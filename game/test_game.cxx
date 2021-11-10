@@ -1,84 +1,137 @@
-#include "game.hpp"
+#include "prereqs.hpp"
+#include "nodes.hpp"
 #include <cassert>
 #include <iostream>
 #include <string>
 
 #define ENDL std::cout << std::endl
 
-static void test_branch_default() 
+static void test_normal_node()
 {
-    game::branch gb; // create object
-    glm::vec3 dummy (0.0f, 0.0f, 0.0f);
+    // create a lot of dummys
+    glm::vec3 v1 (0.0f, 0.0f, 0.0f);
+    glm::vec3 v2 (1.0f, 0.0f, 0.0f);
+    glm::vec3 v3 (0.0f, 1.0f, 0.0f);
+    glm::vec3 v4 (0.0f, 0.0f, 1.0f);
+    glm::vec3 v5 (-1.0f, 0.0f, 0.0f);
+    glm::vec3 v6 (0.0f, -1.0f, 0.0f);
+    glm::vec3 v7 (0.0f, 0.0f, -1.0f);
+    glm::vec3 v8 (1.0f, 1.0f, 1.0f);
+    glm::vec3 v9 (1.0f, 1.0f, -1.0f);
+    glm::vec3 v10 (1.0f, -1.0f, 1.0f);
+    glm::vec3 v11 (-1.0f, 1.0f, 1.0f);
+    glm::vec3 v12 (-1.0f, -1.0f, 1.0f);
 
-    // test call and ensure it returns the empty set
-    assert(gb(dummy, dummy).size() == 0);
+    glm::vec3 bottomleft (-2.0f, -2.0f, -2.0f);
+    glm::vec3 topright (2.0f, 2.0f, 2.0f);
 
-    // test render and ensure dummy isn't modified 
-    gb.render(dummy, dummy);
-    assert(dummy == glm::vec3(0.0f, 0.0f, 0.0f));
+    // test creation of some nodes
+    game::nodes::normal n1 (v1);
+    game::nodes::normal n2 (v2);
+    game::nodes::normal n3 (v3);
+    game::nodes::normal n4 (v4);
+    game::nodes::normal n5 (v5);
+    game::nodes::normal n6 (v6);
+    game::nodes::normal n7 (v7);
+    game::nodes::normal n8 (v8);
+    game::nodes::normal n9 (v9);
+    game::nodes::normal n10 (v10);
+    game::nodes::normal n11 (v11);
+    game::nodes::normal n12 (v12);
 
-    gb.log();
-    ENDL;
+    // test if references break anything
+    game::node &n1_ = n1;
+    game::node &n2_ = n2;
+    game::node &n3_ = n3;
+    game::node &n4_ = n4;
+    game::node &n5_ = n5;
+    game::node &n6_ = n6;
+    game::node &n7_ = n7;
+    game::node &n8_ = n8;
+    game::node &n9_ = n9;
+    game::node &n10_ = n10;
+    game::node &n11_ = n11;
+    game::node &n12_ = n12;
+
+    // set buffer to collect pointers
+    std::vector<game::edge*> buf;
+    // test the attach function
+    buf.push_back(game::attach(game::red, &n1, &n2));
+    buf.push_back(game::attach(game::red, &n1, &n3));
+    buf.push_back(game::attach(game::red, &n1, &n4));
+    buf.push_back(game::attach(game::red, &n1, &n5));
+    buf.push_back(game::attach(game::red, &n1, &n6));
+    buf.push_back(game::attach(game::red, &n1, &n7));
+    buf.push_back(game::attach(game::red, &n1, &n8));
+    buf.push_back(game::attach(game::red, &n1, &n9));
+    buf.push_back(game::attach(game::red, &n1, &n10));
+    buf.push_back(game::attach(game::red, &n1, &n11));
+    buf.push_back(game::attach(game::red, &n1, &n12));
+    buf.push_back(game::attach(game::red, &n2, &n3));
+    buf.push_back(game::attach(game::red, &n2, &n4));
+    buf.push_back(game::attach(game::red, &n2, &n5));
+    buf.push_back(game::attach(game::red, &n2, &n6));
+    buf.push_back(game::attach(game::red, &n2, &n7));
+
+    n2.log(std::cout, 2); ENDL;
+
+
+    game::node::container c1;
+    n1(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n2_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n3(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n4(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n5(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n6(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n7(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n8_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n9_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n10(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n11(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n12(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+
+    // test the render function
+    glm::vec3 out1;
+    auto out2 = n2.render(out1);
+    assert(out1 == v2);
+    assert(out2.size() == 6);
+    for (auto v : out2)
+        std::cout << v.x << " " << v.y << " " << v.z << std::endl;
+
+    // test the detach function
+    for (auto *e : buf)
+        game::detach(e);
+    
+    n2.log(std::cout, 2); ENDL;
 }
 
-static void test_branch_single() 
-{
-
-    glm::vec3 x1 (0.0f, 0.0f, 0.0f);
-    glm::vec3 x2 (0.0f, 1.0f, 0.0f);
-    glm::vec3 x3 (0.0f, 1.5f, 0.0f);
-    glm::vec3 x4 (0.0f, -1.0f, 0.5f);
-
-    glm::vec3 bottomleft (-1.0f, -1.0f, -1.0f);
-    glm::vec3 topright (1.0f, 2.0f, 1.0f);
-    glm::vec3 topright2 (1.0f, 1.1f, 1.0f);
-
-    game::branches::single b1_(x1, x2, game::branch::green);
-    game::branch &b1 = b1_;
-
-    game::branches::single b2_(x2, x3, game::branch::red, &b1_);
-    game::branch &b2 = b2_;
-
-    game::branches::single b3_(x3, x4, game::branch::blue, &b2_);
-    game::branch &b3 = b3_;
-
-    // test call
-    auto out1 = b1(bottomleft, topright);
-    assert(out1.size() == 1);
-
-    auto out2 = b2(bottomleft, topright);
-    assert(out2.size() == 2);
-
-    auto out3 = b3(bottomleft, topright);
-    assert(out3.size() == 2);
-
-    auto out4 = b2(bottomleft, topright2);
-    assert(out4.size() == 1);
-
-
-    // test render
-    glm::vec3 render_buffer[6];
-    b1.render(render_buffer[0], render_buffer[1]);
-    b2.render(render_buffer[2], render_buffer[3]);
-    b3.render(render_buffer[4], render_buffer[5]);
-
-    assert(render_buffer[0] == x1 and render_buffer[1] == x2 or 
-           render_buffer[0] == x2 and render_buffer[1] == x1);
-    
-    assert(render_buffer[2] == x2 and render_buffer[3] == x3 or 
-           render_buffer[2] == x3 and render_buffer[3] == x2);
-    
-    assert(render_buffer[4] == x3 and render_buffer[5] == x4 or
-           render_buffer[4] == x4 and render_buffer[5] == x3);
-
-    // test log
-    b1.log(); ENDL;
-    b2.log(); ENDL;
-    b3.log(); ENDL;
-}
 
 int main(int argc, char **argv)
 {
-    test_branch_default();
-    test_branch_single();
+    test_normal_node();
+
+    return 0;
 }

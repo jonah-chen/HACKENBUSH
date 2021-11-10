@@ -2,26 +2,24 @@
 
 using namespace game;
 
-///////////////////////////////////////////////////////////////////////////////
-// implement the default functionality for branches
-branch::container
-branch::operator() (const glm::vec3 &bottomleft, const glm::vec3 &topright, 
-                    int32_t max_depth)
+edge* game::attach(branch_type type, node *node1, node *node2)
 {
-    return children_ ? children_->operator()(bottomleft, topright) 
-                     : container();
+    edge *e = new edge(type, node1, node2);
+    
+
+    bool success1 = node1->attach(e);
+    bool success2 = node2->attach(e);
+    
+    if (success1 or success2)
+        return e;
+    
+    delete e;
+    return nullptr;
 }
 
-void branch::render (glm::vec3 &vertex1, glm::vec3 &vertex2) const {}
-
-void branch::log(std::ostream &os) const { 
-    os << "Nothing: @";
-    os << "(" << root_pos_.x << "," << root_pos_.y << "," << root_pos_.z << ")";
-}
-
-branch* branch::update_children(branch *children)
+void game::detach(edge *e)
 {
-    branch *old_children = children_;
-    children_ = children;
-    return old_children;
+    e->p1->detach(e);
+    e->p2->detach(e);
+    delete e;
 }
