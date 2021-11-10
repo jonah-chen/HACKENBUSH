@@ -15,13 +15,20 @@
 
 #pragma once
 
+// define max search depths
 #define DEFAULT_MAX_DEPTH 1024
 #define DEFAULT_MAX_BREADTH 1024
+
+// define negative int64_t constants: `special` numbers
 #define INF 0x92345678abcdef10
+#define NOT_FOUND 0x902345678abcdef1
+
+
 
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include <set>
 #include <unordered_set>
 #include <algorithm>
 #include <glm/glm.hpp>

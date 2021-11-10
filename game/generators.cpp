@@ -63,19 +63,37 @@ static float intersect(const glm::vec3 &A, const glm::vec3 &B,
 
 namespace game { namespace nodes{ namespace generators {
 
-glm::vec3 f::geometric(const int64_t depth, const glm::vec3 &pos, 
+////////////////////////////////////////////////////////////////////////////////
+// Collection of implemented branch generators.
+namespace F {
+
+branch_type red  (const int64_t order, void* kwargs) { return game::red; }
+branch_type green(const int64_t order, void* kwargs) { return game::green; }
+branch_type blue (const int64_t order, void* kwargs) { return game::blue; }
+
+
+}
+
+glm::vec3 f::geometric(const int64_t order, const glm::vec3 &rootpos, 
                        const glm::vec3 &kwargs)
 {
-    return pos + kwargs*(1.0-std::pow(0.5f, depth));  
+    return rootpos + kwargs*(1.0f-std::pow(GEOMETRIC_CONSTANT,(float)order));  
 }
 
 int64_t f_::geometric(const glm::vec3 &bottomleft, const glm::vec3 &topright,
                       const glm::vec3 &rootpos,  const glm::vec3 &kwargs)         
 {
+    // B is the root position
+    // A is the direction (kwargs)
+    
+    float t = intersect(kwargs, rootpos, bottomleft, topright);
 
+    // if the line does not intersect the box formed by the infinite stack, or 
+    // it only intersects at a time greater than the limit (which is 1), then 
+    // return NOT_FOUND
+    if (t < 0 or t > 1) return NOT_FOUND;
 
-    return (int64_t)((rootpos.y )/DEFAULT_GEOMETRIC_HEIGHT);
+    // otherwise, return the step when it first intersects.
+    return (int64_t)(std::log2(1.0f-t) / std::log2(GEOMETRIC_CONSTANT));
 }
-
-
 }}}
