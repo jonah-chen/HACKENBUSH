@@ -158,6 +158,8 @@ public:
      * @brief attach this node and another node via the specified edge. The 
      * default behavior is to do nothing and return false.
      * 
+     * @warning this method is not meant to be called explicitly.
+     * 
      * @param e pointer to edge used to attach the nodes. 
      * @return true when the edge is attached succesfully.
      * @return false when the edge cannot be attached.
@@ -170,6 +172,7 @@ public:
      * player or it is unable to withstand the force of gravity. The default 
      * behavior is to do nothing.
      * 
+     * @warning this method is not meant to be called explicitly.
      * @warning implementations of this method must NOT deallocate the pointer.
      * 
      * @param e pointer to the edge to detach.
@@ -200,8 +203,17 @@ protected:
  * 
  * @warning the edge pointer should be freed by the caller.
  */
-
 edge* attach(branch_type type, node *node1, node *node2);
+
+
+/**
+ * @brief detach a edge from each node it is connected to, and deallocate the 
+ * memory used by the edge.
+ * 
+ * @warning the edge pointer should be created with the attach function.
+ * 
+ * @param e a pointer to the edge to be detached.
+ */
 void detach(edge *e);
 
 }
