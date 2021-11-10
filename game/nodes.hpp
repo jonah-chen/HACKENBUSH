@@ -114,4 +114,81 @@ private:
 };
 
 
+/**
+ * @brief implementation of a node that would belong in an infinitely tall stack
+ * 
+ * 
+ */
+class stack : public node
+{
+public: 
+    using type_gen = 
+        branch_type (*)(const int64_t, const branch_type, void*);
+    using step_gen = glm::vec3   (*)(const int64_t, const glm::vec3&, void*);
+
+    /**
+     * @brief Construct a node that admits a (possibly infinite) stack of 
+     * branches that is procedurally generated.
+     * 
+     * @param pos 3D position of the node.
+     * @param tgen type generator function must accept the type and order of 
+     * this node and a void pointer of optional arguments. It must return a 
+     * branch type for the next branch.
+     * @param sgen step generator function must accept the order and current 
+     * position of this node and a void pointer of optional arguments. It must 
+     * return the position of the next node.
+     * @param kwargs optional arguments to be passed to the generator functions.
+     * @param order signed integer describing order or index or id of this node.
+     * Defaults to 0.
+     * @param cap signed integer setting a cap on the depth of this stack. 
+     * Defaults to INF(inity), allowing the stack to grow indefinitly
+     */
+    stack(const glm::vec3 &pos, type_gen tgen, step_gen sgen, 
+          void* kwargs = nullptr, int64_t order = 0, int64_t cap=INF)
+                :   node(pos), 
+                    tgen_(tgen), sgen_(sgen), kwargs_(kwargs), 
+                    order_(order), cap_(cap), root_() {}
+
+    stack(const stack&) = delete;
+    stack& operator=(const stack&) = delete;
+
+    ~stack();
+
+    stack& operator++();
+
+    void operator()(container &nodes,
+                    const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                    int32_t max_depth = DEFAULT_MAX_DEPTH) override;
+
+
+    std::unordered_set<edge*> 
+    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) const override; 
+
+
+    void log(std::ostream &os = std::cout, 
+             uint8_t layers=0, uint8_t counter=0) const override;
+
+
+    bool attach(edge *e) override;
+
+
+    void detach(edge *e) override;
+
+private:
+    type_gen    tgen_;  // Type generator function must accept the type and 
+                        // order of this node and a void pointer of optional 
+                        // arguments. It must return a branch type for the next 
+                        // branch.
+    step_gen    sgen_;  // Step generator function must accept the order and 
+                        // the current position of this node and a void pointer 
+                        // of optional arguments. It must return the position of
+                        // the next node.
+    int64_t     order_; // The order or index or id of this node.
+    int64_t     cap_;   // Cap on the depth of this stack.
+    void*       kwargs_;// Optional arguments to be passed to the generator 
+                        // functions.
+    stack**     root_;  // Pointer to the root of the stack.
+};
+
+
 }}
