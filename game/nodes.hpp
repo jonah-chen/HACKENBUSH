@@ -15,8 +15,6 @@
 
 #pragma once
 #include "prereqs.hpp"
-#include <unordered_set>
-
 namespace game { namespace nodes {
 
 class normal : public node
@@ -102,7 +100,15 @@ public:
      * 
      * @param e pointer to the edge connecting this node to the other node.
      */
-    void attach(edge *e);
+    inline void attach(edge *e) { edges.insert(e); }
+
+    /**
+     * @brief detach an edge from this node.
+     * 
+     * @param e pointer to the edge to detach.
+     */
+    void detach(edge **e);
+    
 
 
 private:
