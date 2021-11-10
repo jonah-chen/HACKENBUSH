@@ -17,6 +17,19 @@
 #include "prereqs.hpp"
 namespace game { namespace nodes {
 
+
+/**
+ * @brief implementation of a node that would belong in a normal, finite graph.
+ * this node is designed in a way so that it is compatible with the other more
+ * unconventional nodes/branches that are used in this implementation of
+ * hackenbush.
+ * 
+ * @details the node is implemented using an container of all edges that are
+ * attached to the node. As game::edges contain both the nodes the edge 
+ * connects, this allows the node to be attach to another type (possibly 
+ * infinite sequence) of node as well. 
+ * 
+ */
 class normal : public node
 {
 public:

@@ -76,6 +76,8 @@ struct edge
  * - the call operator
  * - the render method
  * - the log method
+ * - the attach method
+ * - the detach method
  * 
  * The default implementation of the call operator calls the children if they 
  * exist, and an empty set otherwise. This functionality should be implemented 
