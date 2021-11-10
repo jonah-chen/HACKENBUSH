@@ -15,11 +15,17 @@
 
 #pragma once
 
+// define the rate geometric series shrinks
+#define GEOMETRIC_CONSTANT 0.9f
+
+#include <map>
+#include <cmath>
 #include "prereqs.hpp"
-
 namespace game { namespace nodes {
-
-
+    
+class normal;
+class stack;
+class stack_root;
 /**
  * @brief implementation of a node that would belong in a normal, finite graph.
  * this node is designed in a way so that it is compatible with the other more
@@ -71,13 +77,13 @@ public:
     /**
      * @brief get all the branches attached to this node for use in rendering.
      * 
-     * @param max_bredth: arg is irrelevant to a normal node. 
+     * @param max_breadth: arg is irrelevant to a normal node. 
      * Defaults to DEFAULT_MAX_BRANCH_DEPTH.
      * 
      * @return an unordered map of edge pointers that contains all branches.
      */ 
-    std::unordered_set<edge*>
-    render(int32_t max_depth = DEFAULT_MAX_BREADTH) const override;
+    edge::container
+    render(int32_t max_depth = DEFAULT_MAX_BREADTH) override;
 
     /**
      * @brief write relevant logging info to the output stream.
@@ -113,6 +119,117 @@ private:
     edge::container edges;
 };
 
+///////////////////////////////////////////////////////////////////////////////
+namespace generators {
+
+/**
+ * @brief The F namespace contains branch generator functions. They must all
+ * follow the same signature: 
+ *      branch_type (const int64_t, void*)
+ * 
+ * @param order an integer representing the order of the branch in the tree. The
+ * root is of order 0.
+ * @param kwargs a void pointer to the data structure that contains additional
+ * arguments required by the generator. This could be a seed or anything else.
+ * @return a branch_type object representing the type of the branch between a 
+ * node of order `order` and a node of order `order + 1`.
+ * 
+ * @details the methods implemented in this namespace are:
+ * - red: return red branch no matter what (+omega)
+ * - green: return green branch no matter what (*)
+ * - blue: return blue branch no matter what (-omega)
+ * - num: return branch corresponding to the number given in kwargs.
+ * -
+ */
+namespace F {
+    branch_type red  (const int64_t order, void* kwargs);
+    branch_type green(const int64_t order, void* kwargs);
+    branch_type blue (const int64_t order, void* kwargs);
+    branch_type num  (const int64_t order, void* kwargs);
+}
+
+/**
+ * @brief The f namespace contains step generator functions. They must all 
+ * follow the same signature:
+ *      glm::vec3 (const int64_t, const glm::vec3&, const glm::vec3&)
+ * 
+ * @param order an integer representing the order of the step in the tree. The 
+ * root is of order 0.
+ * @param rootpos a vec3 describing the position of the root node.
+ * @param kwargs a vec3 describing an additional argument (usually a direction) 
+ * used by the generator.
+ * @return a vec3 describing the position of a node of given order.
+ */
+namespace f {
+    glm::vec3 linear        (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+    glm::vec3 harmonic      (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+    glm::vec3 quadratic     (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+    glm::vec3 geometric     (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+    glm::vec3 c_quadratic   (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+    glm::vec3 c_geometric   (const int64_t order, const glm::vec3 &rootpos, 
+                             const glm::vec3 &kwargs);
+}
+
+/**
+ * @brief The f_ namespace contains inverse step generator functions. They must 
+ * all follow the same signature:
+ *      int64_t (const glm::vec3&, const glm::vec3&, 
+ *               const glm::vec3&, const glm::vec3&)
+ * @warning implementations of functions in the f_ namespace must be the inverse
+ *  of the functions with the same name in the f namespace.
+ * 
+ * @param bottomleft a vec3 describing the bottom left corner of the bounding
+ * box.
+ * @param topright a vec3 describing the top right corner of the bounding box.
+ * @param rootpos a vec3 describing the position of the root node.
+ * @param kwargs a vec3 describing an additional argument (usually a direction)
+ * used by the generator in the f namespace.
+ * @return an integer representing the order of the step in the tree. 
+ * @post f::X(f_::X(*args)) is inside the bounding box described by bottomleft
+ * and topright for any valid set of arguments *args.
+ * 
+ * @details the methods implemented in this namespace the same as the ones in 
+ * the f namespace.
+ */
+namespace f_{
+    int64_t linear     (const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t harmonic   (const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t quadratic  (const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t harmonic   (const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t geometric  (const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t c_quadratic(const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs);
+    int64_t c_geometric(const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                        const glm::vec3 &rootpos,    const glm::vec3 &kwargs); 
+}
+
+using type_gen = branch_type (*)(const int64_t, void*);
+
+#define ALL_RED (type_gen)F::red;
+#define ALL_GREEN (type_gen)F::green;
+#define ALL_BLUE (type_gen)F::blue;
+
+struct step_gen {
+    glm::vec3   (*a) (const int64_t order, const glm::vec3 &rootpos, 
+                        const glm::vec3 &kwargs);
+    int64_t     (*a_)(const glm::vec3 &bottomleft, const glm::vec3 &topright, 
+                        const glm::vec3 &rootpos, const glm::vec3 &kwargs);
+};
+
+
+
+}
+
 
 /**
  * @brief implementation of a node that would belong in an infinitely tall stack
@@ -121,48 +238,25 @@ private:
  */
 class stack : public node
 {
-public: 
-    using type_gen = 
-        branch_type (*)(const int64_t, const branch_type, void*);
-    using step_gen = glm::vec3   (*)(const int64_t, const glm::vec3&, void*);
+public:
+    using container= std::map<int32_t, stack*>; // mapping order to children
 
-    /**
-     * @brief Construct a node that admits a (possibly infinite) stack of 
-     * branches that is procedurally generated.
-     * 
-     * @param pos 3D position of the node.
-     * @param tgen type generator function must accept the type and order of 
-     * this node and a void pointer of optional arguments. It must return a 
-     * branch type for the next branch.
-     * @param sgen step generator function must accept the order and current 
-     * position of this node and a void pointer of optional arguments. It must 
-     * return the position of the next node.
-     * @param kwargs optional arguments to be passed to the generator functions.
-     * @param order signed integer describing order or index or id of this node.
-     * Defaults to 0.
-     * @param cap signed integer setting a cap on the depth of this stack. 
-     * Defaults to INF(inity), allowing the stack to grow indefinitly
-     */
-    stack(const glm::vec3 &pos, type_gen tgen, step_gen sgen, 
-          void* kwargs = nullptr, int64_t order = 0, int64_t cap=INF)
-                :   node(pos), 
-                    tgen_(tgen), sgen_(sgen), kwargs_(kwargs), 
-                    order_(order), cap_(cap), root_() {}
+    stack(const glm::vec3 &pos, stack_root* root, int64_t order) : 
+        node(pos), root_(root), order_(order) {};
 
     stack(const stack&) = delete;
     stack& operator=(const stack&) = delete;
 
-    ~stack();
-
-    stack& operator++();
-
-    void operator()(container &nodes,
+    /**
+     * @brief THIS METHOD SHOULD NOT BE CALLED!
+     * @throw not implemented error.
+     */
+    void operator()(node::container &nodes,
                     const glm::vec3 &bottomleft, const glm::vec3 &topright,
                     int32_t max_depth = DEFAULT_MAX_DEPTH) override;
 
-
-    std::unordered_set<edge*> 
-    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) const override; 
+    edge::container
+    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) override; 
 
 
     void log(std::ostream &os = std::cout, 
@@ -171,23 +265,69 @@ public:
 
     bool attach(edge *e) override;
 
+    void detach(edge *e) override;
+
+protected:
+    int64_t     order_; // The order or index or id of this node.
+    void*       kwargs_;// Optional arguments to be passed to the generator 
+                        // functions.
+    stack_root* root_;  // Pointer to the root of the stack.
+};
+
+
+class stack_root : public stack
+{
+public:    
+    /**
+     * @brief Construct a node that admits a (possibly infinite) stack of 
+     * branches that is procedurally generated.
+     * 
+     * @param pos 3D position of the node.
+     * @param tgen type generator function following the signature defined in
+     * generators.hpp.
+     * @param sgen step generator function following the signature defined in
+     * generators.hpp.
+     * @param kwargs optional arguments to be passed to the generator functions.
+     * @param order signed integer describing order or index or id of this node.
+     * Defaults to 0.
+     * @param cap signed integer setting a cap on the depth of this stack. 
+     * Defaults to INF(inity), allowing the stack to grow indefinitly
+     */
+    stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
+               generators::type_gen tgen, generators::step_gen sgen,
+               void *kwargs, stack_root *grandchild = nullptr, int64_t order=0);
+    
+    stack_root(const stack_root&) = delete;
+    stack_root& operator=(const stack_root&) = delete;
+
+    ~stack_root();
+
+
+    edge* __render(int32_t order = 0, stack *ptr = nullptr, bool next = true);
+
+    void operator()(node::container &nodes,
+                    const glm::vec3 &bottomleft, const glm::vec3 &topright,
+                    int32_t max_depth = DEFAULT_MAX_DEPTH) override;
+
+    edge::container
+    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) override;
+
+    void log(std::ostream &os = std::cout, 
+             uint8_t layers=0, uint8_t counter=0) const override;
+
+    bool attach(edge *e) override;
 
     void detach(edge *e) override;
 
+    void detach(int64_t order);
+
 private:
-    type_gen    tgen_;  // Type generator function must accept the type and 
-                        // order of this node and a void pointer of optional 
-                        // arguments. It must return a branch type for the next 
-                        // branch.
-    step_gen    sgen_;  // Step generator function must accept the order and 
-                        // the current position of this node and a void pointer 
-                        // of optional arguments. It must return the position of
-                        // the next node.
-    int64_t     order_; // The order or index or id of this node.
-    int64_t     cap_;   // Cap on the depth of this stack.
-    void*       kwargs_;// Optional arguments to be passed to the generator 
-                        // functions.
-    stack**     root_;  // Pointer to the root of the stack.
+    container               children_;
+    node*                   grandchild_;
+    generators::type_gen    tgen_;
+    generators::step_gen    sgen_; 
+    int64_t                 cap_;
+    glm::vec3               vec_kwargs_;
 };
 
 

@@ -1,4 +1,4 @@
-#include "generators.hpp"
+#include "nodes.hpp"
 
 static inline glm::vec3 operator* (const glm::vec3& v, float m) {
     return glm::vec3(v.x * m, v.y * m, v.z * m);
@@ -61,10 +61,10 @@ static float intersect(const glm::vec3 &A, const glm::vec3 &B,
     return tmin;
 }
 
-namespace game { namespace nodes{ namespace generators {
+namespace game { namespace nodes { namespace generators {
 
 ////////////////////////////////////////////////////////////////////////////////
-// Collection of implemented branch generators.
+// Collection of implemented branch generators
 namespace F {
 
 branch_type red  (const int64_t order, void* kwargs) { return game::red; }

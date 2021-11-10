@@ -141,15 +141,17 @@ public:
 
     /**
      * @brief get the vertex positions that will be used for rendering the 
-     * branch.
+     * branch. Render should be really dumb, and should be used after 
+     * determining which nodes are needed. The upside of it being dumb is that 
+     * it should work universally.
      * 
      * @param max_breadth: 32-bit integer of the maximum number of branches to
      * return. Defaults to DEFAULT_MAX_BRANCH_DEPTH.
      * 
      * @return an unordered map of edge pointers that contains all branches.
      */
-    virtual std::unordered_set<edge*> 
-    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) const=0;
+    virtual edge::container
+    render(int32_t max_breadth = DEFAULT_MAX_BREADTH)=0;
 
 
     /**
