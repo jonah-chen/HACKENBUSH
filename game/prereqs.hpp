@@ -156,51 +156,25 @@ public:
 
     /**
      * @brief attach this node and another node via the specified edge. The 
-     * default behavior is to do nothing and call __attach on the other node 
-     * with the same edge.
+     * default behavior is to do nothing and return false.
      * 
      * @param e pointer to edge used to attach the nodes. 
      * @return true when the edge is attached succesfully.
      * @return false when the edge cannot be attached.
      */
-    virtual bool attach(edge *e) { return e->get_other(this)->__attach(e); };
+    virtual bool attach(edge *e) { return false; };
 
-
-    /**
-     * @brief attach this node and another node via the specified edge. The
-     * default behavior is to return false.
-     * 
-     * @warning this function is not meant to be called directly. It should ONLY
-     *  be called by `attach`.
-     * 
-     * @param e pointer to edge used to attach the nodes. 
-     * @return true when the edge is attached succesfully.
-     * @return false when the edge cannot be attached.
-     */
-    virtual bool __attach(edge *e) { return false; };
-                     
 
     /**
      * @brief detach an edge from this node because either it is chopped by a 
      * player or it is unable to withstand the force of gravity. The default 
-     * behavior is to do nothing and call __detach on the other node with the 
-     * same edge.
+     * behavior is to do nothing.
+     * 
+     * @warning implementations of this method must NOT deallocate the pointer.
      * 
      * @param e pointer to the edge to detach.
      */
-    virtual void detach(edge *e) { e->get_other(this)->__detach(e); }
-
-
-    /**
-     * @brief detach an edge from this node because either it is chopped by a 
-     * player or it is unable to withstand the force of gravity. 
-     * 
-     * @warning this function is not meant to be called directly. It should ONLY
-     *  be called by the `detach`.
-     * 
-     * @param e pointer to the edge to detach.
-     */
-    virtual void __detach(edge *e)=0;
+    virtual void detach(edge *e) {}
     
 
     /**
@@ -210,19 +184,24 @@ public:
      */
     inline glm::vec3 get_pos() const { return pos_; }
 
-    /**
-     * @brief 
-     * 
-     * @param other 
-     * @param type 
-     * @return edge* 
-     */
-    edge* attach(node *other, branch_type type);
-
-
-
 protected:
     glm::vec3 pos_; // 3D position of the node.
 };
+
+/**
+ * @brief attaches the two nodes to each other via an edge, and return a pointer
+ *  to the edge.
+ * 
+ * @param type the type of the edge connecting the two nodes.
+ * @param node1 the first node to attach.
+ * @param node2 the second node to attach.
+ * 
+ * @return edge pointer to the edge between the two nodes.
+ * 
+ * @warning the edge pointer should be freed by the caller.
+ */
+
+edge* attach(branch_type type, node *node1, node *node2);
+void detach(edge *e);
 
 }

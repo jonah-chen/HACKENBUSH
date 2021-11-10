@@ -78,19 +78,7 @@ public:
      */
     virtual void log(std::ostream &os = std::cout, 
                      uint8_t layers=0, uint8_t counter=0) const override;
-
-
-    /**
-     * @brief attach another node to this node via an edge by specifying the 
-     * other node and edge type. 
-     * 
-     * @param other a pointer to the other node.
-     * @param type the type of edge to attach this node to the other node.
-     * 
-     * @return pointer to the edge with the specified type that connect the
-     * two specified nodes.
-     */
-    edge* attach(node *other, branch_type type);
+                     
 
     /**
      * @brief attach another node to this node via an edge by specifying the 
@@ -102,27 +90,12 @@ public:
      */
     bool attach(edge *e) override;
 
-
-    /**
-     * @brief attach another node to this node via an edge by specifying the 
-     * edge connecting them.
-     * 
-     * @pre the other node must already be created.
-     * 
-     * @param e pointer to the edge connecting this node to the other node.
-     */
-    bool __attach(edge *e) override;
-
-
     /**
      * @brief detach an edge from this node.
      * 
      * @param e pointer to the edge to detach.
      */
     void detach(edge *e) override;
-    
-    void __detach(edge *e) override;
-
 
 private:
     edge::container edges;

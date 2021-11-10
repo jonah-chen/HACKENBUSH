@@ -46,25 +46,10 @@ void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 bool normal::attach(edge *e)
 {
     edges.insert(e); 
-    return node::attach(e); 
-}
-
-bool normal::__attach(edge *e)
-{
-    edges.insert(e);
     return true;
 }
 
 void normal::detach(edge *e)
 {
     edges.erase(e);
-    node::detach(e);
-    delete e;
-}
-
-void normal::__detach(edge *e)
-{
-    edges.erase(e);
-    (e->get_other(this))->detach(e);
-    delete e;
 }
