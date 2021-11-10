@@ -13,20 +13,60 @@
 
 #pragma once
 
-#define DEFAULT_MAX_BRANCH_DEPTH 1024
+#define DEFAULT_MAX_DEPTH 1024
+#define DEFAULT_MAX_BREADTH 1024
 
 #include <cstdint>
 #include <iostream>
+#include <vector>
 #include <unordered_set>
 #include <algorithm>
 #include <glm/glm.hpp>
 
 namespace game
 {
+
 /**
- * @brief the branch class describes the any type of branch that exists in this 
- * implementation of hackenbush. Instances of this class are invalid branches, 
- * which describes the ground.
+ * @brief types of branches in the game
+ * - red:   1
+ * - green: 0
+ * - blue: -1
+ */
+enum branch_type : int8_t
+{
+    invalid = -127,
+    blue    =    1,
+    green   =    0,
+    red     =   -1
+};
+
+
+/**
+ * @brief An edge or branch in the game.
+ * 
+ * @details the unique copy of an edge between two nodes. The copy 
+ * constructor and assignment operator are deleted because they will break
+ * many search functionalty since the pointers to the edge will be used.
+ */
+struct edge 
+{
+    using container = std::vector<edge*>;
+    node *p1;
+    node *p2;
+    branch_type type;
+    edge(branch_type type, node *p1, node *p2) 
+        : p1(p1), p2(p2), type(type) {}
+    
+    edge(const edge &e) = delete;
+    edge &operator=(const edge &e) = delete;
+
+    inline node *get_other(const node *p) const{ return p1 == p ? p1 : p2; }
+};
+
+
+/**
+ * @brief the node class describes the any type of node that exists in this 
+ * implementation of hackenbush. Instances of this class are.
  * 
  * @details branches must implement the following functions:
  * - the call operator
@@ -40,126 +80,85 @@ namespace game
  * The default implementation of the other methods does what is logical, which 
  * is close to nothing.
  */
-class branch
+class node
 {
 public:
-    using container = std::unordered_set<branch*>;
-    /**
-     * @brief types of branches in the game
-     * - red:   1
-     * - green: 0
-     * - blue: -1
-     */
-    enum branch_type : int8_t
-    {
-        invalid = -127,
-        blue    =    1,
-        green   =    0,
-        red     =   -1
-    };
+    using container = std::unordered_set<node*>;
 
     /**
      * @brief Construct a new branch object with the invalid type and with
      * children located at the a specified position.
      * 
-     * @param children pointer to the children branch. Defaults to nullptr which
-     * indicates no children.
-     * @param root_pos 3d position of the root of the branch. Defaults to the 
-     * origin.
+     * @param pos the 3D position of the node.
      */
-    branch(branch *children=nullptr, glm::vec3 root_pos=glm::vec3(0,0,0), 
-           uint32_t stability=1) :  type_(invalid), 
-                                    children_(children), 
-                                    root_pos_(root_pos), 
-                                    stability_(stability) {}
+    node(const glm::vec3 &pos) : pos_(pos) {}
+
 
     /**
      * Delete the copy constructor and assignment operator because they may
      * cause many undefined and erroneous behaviors.
      * 
      */
-    branch(const branch&)               = delete;
-    branch &operator=(const branch&)    = delete;
+    node(const node&)               = delete;
+    node &operator=(const node&)    = delete;
+
 
     /**
-     * @brief Get the branches that is contained in the volume specified by two 
+     * @brief get the nodes that are contained in the volume specified by two 
      * diagonally opposite corners.
      * 
-     * @param bottomleft: 3d position of the top left corner of the volume. 
-     * Note that the top left corner is the corner with the smallest x, y,
-     * and z values.
-     * @param topright: 3d position the bottom right corner of the volume. 
-     * Note that the bottom right corner is the corner with the largest x, y, 
-     * and z values.
-     * @param max_depth: 32-bit integer of the maximum number of branches to 
-     * return. Defaults to DEFAULT_MAX_BRANCH_DEPTH.
+     * @param bottomleft: 3d position of the bottom left corner of the volume. 
+     * @note the top left corner is the corner with the smallest x, y, and z 
+     * values.
+     * @param topright: 3d position the top right corner of the volume. 
+     * @note the bottom right corner is the corner with the largest x, y, and z 
+     * values.
+     * @param max_depth: 32-bit integer of the maximum number depth to search. 
+     * Defaults to DEFAULT_MAX_DEPTH.
      * 
-     * @return an unordered_set of branch references that contains all the 
-     * branches contained in the volume which can be used to render branches
-     * to the screen and interact with the player.
-     * 
+     * @return a container of references to all the nodes contained in the 
+     * volume which can be used to render branches to the screen and interact 
+     * with the player.
      */
-    virtual container
-    operator() (const glm::vec3 &bottomleft, const glm::vec3 &topright, 
-                int32_t max_depth = DEFAULT_MAX_BRANCH_DEPTH);
+    virtual void operator()(container &nodes, const glm::vec3 &bottomleft, 
+                            const glm::vec3 &topright, 
+                            int32_t max_depth = DEFAULT_MAX_DEPTH)=0;
 
 
     /**
-     * @brief modify the parameters to the two vertex position of this and
-     * only this branch. Note that these are in no particular order.
+     * @brief get the vertex positions that will be used for rendering the 
+     * branch.
      * 
-     * @param vertex1 3d vector reference to store the first vertex position.
-     * @param vertex2 3d vector reference to store the second vertex position.
+     * @param root: reference to store the position of the root of the branch.
+     * @param max_bredth: 32-bit integer of the maximum number of branches to
+     * return. Defaults to DEFAULT_MAX_BRANCH_DEPTH.
      * 
+     * @return a vector of glm::vec3 that contains the leaf vertex positions.
      */
-    virtual void render (glm::vec3 &vertex1, glm::vec3 &vertex2) const;
+    virtual std::vector<glm::vec3> 
+    render(glm::vec3 &root, int32_t max_breadth = DEFAULT_MAX_BREADTH) const=0;
 
 
     /**
      * @brief write relevant logging info to the output stream.
      * 
      * @param os reference to output stream. Defaults to std::cout.
+     * @param layers: 8-bit integer of the number of recursions to print the 
+     * nodes this node is connected to. Defaults to 0, must be less than 6.
      */
-    virtual void log(std::ostream &os = std::cout) const;
-
+    virtual void log(std::ostream &os = std::cout, 
+                     uint8_t layers = 0)            const=0;
+    
     /**
-     * @brief Get the type of the branch.
+     * @brief return the position of the node
      * 
-     * @return branch_type 
+     * @return glm::vec3 of the position of the node.
      */
-    inline branch_type get_type() const { return type_; }
-
-
-    /**
-     * @brief Update the children of the branch.
-     * 
-     * @param children pointer to the new children branch.
-     * @return pointer to the old children branch that is replaced. 
-     */
-    branch* update_children(branch *children);
-
-    /**
-     * @brief call when the branch is attached to something which is grounded.
-     * This incraments the stability of the branch by 1.
-     * 
-     */
-    inline void attach() { ++stability_; }
-
-    /**
-     * @brief call when the branch is detached from something which is grounded.
-     * This decraments the stability of the branch by 1.
-     * 
-     * @return true if the branch is still stable, and false if the branch 
-     * should fall down.
-     */
-    inline bool detach() { return --stability_; }
+    inline glm::vec3 get_pos() const { return pos_; }
 
 
 protected:
-    branch_type type_;      // type of the branch
-    glm::vec3   root_pos_;  // position of the root of the branch
-    branch*     children_;  // children of the branch
-    uint32_t    stability_; // maximum depth of the branch
+    glm::vec3 pos_; // 3D position of the node.
 };
 
 }
