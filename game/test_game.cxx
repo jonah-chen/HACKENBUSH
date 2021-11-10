@@ -115,11 +115,8 @@ static void test_normal_node()
 
     // test the render function
     glm::vec3 out1;
-    auto out2 = n2.render(out1);
-    assert(out1 == v2);
+    auto out2 = n2.render();
     assert(out2.size() == 6);
-    for (auto v : out2)
-        std::cout << v.x << " " << v.y << " " << v.z << std::endl;
 
     // test the detach function
     for (auto *e : buf)
@@ -128,10 +125,10 @@ static void test_normal_node()
     n2.log(std::cout, 2); ENDL;
 }
 
-
 int main(int argc, char **argv)
 {
     test_normal_node();
-
+    int64_t t1 = INF;
+    std::cout << t1;
     return 0;
 }

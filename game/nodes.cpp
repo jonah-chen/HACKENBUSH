@@ -3,6 +3,9 @@
 using namespace game;
 using namespace game::nodes;
 
+///////////////////////////////////////////////////////////////////////////////
+// Implementation of the normal nodes
+///////////////////////////////////////////////////////////////////////////////
 void normal::operator()(container &nodes, const glm::vec3 &bottomleft, 
                         const glm::vec3 &topright, int32_t max_depth)
 {
@@ -13,13 +16,9 @@ void normal::operator()(container &nodes, const glm::vec3 &bottomleft,
                 e->get_other(this)->operator()(nodes, bottomleft, topright, max_depth-1);
 }
 
-std::vector<glm::vec3> normal::render(glm::vec3 &root, int32_t max_breadth) const
+std::unordered_set<edge*> normal::render(int32_t max_breadth) const
 {
-    std::vector<glm::vec3> ret;
-    root = pos_;
-    for (edge *e : edges)
-        ret.push_back(e->get_other(this)->get_pos());
-    return ret;
+    return edges;
 }
 
 void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
@@ -53,3 +52,9 @@ void normal::detach(edge *e)
 {
     edges.erase(e);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Implementation of the stacked nodes
+///////////////////////////////////////////////////////////////////////////////
+
+

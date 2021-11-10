@@ -14,7 +14,9 @@
  */
 
 #pragma once
+
 #include "prereqs.hpp"
+
 namespace game { namespace nodes {
 
 
@@ -67,18 +69,15 @@ public:
 
 
     /**
-     * @brief get the vertex positions that will be used for rendering the 
-     * branch.
+     * @brief get all the branches attached to this node for use in rendering.
      * 
-     * @param root: reference to store the position of the root of the branch.
      * @param max_bredth: arg is irrelevant to a normal node. 
      * Defaults to DEFAULT_MAX_BRANCH_DEPTH.
      * 
-     * @return a vector of glm::vec3 that contains the leaf vertex positions.
+     * @return an unordered map of edge pointers that contains all branches.
      */ 
-    std::vector<glm::vec3>
-    render(glm::vec3 &root, 
-           int32_t max_depth = DEFAULT_MAX_BREADTH) const override;
+    std::unordered_set<edge*>
+    render(int32_t max_depth = DEFAULT_MAX_BREADTH) const override;
 
     /**
      * @brief write relevant logging info to the output stream.
@@ -113,7 +112,6 @@ public:
 private:
     edge::container edges;
 };
-
 
 
 }}
