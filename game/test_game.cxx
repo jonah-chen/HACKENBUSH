@@ -8,6 +8,7 @@
 
 static void test_normal_node()
 {
+    // create a lot of dummys
     glm::vec3 v1 (0.0f, 0.0f, 0.0f);
     glm::vec3 v2 (1.0f, 0.0f, 0.0f);
     glm::vec3 v3 (0.0f, 1.0f, 0.0f);
@@ -38,6 +39,7 @@ static void test_normal_node()
     game::nodes::normal n11 (v11);
     game::nodes::normal n12 (v12);
 
+    // test if references break anything
     game::node &n1_ = n1;
     game::node &n2_ = n2;
     game::node &n3_ = n3;
@@ -71,11 +73,62 @@ static void test_normal_node()
     buf.push_back(game::attach(game::red, &n2, &n6));
     buf.push_back(game::attach(game::red, &n2, &n7));
 
-    n2.log(std::cout , 2);
+    n2.log(std::cout, 2); ENDL;
 
+
+    game::node::container c1;
+    n1(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n2_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n3(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n4(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n5(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n6(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n7(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n8_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n9_(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n10(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n11(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+    c1.clear();
+    n12(c1, bottomleft, topright);
+    assert(c1.size() == 12);
+
+    // test the render function
+    glm::vec3 out1;
+    auto out2 = n2.render(out1);
+    assert(out1 == v2);
+    assert(out2.size() == 6);
+    for (auto v : out2)
+        std::cout << v.x << " " << v.y << " " << v.z << std::endl;
+
+    // test the detach function
     for (auto *e : buf)
         game::detach(e);
+    
+    n2.log(std::cout, 2); ENDL;
 }
+
+
 int main(int argc, char **argv)
 {
     test_normal_node();
