@@ -2,7 +2,9 @@
  * @file prereqs.hpp
  * @author Jonah Chen
  * @brief Defines the strict prerequisites for the hackenbush game. Includes:
- * - Branches
+ * - Branch types @see branch_type
+ * - Edges between nodes (branches) @see edge
+ * - Nodes virtual class @see node
  * - 
  * @version 0.1
  * @date 2021-11-09
@@ -25,6 +27,8 @@
 
 namespace game
 {
+
+class node; // forward decloration
 
 /**
  * @brief types of branches in the game
@@ -50,7 +54,7 @@ enum branch_type : int8_t
  */
 struct edge 
 {
-    using container = std::vector<edge*>;
+    using container = std::unordered_set<edge*>;
     node *p1;
     node *p2;
     branch_type type;
@@ -60,7 +64,7 @@ struct edge
     edge(const edge &e) = delete;
     edge &operator=(const edge &e) = delete;
 
-    inline node *get_other(const node *p) const{ return p1 == p ? p1 : p2; }
+    inline node *get_other(const node *p) const{ return p1 == p ? p2 : p1; }
 };
 
 
@@ -146,15 +150,75 @@ public:
      * @param layers: 8-bit integer of the number of recursions to print the 
      * nodes this node is connected to. Defaults to 0, must be less than 6.
      */
-    virtual void log(std::ostream &os = std::cout, 
-                     uint8_t layers = 0)            const=0;
+    virtual void log(std::ostream &os = std::cout,
+                     uint8_t layers = 0, uint8_t counter = 0) const=0;
+
+
+    /**
+     * @brief attach this node and another node via the specified edge. The 
+     * default behavior is to do nothing and call __attach on the other node 
+     * with the same edge.
+     * 
+     * @param e pointer to edge used to attach the nodes. 
+     * @return true when the edge is attached succesfully.
+     * @return false when the edge cannot be attached.
+     */
+    virtual bool attach(edge *e) { return e->get_other(this)->__attach(e); };
+
+
+    /**
+     * @brief attach this node and another node via the specified edge. The
+     * default behavior is to return false.
+     * 
+     * @warning this function is not meant to be called directly. It should ONLY
+     *  be called by `attach`.
+     * 
+     * @param e pointer to edge used to attach the nodes. 
+     * @return true when the edge is attached succesfully.
+     * @return false when the edge cannot be attached.
+     */
+    virtual bool __attach(edge *e) { return false; };
+                     
+
+    /**
+     * @brief detach an edge from this node because either it is chopped by a 
+     * player or it is unable to withstand the force of gravity. The default 
+     * behavior is to do nothing and call __detach on the other node with the 
+     * same edge.
+     * 
+     * @param e pointer to the edge to detach.
+     */
+    virtual void detach(edge *e) { e->get_other(this)->__detach(e); }
+
+
+    /**
+     * @brief detach an edge from this node because either it is chopped by a 
+     * player or it is unable to withstand the force of gravity. 
+     * 
+     * @warning this function is not meant to be called directly. It should ONLY
+     *  be called by the `detach`.
+     * 
+     * @param e pointer to the edge to detach.
+     */
+    virtual void __detach(edge *e)=0;
     
+
     /**
      * @brief return the position of the node
      * 
      * @return glm::vec3 of the position of the node.
      */
     inline glm::vec3 get_pos() const { return pos_; }
+
+    /**
+     * @brief 
+     * 
+     * @param other 
+     * @param type 
+     * @return edge* 
+     */
+    edge* attach(node *other, branch_type type);
+
 
 
 protected:

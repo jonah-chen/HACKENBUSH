@@ -77,7 +77,7 @@ public:
      * nodes this node is connected to. Defaults to 0.
      */
     virtual void log(std::ostream &os = std::cout, 
-                     uint8_t layers=0)              const override;
+                     uint8_t layers=0, uint8_t counter=0) const override;
 
 
     /**
@@ -100,15 +100,28 @@ public:
      * 
      * @param e pointer to the edge connecting this node to the other node.
      */
-    inline void attach(edge *e) { edges.insert(e); }
+    bool attach(edge *e) override;
+
+
+    /**
+     * @brief attach another node to this node via an edge by specifying the 
+     * edge connecting them.
+     * 
+     * @pre the other node must already be created.
+     * 
+     * @param e pointer to the edge connecting this node to the other node.
+     */
+    bool __attach(edge *e) override;
+
 
     /**
      * @brief detach an edge from this node.
      * 
      * @param e pointer to the edge to detach.
      */
-    void detach(edge **e);
+    void detach(edge *e) override;
     
+    void __detach(edge *e) override;
 
 
 private:
