@@ -150,8 +150,8 @@ public:
      * 
      * @return an unordered map of edge pointers that contains all branches.
      */
-    virtual edge::container
-    render(int32_t max_breadth = DEFAULT_MAX_BREADTH)=0;
+    virtual void render(edge::container &edges, 
+                        int32_t max_breadth = DEFAULT_MAX_BREADTH)=0;
 
 
     /**

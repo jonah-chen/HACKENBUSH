@@ -16,14 +16,15 @@ void normal::operator()(container &nodes, const glm::vec3 &bottomleft,
     if (IN(pos_, bottomleft, topright))
         nodes.insert(this);
     if (max_depth)
-        for (edge *edge : edges)
+        for (edge *edge : edges_)
             if (nodes.find(edge->get_other(this))==nodes.end())
                 edge->get_other(this)->operator()(nodes, bottomleft, topright, max_depth-1);
 }
 
-edge::container normal::render(int32_t max_breadth)
+void normal::render(edge::container &edges, int32_t max_breadth)
 {
-    return edges;
+    std::set_union(edges.begin(), edges.end(), edges_.begin(), edges_.end(),
+                   std::inserter(edges, edges.begin()));
 }
 
 void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
@@ -33,29 +34,29 @@ void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 
     os << "normal ";
     os << "@(" << pos_.x << "," << pos_.y << "," << pos_.z << ")";
-    os << " with " << edges.size() << " edges";
+    os << " with " << edges_.size() << " edges";
     if (layers)
     {
         os << " to";
-        for (edge *e : edges)
+        for (edge *edge : edges_)
         {
             os << std::endl;
             for (uint8_t i=0; i<=counter; ++i)
                 os << "\t";
-            e->get_other(this)->log(os, layers-1, counter+1);
+            edge->get_other(this)->log(os, layers-1, counter+1);
         }
     }
 }
 
 bool normal::attach(edge *e)
 {
-    edges.insert(e); 
+    edges_.insert(e); 
     return true;
 }
 
 void normal::detach(edge *e)
 {
-    edges.erase(e);
+    edges_.erase(e);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,14 +70,12 @@ void stack::operator()(node::container &nodes, const glm::vec3 &bottomleft,
 }
 
 // return the edge that is BOTH moving away or towards the root
-edge::container stack::render(int32_t max_breadth)
+void stack::render(edge::container &edges, int32_t max_breadth)
 {
-    edge::container edges;
     edge* prev = root_->__render(order_, this, false);
     edge* next = root_->__render(order_, this, true);
     if (prev) edges.insert(prev);
     if (next) edges.insert(next);
-    return edges;
 }
 
 void stack::log(std::ostream &os, uint8_t layers, uint8_t counter) const
@@ -87,14 +86,15 @@ void stack::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 
 bool stack::attach(edge *e)
 {
-    std::cout << "cannot attach edge to the middle of an infinite stack"
-                << std::endl;
-    throw "this is not implemented. please design your game differently";
+    return true;
+    // i don't think this should do anything?
 }
 
 void stack::detach(edge *e)
 {
-    root_->detach(order_);
+    stack *other = (stack*)(e->get_other(this));
+    if (other->order_ < order_)
+        root_->detach(order_);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,7 +132,8 @@ edge* stack_root::__render(int32_t order, stack *ptr, bool next)
 
         auto branch = children_.find(next ? order+1 : order-1);
         if (branch != children_.end())
-            return game::attach(type, this, branch->second);
+            return game::attach(type, ptr, branch->second);
+        // return game::attach(type, ptr, children_[next ? order+1 : order-1]);
     }
     return nullptr; // one of the nodes are not created
 }
@@ -180,12 +181,10 @@ void stack_root::operator() (node::container &nodes, const glm::vec3 &bottomleft
     }
 }
 
-edge::container stack_root::render(int32_t max_breadth)
+void stack_root::render(edge::container &edges, int32_t max_breadth)
 {
-    edge::container edges;
     edge* next = root_->__render();
     if (next) edges.insert(next);
-    return edges;
 }
 
 void stack_root::log(std::ostream &os, uint8_t layers, uint8_t counter) const
@@ -226,15 +225,18 @@ void stack_root::detach(edge *e)
     // not done :(((
 }
 
+// kill off everything greater with order greater than order
 void stack_root::detach(int64_t order)
 {
-    // kill off everything greater with order greater than order
-    
+    // if the order is greater than the current order, do nothing
+    // not sure if this check is necessary.
+    if (cap_!=INF and order>cap_)
+        return;
+
     cap_ = order; // not sure if i need a -1 here
     
-    for (auto it = children_.find(order); it != children_.end(); ++it)
-    {
-        delete it->second;
-        children_.erase(it);
-    }
+    auto it = children_.find(order);
+    for (auto j = children_.find(order); j != children_.end(); ++j)
+        delete j->second;
+    children_.erase(it, children_.end());
 }

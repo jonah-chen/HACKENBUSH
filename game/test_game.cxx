@@ -116,7 +116,8 @@ static void test_normal_node()
 
     // test the render function
     glm::vec3 out1;
-    auto out2 = n2.render();
+    game::edge::container out2;
+    n2.render(out2);
     assert(out2.size() == 6);
 
     // test the detach function
@@ -135,6 +136,7 @@ static void test_stack_node()
 
     glm::vec3 bottomleft (-2.0f, -2.0f, -2.0f);
     glm::vec3 topright (2.0f, 2.0f, 2.0f);
+    glm::vec3 topright2(0.5f, 2.0f, 2.0f);
 
     game::node::container c1;
 
@@ -154,9 +156,46 @@ static void test_stack_node()
     n1(c1, bottomleft, topright);
     assert(c1.size() == 1024+512);
     // now attach some more stuff
+
+    game::edge::container out;
     for (auto *e : c1)
+        e->render(out);
+    // test render
+    std::cout << "out.size() = " << out.size() << std::endl;
+
+    bool detach = true;
+    for (auto *e : out)
     {
-        e->render();
+        if (detach)
+        {
+            game::detach(e);
+            detach = false;
+            n1_.log(); ENDL;
+            n2_.log(); ENDL;
+            c1.clear();
+            n1(c1, bottomleft, topright);
+            std::cout << "c1.size() = " << c1.size() << std::endl;
+        }
+        else delete e;
+    }
+    out.clear();
+    for (auto *e : c1)
+        e->render(out);
+    std::cout << "out.size() = " << out.size() << std::endl;
+    for (auto *e : out)
+    {
+        if (detach)
+        {
+            game::detach(e);
+            detach = false;
+            n1_.log(); ENDL;
+            n2_.log(); ENDL;
+            c1.clear();
+            n1(c1, bottomleft, topright);
+            std::cout << "c1.size() = " << c1.size() << std::endl;
+            c1.clear();
+        }
+        else delete e;
     }
 }
 

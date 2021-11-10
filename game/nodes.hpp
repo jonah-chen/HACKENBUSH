@@ -82,8 +82,7 @@ public:
      * 
      * @return an unordered map of edge pointers that contains all branches.
      */ 
-    edge::container
-    render(int32_t max_depth = DEFAULT_MAX_BREADTH) override;
+    void render(edge::container &edges, int32_t max_depth = DEFAULT_MAX_BREADTH) override;
 
     /**
      * @brief write relevant logging info to the output stream.
@@ -116,7 +115,7 @@ public:
     void detach(edge *e) override;
 
 private:
-    edge::container edges;
+    edge::container edges_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,8 +250,8 @@ public:
                     const glm::vec3 &bottomleft, const glm::vec3 &topright,
                     int32_t max_depth = DEFAULT_MAX_DEPTH) override;
 
-    edge::container
-    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) override; 
+    
+    void render(edge::container& edges, int32_t max_breadth = DEFAULT_MAX_BREADTH) override; 
 
 
     void log(std::ostream &os = std::cout, 
@@ -307,8 +306,7 @@ public:
                     const glm::vec3 &bottomleft, const glm::vec3 &topright,
                     int32_t max_depth = DEFAULT_MAX_DEPTH) override;
 
-    edge::container
-    render(int32_t max_breadth = DEFAULT_MAX_BREADTH) override;
+    void render(edge::container &edges, int32_t max_breadth = DEFAULT_MAX_BREADTH) override;
 
     void log(std::ostream &os = std::cout, 
              uint8_t layers=0, uint8_t counter=0) const override;
