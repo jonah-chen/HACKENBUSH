@@ -1,5 +1,6 @@
 #include "prereqs.hpp"
 #include "nodes.hpp"
+#include "generators.hpp"
 #include <cassert>
 #include <iostream>
 #include <string>
@@ -125,10 +126,43 @@ static void test_normal_node()
     n2.log(std::cout, 2); ENDL;
 }
 
+static void test_stack_node()
+{
+    glm::vec3 v1 (0.0f, 0.0f, 0.0f);
+    glm::vec3 v2 (1.0f, 0.0f, 0.0f);
+    glm::vec3 v3 (0.0f, 1.0f, 0.0f);
+    glm::vec3 v4 (0.0f, 0.0f, 1.0f);
+
+    glm::vec3 bottomleft (-2.0f, -2.0f, -2.0f);
+    glm::vec3 topright (2.0f, 2.0f, 2.0f);
+
+    game::node::container c1;
+
+    // test creation of some nodes
+    game::nodes::stack_root n1(v1, v2, ALL_BLUE, GEOMETRIC, nullptr);
+    n1[50]->log(); ENDL;
+
+    // test children
+    game::nodes::stack_root n2(v2, v2, ALL_BLUE, GEOMETRIC, nullptr, &n1);
+    n2[10]->log(); ENDL;
+
+    game::node &n1_ = n1;
+    game::node &n2_ = n2;
+
+    n2(c1, bottomleft, topright);
+    assert(c1.size() == 1024);
+    n1(c1, bottomleft, topright);
+    assert(c1.size() == 1024+512);
+    // now attach some more stuff
+    for (auto *e : c1)
+    {
+        e->render();
+    }
+}
+
 int main(int argc, char **argv)
 {
     test_normal_node();
-    int64_t t1 = INF;
-    std::cout << t1;
+    test_stack_node();
     return 0;
 }

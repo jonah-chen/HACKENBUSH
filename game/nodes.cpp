@@ -16,9 +16,9 @@ void normal::operator()(container &nodes, const glm::vec3 &bottomleft,
     if (IN(pos_, bottomleft, topright))
         nodes.insert(this);
     if (max_depth)
-        for (edge *e : edges)
-            if (nodes.find(e->get_other(this))==nodes.end())
-                e->get_other(this)->operator()(nodes, bottomleft, topright, max_depth-1);
+        for (edge *edge : edges)
+            if (nodes.find(edge->get_other(this))==nodes.end())
+                edge->get_other(this)->operator()(nodes, bottomleft, topright, max_depth-1);
 }
 
 edge::container normal::render(int32_t max_breadth)
@@ -102,10 +102,10 @@ void stack::detach(edge *e)
 ///////////////////////////////////////////////////////////////////////////////
 stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
                        generators::type_gen tgen, generators::step_gen sgen,
-                       void *kwargs, stack_root *grandchild, int64_t order)
+                       void *kwargs, stack_root *grandchild,
+                       int64_t order, int64_t cap)
     :   stack(pos, nullptr, order), vec_kwargs_(vec_kwargs), 
-        tgen_(tgen), sgen_(sgen), 
-        grandchild_(grandchild)
+        tgen_(tgen), sgen_(sgen), cap_(cap), grandchild_(grandchild)
 {
     
 }
@@ -137,27 +137,45 @@ edge* stack_root::__render(int32_t order, stack *ptr, bool next)
     return nullptr; // one of the nodes are not created
 }
 
+// will add the created object to the children, if it is not already there
+stack *stack_root::operator[] (std::size_t i)
+{
+    if (cap_!=INF and i>=cap_)
+        return nullptr;
+
+    auto branch = children_.find(i);
+    if (branch != children_.end())
+        return branch->second;
+    
+    glm::vec3 child_pos = sgen_.a(i, pos_, vec_kwargs_);
+    stack *child_node = new stack(child_pos, this, i);
+    
+    children_[i] = child_node;
+    return child_node;
+}
+
 void stack_root::operator() (node::container &nodes, const glm::vec3 &bottomleft, 
                              const glm::vec3 &topright, int32_t max_depth)
 {
     int64_t first = sgen_.a_(bottomleft, topright, pos_, vec_kwargs_);
-    if (first != NOT_FOUND) // if this entire stack is not in the region,
+    if (first == NOT_FOUND) // if this entire stack is not in the region,
         return;             // then we don't need to do anything         
 
     // deal with grandchildren later
     if (grandchild_)
-        return;
+    {
+        max_depth /= 2;
+        (*grandchild_)(nodes, bottomleft, topright, max_depth);
+    }
 
-    for (int32_t child_ord = first; 
-         child_ord < max_depth+first and (cap_==INF or child_ord < cap_);
-         ++child_ord)
+    for (int32_t child_ord = first; child_ord < max_depth+first; ++child_ord)
     {
         glm::vec3 child_pos = sgen_.a(child_ord, pos_, vec_kwargs_);
         if (IN(child_pos, bottomleft, topright))
         {
-            auto *child_node = new stack(pos_, this, child_ord);
-            children_[child_ord] = child_node;
-            nodes.insert(child_node);
+            stack *child_node = (*this)[child_ord];
+            if (child_node) nodes.insert(child_node);
+            else return;
         }
     }
 }

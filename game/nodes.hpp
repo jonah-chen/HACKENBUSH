@@ -215,10 +215,6 @@ namespace f_{
 
 using type_gen = branch_type (*)(const int64_t, void*);
 
-#define ALL_RED (type_gen)F::red;
-#define ALL_GREEN (type_gen)F::green;
-#define ALL_BLUE (type_gen)F::blue;
-
 struct step_gen {
     glm::vec3   (*a) (const int64_t order, const glm::vec3 &rootpos, 
                         const glm::vec3 &kwargs);
@@ -240,9 +236,9 @@ class stack : public node
 {
 public:
     using container= std::map<int32_t, stack*>; // mapping order to children
-
+    
     stack(const glm::vec3 &pos, stack_root* root, int64_t order) : 
-        node(pos), root_(root), order_(order) {};
+          node(pos), root_(root), order_(order) {};
 
     stack(const stack&) = delete;
     stack& operator=(const stack&) = delete;
@@ -295,13 +291,15 @@ public:
      */
     stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
                generators::type_gen tgen, generators::step_gen sgen,
-               void *kwargs, stack_root *grandchild = nullptr, int64_t order=0);
+               void *kwargs, stack_root *grandchild = nullptr, 
+               int64_t order = 0, int64_t cap = INF);
     
     stack_root(const stack_root&) = delete;
     stack_root& operator=(const stack_root&) = delete;
 
     ~stack_root();
 
+    stack *operator[] (std::size_t i);
 
     edge* __render(int32_t order = 0, stack *ptr = nullptr, bool next = true);
 
