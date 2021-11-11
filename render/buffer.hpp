@@ -47,6 +47,9 @@ protected:
 public:
     ~buffer();
 
+    buffer (const buffer&) = delete;
+    buffer& operator= (const buffer&) = delete;
+
     /**
      * @brief Bind the buffers of this object to the current context.
      * 

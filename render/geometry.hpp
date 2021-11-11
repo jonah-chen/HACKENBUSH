@@ -38,7 +38,7 @@ public:
     
 private:
     std::size_t max_nodes_;
-    float half_width_;
+    float width_;
     
     void __update(const game::properties &cur_state) override;
     void enable_vertex_attribs() override;
@@ -53,7 +53,7 @@ public:
 
 private:
     std::size_t max_edges_;
-    float half_width_;
+    float width_;
     
     void __update(const game::properties &cur_state) override;
     void enable_vertex_attribs() override;

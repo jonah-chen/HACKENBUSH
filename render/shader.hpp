@@ -25,6 +25,11 @@ class shader
 {
 public:
     shader(const char* vertex_path, const char* fragment_path);
+
+    // there is absolutely no reason to copy shaders.
+    shader(const shader&) = delete;
+    shader& operator=(const shader&) = delete;
+
     ~shader();
 
     void use();
