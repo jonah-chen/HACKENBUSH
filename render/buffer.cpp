@@ -2,7 +2,7 @@
 
 namespace render {
 
-buffer::buffer(GLuint shape) : shape_(shape), cur_index_(0)
+buffer::buffer(GLuint shape) : shape_(shape), cur_index_(0), bound_(false)
 {
     glGenVertexArrays(1, &vao_);
     glGenBuffers(1, &vbo_);
@@ -24,6 +24,8 @@ void buffer::bind()
     glBindVertexArray(vao_);
     glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+    
+    enable_vertex_attribs();
 }
 
 void buffer::unbind()
@@ -34,11 +36,25 @@ void buffer::unbind()
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    disable_vertex_attribs();
 }
 
 void buffer::draw() const
 {
     glDrawElements(shape_, count_, GL_UNSIGNED_INT, 0); // count and type refer to the index buffer
+}
+
+void buffer::update(const game::properties &cur_state)
+{
+    if (bound_)
+        __update(cur_state);
+    else
+    {
+        bind();
+        __update(cur_state);
+        unbind();
+    }
 }
 
 
