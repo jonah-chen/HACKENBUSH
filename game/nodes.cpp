@@ -3,6 +3,15 @@
 using namespace game;
 using namespace game::nodes;
 
+/**
+ * @pre each of the 3 coordinates of BOT_L must be less than the corresponding 
+ * coordinate of TOP_R.
+ * @param X a vec3 of the point of interest.
+ * @param BOT_L a vec3 of the bottom left corner of the bounding box.
+ * @param TOP_R a vec3 of the top right corner of the bounding box.
+ * @return true if `X` is within the bounding box.
+ * @return false if `X` is not within the bounding box.
+ */ 
 #define IN(X,BOT_L,TOP_R) ((X).x >= (BOT_L).x && (X).x <= (TOP_R).x && \
                            (X).y >= (BOT_L).y && (X).y <= (TOP_R).y && \
                            (X).z >= (BOT_L).z && (X).z <= (TOP_R).z)
@@ -10,17 +19,28 @@ using namespace game::nodes;
 ///////////////////////////////////////////////////////////////////////////////
 // Implementation of the normal nodes
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @details use a recursive (depth first) traversal of the bree with a maximum
+ * depth to search for the all the nodes attached to this node. 
+ */
 void normal::operator()(container &nodes, const glm::vec3 &bottomleft, 
                         const glm::vec3 &topright, int32_t max_depth)
 {
     if (IN(pos_, bottomleft, topright))
         nodes.insert(this);
     if (max_depth)
+    {
         for (edge *edge : edges_)
-            if (nodes.find(edge->get_other(this))==nodes.end())
-                edge->get_other(this)->operator()(nodes, bottomleft, topright, max_depth-1);
+        {
+            node *other = edge->get_other(this);
+            if (nodes.find(other)==nodes.end()) // when other node not visited
+                (*other)(nodes, bottomleft, topright, max_depth-1);
+        }
+    }
 }
 
+// add the edges attached to this node using std::set_union
 void normal::render(edge::container &edges, int32_t max_breadth)
 {
     std::set_union(edges.begin(), edges.end(), edges_.begin(), edges_.end(),
@@ -29,7 +49,7 @@ void normal::render(edge::container &edges, int32_t max_breadth)
 
 void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 {
-    if (layers>5)
+    if (layers>5) // layers>5 is not allowed
         throw layers;
 
     os << "normal ";
@@ -48,12 +68,15 @@ void normal::log(std::ostream &os, uint8_t layers, uint8_t counter) const
     }
 }
 
+// insert the edge and return true, since a finite number (1) of edges is always 
+// allowed to be inserted. 
 bool normal::attach(edge *e)
 {
     edges_.insert(e); 
     return true;
 }
 
+// set erase method automatically error checks
 void normal::detach(edge *e)
 {
     edges_.erase(e);
@@ -107,7 +130,6 @@ stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
     :   stack(pos, nullptr, order), vec_kwargs_(vec_kwargs), 
         tgen_(tgen), sgen_(sgen), cap_(cap), grandchild_(grandchild)
 {
-    
 }
 
 stack_root::~stack_root()
@@ -155,7 +177,8 @@ stack *stack_root::operator[] (std::size_t i)
     return child_node;
 }
 
-void stack_root::operator() (node::container &nodes, const glm::vec3 &bottomleft, 
+void stack_root::operator() (node::container &nodes, 
+                             const glm::vec3 &bottomleft, 
                              const glm::vec3 &topright, int32_t max_depth)
 {
     int64_t first = sgen_.a_(bottomleft, topright, pos_, vec_kwargs_);

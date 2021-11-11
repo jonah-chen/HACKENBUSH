@@ -35,7 +35,7 @@ class stack_root;
  * @details the node is implemented using an container of all edges that are
  * attached to the node. As game::edges contain both the nodes the edge 
  * connects, this allows the node to be attach to another type (possibly 
- * infinite sequence) of node as well. 
+ * infinite sequence) of node as well.
  * 
  */
 class normal : public node
@@ -77,12 +77,14 @@ public:
     /**
      * @brief get all the branches attached to this node for use in rendering.
      * 
-     * @param max_breadth: arg is irrelevant to a normal node. 
-     * Defaults to DEFAULT_MAX_BRANCH_DEPTH.
+     * @param edges: a container where a reference of all the edges attached to 
+     * this node will be added to.
+     * @param max_breadth: arg is irrelevant to normal node. Defaults to 
+     * DEFAULT_MAX_BRANCH_DEPTH.
      * 
-     * @return an unordered map of edge pointers that contains all branches.
      */ 
-    void render(edge::container &edges, int32_t max_depth = DEFAULT_MAX_BREADTH) override;
+    void render(edge::container &edges, 
+                        int32_t max_breadth = DEFAULT_MAX_BREADTH) override;
 
     /**
      * @brief write relevant logging info to the output stream.
@@ -92,6 +94,9 @@ public:
      * @param os reference to output stream. Defaults to std::cout.
      * @param layers: 8-bit integer of the number of recursions to print the 
      * nodes this node is connected to. Defaults to 0.
+     * @param counter: 8-bit integer used for intermediate recursion. Defaults
+     * to 0. 
+     * @warning counter should NEVER be explicitly passed into the method.
      */
     virtual void log(std::ostream &os = std::cout, 
                      uint8_t layers=0, uint8_t counter=0) const override;
@@ -228,13 +233,15 @@ struct step_gen {
 
 /**
  * @brief implementation of a node that would belong in an infinitely tall stack
+ *  that is NOT attached to any other node outside the stack.
  * 
+ * @warning this class is not meant to be used directly.
  * 
  */
 class stack : public node
 {
 public:
-    using container= std::map<int32_t, stack*>; // mapping order to children
+    using container = std::map<int32_t, stack*>; // mapping order to children
     
     stack(const glm::vec3 &pos, stack_root* root, int64_t order) : 
           node(pos), root_(root), order_(order) {};
