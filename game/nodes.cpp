@@ -162,7 +162,7 @@ edge* stack_root::__render(int32_t order, stack *ptr, bool next)
 // will add the created object to the children, if it is not already there
 stack *stack_root::operator[] (std::size_t i)
 {
-    if (cap_!=INF and i>=cap_)
+    if (cap_!=INF and (int64_t)i>=cap_)
         return nullptr;
 
     auto branch = children_.find(i);
