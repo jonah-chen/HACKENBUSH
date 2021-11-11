@@ -1,5 +1,5 @@
 #!/bin/bash
-clang++ tests/test_gl.cxx interaction/input.cpp \
+clang++ tests/test_gl.cxx interaction/input.cpp render/*.cpp \
 -I $(pwd) \
 -I /usr/local/include/GLFW \
 -L /usr/local/lib \
