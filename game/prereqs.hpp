@@ -20,8 +20,8 @@
 #define DEFAULT_MAX_BREADTH 1024
 
 // define negative int64_t constants: `special` numbers
-#define INF 0x92345678abcdef10
-#define NOT_FOUND 0x902345678abcdef1
+#define INF (int64_t)0x92345678abcdef10
+#define NOT_FOUND (int64_t)0x902345678abcdef1
 
 #include <iostream>
 #include <vector>
@@ -49,6 +49,8 @@ enum branch_type : int8_t
     red     =   -1
 };
 
+glm::vec4 branch_color(branch_type type);
+
 
 /**
  * @brief An edge or branch in the game.
@@ -59,13 +61,13 @@ enum branch_type : int8_t
  * 
  * @details the container used for this class is std::unordered_set<edge*>.
  */
-struct edge 
+struct edge
 {
     using container = std::unordered_set<edge*>;
     node *p1;
     node *p2;
     branch_type type;
-    edge(branch_type type, node *p1, node *p2) 
+    edge(branch_type type, node *p1, node *p2)
         : p1(p1), p2(p2), type(type) {}
     
     edge(const edge &e) = delete;
@@ -245,6 +247,7 @@ void soft_detach(edge *e);
 struct properties 
 {
     glm::vec3 pos;
+    game::edge::container &visible_gamestate;
 };
 
 }
