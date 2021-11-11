@@ -3,20 +3,30 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-#define  XPOS(IN) ( (IN.fp)[0] )
-#define  YPOS(IN) ( (IN.fp)[1] )
-#define   LMB(IN) ( (IN.tf)[0] )
-#define   RMB(IN) ( (IN.tf)[1] )
-#define   K_W(IN) ( (IN.tf)[2] )
-#define   K_A(IN) ( (IN.tf)[3] )
-#define   K_S(IN) ( (IN.tf)[4] )
-#define   K_D(IN) ( (IN.tf)[5] )
-#define K_ESC(IN) ( (IN.tf)[6] )
+#define    XPOS(IN) ( (IN.fp)[0] )
+#define    YPOS(IN) ( (IN.fp)[1] )
+#define     LMB(IN) ( (IN.tf)[0] )
+#define     RMB(IN) ( (IN.tf)[1] )
+#define K_SPACE(IN) ( (IN.tf)[2] ) // move up
+#define K_SHIFT(IN) ( (IN.tf)[3] ) // move down
+#define     K_W(IN) ( (IN.tf)[4] ) // move forward
+#define     K_A(IN) ( (IN.tf)[5] ) // move left
+#define     K_S(IN) ( (IN.tf)[6] ) // move down
+#define     K_D(IN) ( (IN.tf)[7] ) // move right
+#define   K_ESC(IN) ( (IN.tf)[8] ) // change to menu
 
 #define FLOATPOINT_INPUTS 2
-#define TRUE_FALSE_INPUTS 7
+#define TRUE_FALSE_INPUTS 9
 
-
+/**
+ * @brief class storing the use input data at a given frame. Members should not 
+ * be accessed directly. Rather, they should be accessed using the macros 
+ * defined above.
+ * 
+ * @details We use stack allocated arrays to store the input data. This is 
+ * at least 2x faster than using individual variables for each input.
+ * 
+ */
 class user_inputs
 {
 public:
