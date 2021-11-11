@@ -1,6 +1,6 @@
-#include "prereqs.hpp"
-#include "nodes.hpp"
-#include "generators.hpp"
+#include "game/prereqs.hpp"
+#include "game/nodes.hpp"
+#include "game/generators.hpp"
 #include <cassert>
 #include <iostream>
 #include <string>

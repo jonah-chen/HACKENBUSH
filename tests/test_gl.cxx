@@ -3,8 +3,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "profile.hpp"
+#include "common/profile.hpp"
 #include "interaction/input.hpp"
+
 int main(int argc, char** argv)
 {
     if (!glfwInit())
@@ -39,13 +40,13 @@ int main(int argc, char** argv)
     // set the initial mouse position
     glfwGetCursorPos(window, &XPOS(prev_inputs), &YPOS(prev_inputs));
 
-    prev_inputs = fetch_inputs(window);
+    prev_inputs = user_inputs::fetch(window);
 
     // rendering loop
     while (!glfwWindowShouldClose(window))
     {
     PROFILE_START;
-        cur_inputs = fetch_inputs(window);
+        cur_inputs = user_inputs::fetch(window);
 
         // render
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
