@@ -1,7 +1,7 @@
 #include "geometry.hpp"
 
 
-static uint32_t *calculate_cube_indices(std::size_t num_cubes)
+static std::vector<uint32_t> calculate_cube_indices(std::size_t num_cubes)
 {
     uint32_t vertex_offset[36] = {
         0, 1, 2, 0, 2, 3,
@@ -12,11 +12,12 @@ static uint32_t *calculate_cube_indices(std::size_t num_cubes)
         3, 7, 4, 3, 4, 0
     };
 
-    uint32_t *indices = new uint32_t[num_cubes * 36];
+    std::vector<uint32_t> indices;
+    indices.reserve(num_cubes * 36);
 
     for (std::size_t cube = 0; cube < num_cubes; ++cube)
         for (std::size_t elem = 0; elem < 36; ++elem)
-            indices[cube*36 + elem] = vertex_offset[elem] + cube * 8;
+            indices.push_back(vertex_offset[elem] + cube * 8);
 
     return indices;
 }
@@ -92,13 +93,45 @@ void nodes::__update(const game::properties& cur_state)
         throw std::runtime_error(
                                 "The number of nodes exceeds the render limit");
     
-    float *vertices = new float[num_nodes * 3];
+    std::vector<float> vertices;
+    vertices.reserve(num_nodes * 3 * 8);
     for (auto *n : nodes)
     {
         glm::vec3 pos = n->get_pos();
+        vertices.push_back(pos.x - half_width_);
+        vertices.push_back(pos.y - half_width_);
+        vertices.push_back(pos.z - half_width_);
 
+        vertices.push_back(pos.x + half_width_);
+        vertices.push_back(pos.y - half_width_);
+        vertices.push_back(pos.z - half_width_);
+
+        vertices.push_back(pos.x + half_width_);
+        vertices.push_back(pos.y + half_width_);
+        vertices.push_back(pos.z - half_width_);
+
+        vertices.push_back(pos.x - half_width_);
+        vertices.push_back(pos.y + half_width_);
+        vertices.push_back(pos.z - half_width_);
+
+        vertices.push_back(pos.x - half_width_);
+        vertices.push_back(pos.y - half_width_);
+        vertices.push_back(pos.z + half_width_);
+
+        vertices.push_back(pos.x + half_width_);
+        vertices.push_back(pos.y - half_width_);
+        vertices.push_back(pos.z + half_width_);
+
+        vertices.push_back(pos.x + half_width_);
+        vertices.push_back(pos.y + half_width_);
+        vertices.push_back(pos.z + half_width_);
+
+        vertices.push_back(pos.x - half_width_);
+        vertices.push_back(pos.y + half_width_);
+        vertices.push_back(pos.z + half_width_);
     }
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_DYNAMIC_DRAW);
+
+    glBufferSubData(GL_ARRAY_BUFFER, 0x0, vertices.size() * sizeof(float), vertices.data());
 }
 
 
@@ -122,6 +155,10 @@ ground::ground(float render_distance)
     };
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+    // allocate memory for vertex buffer object
+    // 4 vertices per quad * 3 floats per vertex
+    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
+
     unbind();
 }
 
@@ -136,9 +173,8 @@ nodes::nodes(float width, std::size_t max_nodes)
     // this is 6*2*3 = 36 vertices per node.
 
     // initialize index buffer
-    uint32_t *vertices = calculate_cube_indices(max_nodes);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, max_nodes * 36 * sizeof(uint32_t), vertices, GL_STATIC_DRAW);
-    delete[] vertices;
+    std::vector<uint32_t> indices = calculate_cube_indices(max_nodes);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
     unbind();
 }

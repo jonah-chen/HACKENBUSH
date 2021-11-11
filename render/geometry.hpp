@@ -16,6 +16,7 @@
 
 #include "game/nodes.hpp"
 #include "buffer.hpp"
+#include <vector>
 
 namespace render { namespace geometry {
 
