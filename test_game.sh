@@ -1,2 +1,5 @@
 #!/bin/bash
-clang++ -std=c++2a -O3 -fopenmp game/*.cpp game/test_game.cxx -o $1
+clang++ game/*.cpp game/test_game.cxx \
+-I /home/hina/Code/HACKENBUSH \
+-std=c++2a -O3 -fopenmp \
+-o $1
