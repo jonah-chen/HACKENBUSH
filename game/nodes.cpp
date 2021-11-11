@@ -1,8 +1,5 @@
 #include "nodes.hpp"
 
-using namespace game;
-using namespace game::nodes;
-
 /**
  * @pre each of the 3 coordinates of BOT_L must be less than the corresponding 
  * coordinate of TOP_R.
@@ -19,6 +16,8 @@ using namespace game::nodes;
 ///////////////////////////////////////////////////////////////////////////////
 // Implementation of the normal nodes
 ///////////////////////////////////////////////////////////////////////////////
+
+namespace game { namespace nodes {
 
 /**
  * @details use a recursive (depth first) traversal of the bree with a maximum
@@ -263,3 +262,5 @@ void stack_root::detach(int64_t order)
         delete j->second;
     children_.erase(it, children_.end());
 }
+
+}}

@@ -1,6 +1,6 @@
 #include "prereqs.hpp"
 
-using namespace game;
+namespace game {
 
 edge* game::attach(branch_type type, node *node1, node *node2)
 {
@@ -27,4 +27,6 @@ void game::soft_detach(edge *e)
 {
     e->p1->detach(e);
     e->p2->detach(e);
+}
+
 }
