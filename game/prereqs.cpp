@@ -2,7 +2,7 @@
 
 namespace game {
 
-edge* game::attach(branch_type type, node *node1, node *node2)
+edge* attach(branch_type type, node *node1, node *node2)
 {
     edge *e = new edge(type, node1, node2);
     
@@ -17,13 +17,13 @@ edge* game::attach(branch_type type, node *node1, node *node2)
     return nullptr;
 }
 
-void game::detach(edge *e)
+void detach(edge *e)
 {
     soft_detach(e);
     delete e;
 }
 
-void game::soft_detach(edge *e)
+void soft_detach(edge *e)
 {
     e->p1->detach(e);
     e->p2->detach(e);

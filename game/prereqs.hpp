@@ -23,9 +23,6 @@
 #define INF 0x92345678abcdef10
 #define NOT_FOUND 0x902345678abcdef1
 
-
-
-#include <cstdint>
 #include <iostream>
 #include <vector>
 #include <set>
@@ -243,5 +240,11 @@ void detach(edge *e);
  * @param e a pointer to the edge to be detached.
  */
 void soft_detach(edge *e);
+
+
+struct properties 
+{
+    glm::vec3 pos;
+};
 
 }
