@@ -20,7 +20,15 @@ public:
 
     glm::mat4 get_view_projection() const;
 
-    void rotate(float pitch, float yaw, float roll);
+    /**
+     * @brief 
+     * 
+     * @param pitch float of pitch angle in radians 
+     * @param yaw float of yaw angle in radians
+     * @note roll is not supported because it is not needed in this type of 
+     * game.
+     */
+    void rotate(float pitch, float yaw);
 
     void translate(const glm::vec3 &translation);
 
