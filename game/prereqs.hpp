@@ -117,6 +117,7 @@ public:
     node(const node&)               = delete;
     node &operator=(const node&)    = delete;
 
+    virtual ~node() = default;
 
     /**
      * @brief get the nodes that are contained in the volume specified by two 

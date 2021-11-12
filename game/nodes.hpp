@@ -226,8 +226,6 @@ struct step_gen {
                         const glm::vec3 &rootpos, const glm::vec3 &kwargs);
 };
 
-
-
 }
 
 

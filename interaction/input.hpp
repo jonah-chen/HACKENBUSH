@@ -1,19 +1,21 @@
 #pragma once
 
+#include "render/camera.hpp"
+#include "game/prereqs.hpp"
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-#define    XPOS(IN) ( (IN.fp)[0] )
-#define    YPOS(IN) ( (IN.fp)[1] )
-#define     LMB(IN) ( (IN.tf)[0] )
-#define     RMB(IN) ( (IN.tf)[1] )
-#define K_SPACE(IN) ( (IN.tf)[2] ) // move up
-#define K_SHIFT(IN) ( (IN.tf)[3] ) // move down
-#define     K_W(IN) ( (IN.tf)[4] ) // move forward
-#define     K_A(IN) ( (IN.tf)[5] ) // move left
-#define     K_S(IN) ( (IN.tf)[6] ) // move down
-#define     K_D(IN) ( (IN.tf)[7] ) // move right
-#define   K_ESC(IN) ( (IN.tf)[8] ) // change to menu
+#define     YPOS(IN) ( (IN.fp)[1] )
+#define     XPOS(IN) ( (IN.fp)[0] )
+#define      LMB(IN) ( (IN.tf)[0] )
+#define      RMB(IN) ( (IN.tf)[1] )
+#define  K_SPACE(IN) ( (IN.tf)[2] ) // move up
+#define K_LSHIFT(IN) ( (IN.tf)[3] ) // move down
+#define      K_W(IN) ( (IN.tf)[4] ) // move forward
+#define      K_A(IN) ( (IN.tf)[5] ) // move left
+#define      K_S(IN) ( (IN.tf)[6] ) // move down
+#define      K_D(IN) ( (IN.tf)[7] ) // move right
+#define    K_ESC(IN) ( (IN.tf)[8] ) // change to menu
 
 #define FLOATPOINT_INPUTS 2
 #define TRUE_FALSE_INPUTS 9
@@ -63,3 +65,21 @@ public:
     double fp[FLOATPOINT_INPUTS];
     bool   tf[TRUE_FALSE_INPUTS];
 };
+
+/**
+ * Move the camera given the user inputs.
+ *
+ * @warning acceleration is not implemented.
+ *
+ * @param camera camera object to move.
+ * @param cur_state current game state.
+ * @note properties is not currently used, but will be used for acceleration.
+ * @param inputs user inputs at the current frame.
+ * @param last_inputs user inputs at the previous frame.
+ * @param fps frames per second used for the game.
+ */
+void execute_movement(render::camera& camera, 
+                      const game::properties &cur_state,
+                      const user_inputs &inputs,
+                      const user_inputs &last_inputs,
+                      float fps = 60.0f);
