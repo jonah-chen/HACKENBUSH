@@ -42,7 +42,7 @@ void buffer::unbind()
 
 void buffer::draw() const
 {
-    glDrawElements(shape_, count_, GL_UNSIGNED_INT, 0); // count and type refer to the index buffer
+    glDrawElements(shape_, count_, GL_UNSIGNED_INT, nullptr); // count and type refer to the index buffer
 }
 
 void buffer::update(const game::properties &cur_state)

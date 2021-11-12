@@ -247,7 +247,9 @@ void soft_detach(edge *e);
 struct properties 
 {
     glm::vec3 pos;
-    game::edge::container &visible_gamestate;
+    edge::container &visible_gamestate;
+    properties(glm::vec3 pos, edge::container &visible_gamestate) : 
+        pos(pos), visible_gamestate(visible_gamestate) {}
 };
 
 }

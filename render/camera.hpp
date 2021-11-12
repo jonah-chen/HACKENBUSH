@@ -11,7 +11,7 @@ public:
     camera(const glm::vec3 &position, 
            const glm::vec3 &forward = glm::vec3(1.0f, 0.0f, 0.0f), 
            const glm::vec3 &up = glm::vec3(0.0f, 1.0f, 1.0f),
-           float fov = glm::radians(70.0f),
+           float fov = 1.4f,
            float aspect = 16.0f / 9.0f,
            float near = 0.1f,
            float far = 100.0f);
