@@ -61,7 +61,7 @@ execute_movement(render::camera &camera, const game::properties &properties,
 
 
 	// no acceleration yet
-	const float velocity = 20.0f;
+	const float velocity = 2.0f;
 	const float acceleration = 0.0f;
 
 	// the WASD keys control the movement of the camera
