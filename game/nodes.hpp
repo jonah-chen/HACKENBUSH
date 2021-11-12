@@ -22,7 +22,7 @@
 #include <cmath>
 #include "prereqs.hpp"
 
-namespace game { namespace nodes {
+namespace game::nodes {
 
 class normal;
 
@@ -359,4 +359,4 @@ private:
 };
 
 
-}}
+}

@@ -2,21 +2,21 @@
 
 namespace render {
 
-buffer::buffer(GLuint shape) : shape_(shape), cur_index_(0), bound_(false)
+mesh::mesh(GLuint shape) : shape_(shape), cur_index_(0), bound_(false)
 {
 	glGenVertexArrays(1, &vao_);
 	glGenBuffers(1, &vbo_);
 	glGenBuffers(1, &ebo_);
 }
 
-buffer::~buffer()
+mesh::~mesh()
 {
 	glDeleteBuffers(1, &vbo_);
 	glDeleteBuffers(1, &ebo_);
 	glDeleteVertexArrays(1, &vao_);
 }
 
-void buffer::bind()
+void mesh::bind()
 {
 	if (bound_)
 		return;
@@ -28,7 +28,7 @@ void buffer::bind()
 	enable_vertex_attribs();
 }
 
-void buffer::unbind()
+void mesh::unbind()
 {
 	if (!bound_)
 		return;
@@ -40,14 +40,15 @@ void buffer::unbind()
 	disable_vertex_attribs();
 }
 
-void buffer::draw(shader &shader) const
+void mesh::draw(shader &shader) const
 {
 	shader.bind();
+	prepare_shader(shader);
 	glDrawElements(shape_, count_, GL_UNSIGNED_INT,
 				   nullptr); // count and type refer to the index buffer
 }
 
-void buffer::update(const game::properties &cur_state)
+void mesh::update(const game::properties &cur_state)
 {
 	if (bound_)
 		__update(cur_state);

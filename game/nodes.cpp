@@ -17,7 +17,7 @@
 // Implementation of the normal nodes
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace game { namespace nodes {
+namespace game::nodes {
 
 /**
  * @details use a recursive (depth first) traversal of the bree with a maximum
@@ -262,4 +262,4 @@ void stack_root::detach(int64_t order)
 	children_.erase(it, children_.end());
 }
 
-}}
+}

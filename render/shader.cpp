@@ -1,35 +1,36 @@
 #include "shader.hpp"
 
-static void load_shader(GLuint id, const char* path)
+static void load_shader(GLuint id, const char *path)
 {
-	FILE* file = fopen(path, "rb");
-    if (!file)
-    {
-        printf("Failed to open file: %s\n", path);
-        return;
-    }
+	FILE *file = fopen(path, "rb");
+	if (!file)
+	{
+		printf("Failed to open file: %s\n", path);
+		return;
+	}
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file);
+	fseek(file, 0, SEEK_END);
+	long size = ftell(file);
 	if (!size)
 		throw std::runtime_error("Shader file is empty");
-    fseek(file, 0, SEEK_SET);
+	fseek(file, 0, SEEK_SET);
 
-    char* source = (char*)malloc(size + 1);
-    fread(source, 1, size, file);
-    source[size] = '\0';
-    fclose(file);
+	char *source = (char *) malloc(size + 1);
+	fread(source, 1, size, file);
+	source[size] = '\0';
+	fclose(file);
 
-    glShaderSource(id, 1, (const char**)&source, nullptr);
+	glShaderSource(id, 1, (const char **) &source, nullptr);
 	glCompileShader(id);
-    free(source);
+	free(source);
 }
 
 namespace render {
 
 shader *shader::active_shader = nullptr;
 
-shader::shader(const char *vertex_path, const char *fragment_path, const char *geometry_path)
+shader::shader(const char *vertex_path, const char *fragment_path,
+			   const char *geometry_path)
 {
 	program_ = glCreateProgram();
 
@@ -41,11 +42,11 @@ shader::shader(const char *vertex_path, const char *fragment_path, const char *g
 	load_shader(fragment_shader_id, fragment_path);
 
 	if (geometry_path)
-    {
-        geometry_shader_id = glCreateShader(GL_GEOMETRY_SHADER);
-        load_shader(geometry_shader_id, geometry_path);
+	{
+		geometry_shader_id = glCreateShader(GL_GEOMETRY_SHADER);
+		load_shader(geometry_shader_id, geometry_path);
 		glAttachShader(program_, geometry_shader_id);
-    }
+	}
 
 	glAttachShader(program_, vertex_shader_id);
 	glAttachShader(program_, fragment_shader_id);
@@ -56,7 +57,7 @@ shader::shader(const char *vertex_path, const char *fragment_path, const char *g
 	glDeleteShader(vertex_shader_id);
 	glDeleteShader(fragment_shader_id);
 	if (geometry_path)
-        glDeleteShader(geometry_shader_id);
+		glDeleteShader(geometry_shader_id);
 }
 
 shader::~shader()

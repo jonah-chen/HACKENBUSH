@@ -18,10 +18,9 @@
 #include "buffer.hpp"
 #include <vector>
 
-namespace render {
-namespace geometry {
+namespace render::geometry {
 
-class ground : public buffer
+class ground : public mesh
 {
 public:
 	ground(float render_distance); // the ground is y=0
@@ -33,9 +32,23 @@ private:
 	void enable_vertex_attribs() override;
 
 	void disable_vertex_attribs() override;
+
+	void prepare_shader(shader &shader) const override;
 };
 
-class nodes : public buffer
+class crosshair : public mesh
+{
+public:
+    explicit crosshair(float crosshair_size = 0.05f);
+private:
+    void enable_vertex_attribs() override;
+
+    void disable_vertex_attribs() override;
+
+	void prepare_shader(shader &shader) const;
+};
+
+class nodes : public mesh
 {
 public:
 	nodes(float width = 0.2f, std::size_t max_nodes = RENDER_LIMIT);
@@ -49,9 +62,11 @@ private:
 	void enable_vertex_attribs() override;
 
 	void disable_vertex_attribs() override;
+
+	void prepare_shader(shader &shader) const override;
 };
 
-class edges : public buffer
+class edges : public mesh
 {
 public:
 	edges(float line_width = 0.1f, std::size_t max_edges = RENDER_LIMIT);
@@ -73,6 +88,5 @@ private:
 	void disable_vertex_attribs() override;
 };
 
-}
 }
 

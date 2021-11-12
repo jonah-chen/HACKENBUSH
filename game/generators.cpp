@@ -62,7 +62,7 @@ static float intersect(const glm::vec3 &A, const glm::vec3 &B,
 	return tmin;
 }
 
-namespace game { namespace nodes { namespace generators {
+namespace game::nodes::generators {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Collection of implemented branch generators
@@ -103,4 +103,4 @@ int64_t f_::geometric(const glm::vec3 &bottomleft, const glm::vec3 &topright,
 	// otherwise, return the step when it first intersects.
 	return (int64_t) (std::log2(1.0f - t) / std::log2(GEOMETRIC_CONSTANT));
 }
-}}}
+}

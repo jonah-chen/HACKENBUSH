@@ -27,7 +27,7 @@ namespace render {
  * `void __update(const game::properties&)`.
  * 
  */
-class buffer
+class mesh
 {
 protected:
 	/**
@@ -45,14 +45,14 @@ protected:
 	 *
 	 * @param shape GLuint describing the shape of the primitive to be rendered.
 	 */
-	buffer(GLuint shape);
+	mesh(GLuint shape);
 
 public:
-	~buffer();
+	~mesh();
 
-	buffer(const buffer &) = delete;
+	mesh(const mesh &) = delete;
 
-	buffer &operator=(const buffer &) = delete;
+	mesh &operator=(const mesh &) = delete;
 
 	/**
 	 * @brief Bind the buffers of this object to the current context.
@@ -112,6 +112,9 @@ protected:
 	 */
 	virtual void __update(const game::properties &cur_state)
 	{}
+
+	virtual void prepare_shader(shader &shader) const
+    {}
 
 	virtual void enable_vertex_attribs() = 0;
 

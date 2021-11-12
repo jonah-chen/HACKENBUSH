@@ -1,5 +1,6 @@
 #include "camera.hpp"
 #include <iostream>
+
 namespace render {
 
 camera::camera(const glm::vec3 &pos,
@@ -25,12 +26,12 @@ void camera::rotate(float pitch, float yaw)
 						   glm::vec3(right_.x, 0.0f, right_.z));
 	rotation = glm::rotate(rotation, yaw, glm::vec3(0.0f, 1.0f, 0.0f));
 
-    // quaternion rotations can cause floating point errors.
-    // correct using the small angle approximation.
-    if (right_.y > QUARTERNION_ERROR_TOLERANCE 
-        or right_.y < -QUARTERNION_ERROR_TOLERANCE and up_.y > 0.5f)
-        rotation = glm::rotate(rotation, right_.y,
-                               glm::vec3(forward_.x, 0.0f, forward_.z));
+	// quaternion rotations can cause floating point errors.
+	// correct using the small angle approximation.
+	if (right_.y > QUARTERNION_ERROR_TOLERANCE
+		or right_.y < -QUARTERNION_ERROR_TOLERANCE and up_.y > 0.5f)
+		rotation = glm::rotate(rotation, right_.y,
+							   glm::vec3(forward_.x, 0.0f, forward_.z));
 
 	forward_ = glm::normalize(glm::vec3(rotation * glm::vec4(forward_, 1.0f)));
 	up_ = glm::normalize(glm::vec3(rotation * glm::vec4(up_, 1.0f)));
@@ -45,6 +46,12 @@ void camera::translate(float forward, float up, float right)
 
 	if (pos_.y < ground_level_)
 		pos_.y = ground_level_;
+}
+
+void camera::set_view_projection(shader &shader) const
+{
+	shader.set_uniform("u_view", glm::lookAt(pos_, pos_ + forward_, up_));
+    shader.set_uniform("u_projection", projection_);
 }
 
 }

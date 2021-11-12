@@ -10,6 +10,7 @@
 #include "render/buffer.hpp"
 #include "render/camera.hpp"
 #include "render/geometry.hpp"
+#include "game/generators.hpp"
 
 
 // write glDebugMessageCallback to print to console
@@ -81,19 +82,27 @@ int main(int argc, char **argv)
 
 	glm::vec3 v1(8.0f, 0.0f, 0.0f);
 	glm::vec3 v2(8.0f, 1.0f, 0.0f);
+	glm::vec3 v3(8.0f, 2.0f, 0.0f);
+	glm::vec3 v4(8.0f, 2.0f, 1.0f);
 
 	game::nodes::normal n1(v1);
 	game::nodes::normal n2(v2);
+	game::nodes::normal n3(v3);
+	game::nodes::stack_root n4(v4, glm::vec3(0.0f, 3.0f, 0.0f), ALL_GREEN,
+							GEOMETRIC, nullptr);
+
 	std::vector<game::edge *> buf;
 	buf.push_back(game::attach(game::green, &n1, &n2));
+	buf.push_back(game::attach(game::blue, &n2, &n3));
+	buf.push_back(game::attach(game::red, &n2, &n4));
+	n2.log();
 
-	n1.log();
 	std::cout << std::endl;
 
 	game::node::container c1;
 	n1(c1, bottomleft, topright);
-
-	n1.render(edges);
+	for (auto *n : c1)
+		n->render(edges);
 
 
 
@@ -107,6 +116,10 @@ int main(int argc, char **argv)
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(debugCallback, nullptr);
+
+	// enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// rendering loop
 	while (!glfwWindowShouldClose(window))
@@ -126,23 +139,19 @@ int main(int argc, char **argv)
 		// draw
         if (playing)
 		{
-			shader.set_uniform("u_view", camera.get_view_matrix());
-			shader.set_uniform("u_projection", camera.get_projection_matrix());
+			camera.set_view_projection(shader);
 
 			ground.bind();
 			ground.update(p);
-			shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
 			ground.draw(shader);
 			ground.unbind();
 
 			r_nodes.bind();
 			r_nodes.update(p);
-			shader.set_uniform("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
 			r_nodes.draw(shader);
 			r_nodes.unbind();
 
-			shader2.set_uniform("u_view", camera.get_view_matrix());
-			shader2.set_uniform("u_projection", camera.get_projection_matrix());
+			camera.set_view_projection(shader2);
 
 			r_edges.bind();
 			r_edges.update(p);

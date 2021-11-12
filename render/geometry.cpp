@@ -24,8 +24,7 @@ static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
 }
 
 
-namespace render {
-namespace geometry {
+namespace render::geometry {
 
 void ground::enable_vertex_attribs()
 {
@@ -43,6 +42,12 @@ void edges::enable_vertex_attribs()
 	glEnableVertexAttribArray(1); // (r,g,b,a) color
 }
 
+void crosshair::enable_vertex_attribs()
+{
+	glEnableVertexAttribArray(0); // (x,y) SCREEN position
+}
+
+
 void ground::disable_vertex_attribs()
 {
 	glDisableVertexAttribArray(0);
@@ -58,6 +63,12 @@ void edges::disable_vertex_attribs()
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 }
+
+void crosshair::disable_vertex_attribs()
+{
+	glDisableVertexAttribArray(0);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -178,7 +189,7 @@ void edges::__update(const game::properties &cur_state)
 ////////////////////////////////////////////////////////////////////////////////
 
 ground::ground(float render_distance)
-		: buffer(GL_TRIANGLES), render_distance_(render_distance)
+		: mesh(GL_TRIANGLES), render_distance_(render_distance)
 {
 	// I need to use the position and render distance to figure out what
 	// triangle to draw at y = 0.
@@ -206,7 +217,7 @@ ground::ground(float render_distance)
 }
 
 nodes::nodes(float width, std::size_t max_nodes)
-		: buffer(GL_TRIANGLES), width_(width), max_nodes_(max_nodes)
+		: mesh(GL_TRIANGLES), width_(width), max_nodes_(max_nodes)
 {
 	bind();
 
@@ -232,7 +243,7 @@ nodes::nodes(float width, std::size_t max_nodes)
 
 
 edges::edges(float width, std::size_t max_edges)
-		: buffer(GL_TRIANGLES), width_(width), max_edges_(max_edges)
+		: mesh(GL_TRIANGLES), width_(width), max_edges_(max_edges)
 {
 	bind();
 
@@ -255,5 +266,50 @@ edges::edges(float width, std::size_t max_edges)
 	unbind();
 }
 
+crosshair::crosshair(float crosshair_size)
+	: mesh(GL_LINES)
+{
+	// indices for 2 lines
+	float indices[4] = { 0, 1, 2, 3 };
+
+	float vertices[8] = {
+			0.5f-crosshair_size, 0.5f,
+			0.5f+crosshair_size, 0.5f,
+			0.5f, 0.5f-crosshair_size,
+			0.5f, 0.5f+crosshair_size
+	};
+
+	bind();
+
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+                 GL_STATIC_DRAW);
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
+                 GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
+                          (void *) 0x0);
+
+	unbind();
+
 }
+
+void ground::prepare_shader(shader &shader) const
+{
+	shader.set_uniform("u_color", 0.2f, 0.2f, 0.2f, 1.0f);
+}
+
+void nodes::prepare_shader(shader &shader) const
+{
+	shader.set_uniform("u_color", 1.0f, 1.0f, 1.0f, 0.4f);
+}
+
+void crosshair::prepare_shader(shader &shader) const
+{
+	// set view projection matrix to the identity matrix
+	glm::mat4 identity = glm::mat4(1.0f);
+	shader.set_uniform("u_view", identity);
+	shader.set_uniform("u_projection", identity);
+}
+
 }
