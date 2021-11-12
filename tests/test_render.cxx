@@ -6,6 +6,15 @@
 #include "common/profile.hpp"
 #include "interaction/input.hpp"
 #include "render/shader.hpp"
+#include "render/buffer.hpp"
+#include "render/camera.hpp"
+#include "render/geometry.hpp"
+
+
+// write glDebugMessageCallback to print to console
+void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
+    std::cout << "; id: " << id << "; severity: " << severity << "; message: " << message << std::endl;
+}
 
 
 int main(int argc, char** argv)
@@ -22,7 +31,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
     if (!window)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;
@@ -43,50 +52,56 @@ int main(int argc, char** argv)
 
     user_inputs prev_inputs, cur_inputs;
 
-    // create vertex array and index buffer objects to draw one triangle
-    
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };
+    render::camera camera(glm::vec3(0.0f, 1.0f, 0.0f));
 
-    unsigned int indices[] = {
-        0, 1, 2
-    };
-    
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
+    render::geometry::ground ground(10.0f);
+    render::geometry::nodes r_nodes;
+    render::geometry::edges r_edges;
 
     // create and compile shaders
-    render::shader shader("render/test_shader.vs", "render/test_shader.fs");
+    render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs", "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
     shader.bind();
     shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
 
+
+    game::edge::container edges;
+    game::properties p(glm::vec3(0,0,0), edges);
+
+
+    glm::vec3 bottomleft (-10.0f, 0.0f, -10.0f);
+    glm::vec3 topright (10.0f, 10.0f, 10.0f);
+
+    glm::vec3 v1 (1.0f, 0.0f, 0.0f);
+    glm::vec3 v2 (1.0f, 1.0f, 0.0f);
+
+    game::nodes::normal n1 (v1);
+    game::nodes::normal n2 (v2);
+    std::vector<game::edge*> buf;
+    buf.push_back(game::attach(game::red, &n1, &n2));
+
+    n1.log(); std::cout << std::endl;
+
+    game::node::container c1;
+    n1(c1, bottomleft, topright);
+
+    n1.render(edges);
+
     
+
     // disable cursor
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    
+
 
     // set the initial mouse position
     glfwGetCursorPos(window, &XPOS(prev_inputs), &YPOS(prev_inputs));
 
     prev_inputs = user_inputs::fetch(window);
+
+    // debug callback
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback(debugCallback, nullptr);
 
     // rendering loop
     while (!glfwWindowShouldClose(window))
@@ -100,9 +115,20 @@ int main(int argc, char** argv)
         // std::cout << cur_inputs - prev_inputs << std::endl;
         prev_inputs = cur_inputs;
 
+        shader.set_uniform("u_mvp", camera.get_view_projection());
         // draw
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-
+        // ground.bind();
+        // ground.update(p);
+        // ground.draw();
+        // ground.unbind();
+        r_nodes.bind();
+        r_nodes.update(p);
+        r_nodes.draw();
+        r_nodes.unbind();
+        // r_edges.bind();
+        // r_edges.update(p);
+        // r_edges.draw();
+        // r_edges.unbind();
 
     PROFILE_LOG;
 
@@ -112,6 +138,9 @@ int main(int argc, char** argv)
         // poll events
         glfwPollEvents();
     }
+
+    for (auto *e : buf)
+        delete e;
 
     // terminate
     glfwTerminate();
