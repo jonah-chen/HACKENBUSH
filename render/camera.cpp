@@ -51,7 +51,7 @@ void camera::translate(float forward, float up, float right)
 void camera::set_view_projection(shader &shader) const
 {
 	shader.set_uniform("u_view", glm::lookAt(pos_, pos_ + forward_, up_));
-    shader.set_uniform("u_projection", projection_);
+	shader.set_uniform("u_projection", projection_);
 }
 
 }

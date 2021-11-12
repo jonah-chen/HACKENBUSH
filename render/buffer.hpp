@@ -45,7 +45,7 @@ protected:
 	 *
 	 * @param shape GLuint describing the shape of the primitive to be rendered.
 	 */
-	mesh(GLuint shape);
+	mesh(shader &shader, GLuint shape);
 
 public:
 	~mesh();
@@ -100,6 +100,7 @@ protected:
 	bool bound_;    // whether the buffer is bound to the current context
 	GLsizei count_; // number of elements in the index buffer
 	uint32_t cur_index_;    // current index of the buffer
+	shader &shader_; // the shader that is made to draw this mesh.
 
 	/**
 	 * @brief update the state of this object, if necessary to what it should be
@@ -114,7 +115,7 @@ protected:
 	{}
 
 	virtual void prepare_shader(shader &shader) const
-    {}
+	{}
 
 	virtual void enable_vertex_attribs() = 0;
 

@@ -21,7 +21,7 @@ debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	std::cout << "; id: " << id << "; severity: " << severity << "; message: "
 			  << message << std::endl;
 	if (severity == GL_DEBUG_SEVERITY_HIGH)
-        exit(1);
+		exit(1);
 }
 
 
@@ -64,17 +64,17 @@ int main(int argc, char **argv)
 
 	render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
 
-	// create meshes
-	render::geometry::ground ground(10.0f);
-	render::geometry::nodes r_nodes;
-	render::geometry::edges r_edges;
-	render::geometry::crosshair r_crosshair;
-
 	// create and compile shaders
 	render::shader shader("/home/hina/Code/HACKENBUSH/render/basic.vs",
 						  "/home/hina/Code/HACKENBUSH/render/basic.fs");
 	render::shader shader2("/home/hina/Code/HACKENBUSH/render/edge.vs",
 						   "/home/hina/Code/HACKENBUSH/render/edge.fs");
+
+	// create meshes
+	render::geometry::ground ground(shader, 10.0f);
+	render::geometry::nodes r_nodes(shader);
+	render::geometry::edges r_edges(shader2);
+	render::geometry::crosshair r_crosshair(shader);
 
 	game::edge::container edges;
 	game::properties p(glm::vec3(0, 0, 0), edges);
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 	game::nodes::normal n2(v2);
 	game::nodes::normal n3(v3);
 	game::nodes::stack_root n4(v4, glm::vec3(0.0f, 3.0f, 0.0f), ALL_GREEN,
-							GEOMETRIC, nullptr);
+							   GEOMETRIC, nullptr);
 
 	std::vector<game::edge *> buf;
 	buf.push_back(game::attach(game::green, &n1, &n2));
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 
 	game::node::container c1;
 	n1(c1, bottomleft, topright);
-	for (auto *n : c1)
+	for (auto *n: c1)
 		n->render(edges);
 
 
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 	// disable cursor
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    bool playing = true;
+	bool playing = true;
 	prev_inputs = user_inputs::fetch(window);
 
 	// debug callback
@@ -129,8 +129,8 @@ int main(int argc, char **argv)
 	{
 		PROFILE_START;
 		cur_inputs = user_inputs::fetch(window);
-        if (K_ESC(cur_inputs) and !K_ESC(prev_inputs))
-            playing = !playing;
+		if (K_ESC(cur_inputs) and !K_ESC(prev_inputs))
+			playing = !playing;
 		// render
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -143,31 +143,17 @@ int main(int argc, char **argv)
 		p.pos = camera.get_pos();
 
 		// draw
-        if (playing)
+		if (playing)
 		{
 			camera.set_view_projection(shader);
 
-			ground.bind();
 			ground.update(p);
-			ground.draw(shader);
-			ground.unbind();
 
 			camera.set_view_projection(shader2);
 
-			r_edges.bind();
 			r_edges.update(p);
-			r_edges.draw(shader2);
-			r_edges.unbind();
-
-			r_nodes.bind();
 			r_nodes.update(p);
-			r_nodes.draw(shader);
-			r_nodes.unbind();
-
-			r_crosshair.bind();
 			r_crosshair.update(p);
-			r_crosshair.draw(shader);
-			r_crosshair.unbind();
 
 		}
 		PROFILE_LOG;

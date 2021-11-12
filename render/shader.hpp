@@ -28,8 +28,8 @@ class shader
 private:
 	static shader *active_shader;
 public:
-	shader(const char *vertex_path, const char *fragment_path,
-		   const char *geometry_path = nullptr);
+	explicit shader(const char *vertex_path, const char *fragment_path,
+					const char *geometry_path = nullptr);
 
 	// there is absolutely no reason to copy shaders.
 	shader(const shader &) = delete;

@@ -22,11 +22,13 @@ static float calc_min_distance(const glm::vec3 &forward, const glm::vec3 &pos,
 	const float min_dist_to_p2 = glm::length(glm::cross(forward, to_p2));
 	const float min_dist_to_endpoint = glm::min(min_dist_to_p1, min_dist_to_p2);
 	const float dist_to_midpoint = glm::length(glm::cross(forward,
-														  (to_p2+to_p1)*0.5f));
+														  (to_p2 + to_p1) *
+														  0.5f));
 
-	const glm::vec3 normal = glm::cross(forward, p2-p1);
-	const float line_min_dist = glm::abs(glm::dot(pos-p1, normal) / glm::length
-			(normal));
+	const glm::vec3 normal = glm::cross(forward, p2 - p1);
+	const float line_min_dist = glm::abs(
+			glm::dot(pos - p1, normal) / glm::length
+					(normal));
 
 	return min_dist_to_endpoint < line_min_dist or
 		   min_dist_to_endpoint < dist_to_midpoint
@@ -115,7 +117,7 @@ game::edge *select(const render::camera &camera, const game::properties
 {
 	float min_dist = MIN_WACK_DISTANCE;
 	game::edge *selected = nullptr;
-	for (game::edge *candidate : candidates)
+	for (game::edge *candidate: candidates)
 	{
 		const glm::vec3 p1 = candidate->p1->get_pos();
 		const glm::vec3 p2 = candidate->p2->get_pos();

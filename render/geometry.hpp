@@ -15,9 +15,9 @@
 #define RENDER_LIMIT 4096
 
 // RGBA colors
-#define CROSSHAIR_COLOR 		1.0f,0.0f,0.0f,1.0f
-#define UNSELECTED_NODE_COLOR 	1.0f,1.0f,1.0f,0.4f
-#define SELECTED_NODE_COLOR 	1.0f,1.0f,1.0f,1.0f
+#define CROSSHAIR_COLOR        1.0f,0.0f,0.0f,1.0f
+#define UNSELECTED_NODE_COLOR    1.0f,1.0f,1.0f,0.4f
+#define SELECTED_NODE_COLOR    1.0f,1.0f,1.0f,1.0f
 #define GROUND_COLOR            0.2f,0.2f,0.2f,1.0f
 
 #include "game/nodes.hpp"
@@ -29,7 +29,7 @@ namespace render::geometry {
 class ground : public mesh
 {
 public:
-	explicit ground(float render_distance); // the ground is y=0
+	explicit ground(shader &shader, float render_distance); // the ground is y=0
 private:
 	float render_distance_;
 
@@ -45,11 +45,13 @@ private:
 class crosshair : public mesh
 {
 public:
-    explicit crosshair(float crosshair_size = 0.05f, float aspect = 16.0f / 9.0f);
-private:
-    void enable_vertex_attribs() override;
+	explicit crosshair(shader &shader, float crosshair_size = 0.05f,
+					   float aspect = 16.0f / 9.0f);
 
-    void disable_vertex_attribs() override;
+private:
+	void enable_vertex_attribs() override;
+
+	void disable_vertex_attribs() override;
 
 	void prepare_shader(shader &shader) const;
 };
@@ -57,7 +59,8 @@ private:
 class nodes : public mesh
 {
 public:
-	explicit nodes(float width = 0.2f, std::size_t max_nodes = RENDER_LIMIT);
+	explicit nodes(shader &shader, float width = 0.2f,
+				   std::size_t max_nodes = RENDER_LIMIT);
 
 private:
 	std::size_t max_nodes_;
@@ -75,8 +78,9 @@ private:
 class edges : public mesh
 {
 public:
-	explicit edges(float line_width = 0.1f, std::size_t max_edges =
-			RENDER_LIMIT);
+	explicit edges(shader &shader, float line_width = 0.1f,
+				   std::size_t max_edges =
+				   RENDER_LIMIT);
 
 private:
 	struct vertex

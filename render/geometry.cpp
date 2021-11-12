@@ -188,8 +188,8 @@ void edges::__update(const game::properties &cur_state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ground::ground(float render_distance)
-		: mesh(GL_TRIANGLES), render_distance_(render_distance)
+ground::ground(shader &shader, float render_distance)
+		: mesh(shader, GL_TRIANGLES), render_distance_(render_distance)
 {
 	// I need to use the position and render distance to figure out what
 	// triangle to draw at y = 0.
@@ -216,8 +216,8 @@ ground::ground(float render_distance)
 	unbind();
 }
 
-nodes::nodes(float width, std::size_t max_nodes)
-		: mesh(GL_TRIANGLES), width_(width), max_nodes_(max_nodes)
+nodes::nodes(shader &shader, float width, std::size_t max_nodes)
+		: mesh(shader, GL_TRIANGLES), width_(width), max_nodes_(max_nodes)
 {
 	bind();
 
@@ -242,8 +242,8 @@ nodes::nodes(float width, std::size_t max_nodes)
 }
 
 
-edges::edges(float width, std::size_t max_edges)
-		: mesh(GL_TRIANGLES), width_(width), max_edges_(max_edges)
+edges::edges(shader &shader, float width, std::size_t max_edges)
+		: mesh(shader, GL_TRIANGLES), width_(width), max_edges_(max_edges)
 {
 	bind();
 
@@ -266,11 +266,11 @@ edges::edges(float width, std::size_t max_edges)
 	unbind();
 }
 
-crosshair::crosshair(float crosshair_size, float aspect)
-	: mesh(GL_LINES)
+crosshair::crosshair(shader &shader, float crosshair_size, float aspect)
+		: mesh(shader, GL_LINES)
 {
 	// indices for 2 lines
-	GLuint indices[4] = { 0, 1, 2, 3 };
+	GLuint indices[4] = {0, 1, 2, 3};
 
 	float vertices[8] = {
 			-crosshair_size / aspect, 0.0f,
@@ -284,13 +284,13 @@ crosshair::crosshair(float crosshair_size, float aspect)
 	bind();
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
-                 GL_STATIC_DRAW);
+				 GL_STATIC_DRAW);
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,
-                 GL_STATIC_DRAW);
+				 GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
-                          (void *) 0x0);
+						  (void *) 0x0);
 
 	unbind();
 

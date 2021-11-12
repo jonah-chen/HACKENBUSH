@@ -33,6 +33,7 @@ add_executable(HACKENBUSH tests/test_render.cxx
         render/geometry.cpp
         render/geometry.hpp
         render/shader.cpp
-        render/shader.hpp)
+        render/shader.hpp
+        game/game.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY} ${OpenGlLinkers})

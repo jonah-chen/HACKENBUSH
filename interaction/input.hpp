@@ -89,4 +89,4 @@ void execute_movement(render::camera &camera, const game::properties &cur_state,
 
 game::edge *select(const render::camera &camera, const game::properties
 &properties, const user_inputs &inputs, const game::edge::container
-&candidates);
+				   &candidates);

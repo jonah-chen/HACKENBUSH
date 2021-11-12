@@ -2,7 +2,8 @@
 
 namespace render {
 
-mesh::mesh(GLuint shape) : shape_(shape), cur_index_(0), bound_(false)
+mesh::mesh(shader &shader, GLuint shape) : shader_(shader), shape_(shape),
+										   cur_index_(0), bound_(false)
 {
 	glGenVertexArrays(1, &vao_);
 	glGenBuffers(1, &vbo_);
@@ -50,15 +51,10 @@ void mesh::draw(shader &shader) const
 
 void mesh::update(const game::properties &cur_state)
 {
-	if (bound_)
-		__update(cur_state);
-	else
-	{
-		bind();
-		__update(cur_state);
-		unbind();
-	}
+	if (!bound_) bind();
+	__update(cur_state);
+	draw(shader_);
+	unbind();
 }
-
 
 }
