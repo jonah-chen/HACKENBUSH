@@ -266,18 +266,20 @@ edges::edges(float width, std::size_t max_edges)
 	unbind();
 }
 
-crosshair::crosshair(float crosshair_size)
+crosshair::crosshair(float crosshair_size, float aspect)
 	: mesh(GL_LINES)
 {
 	// indices for 2 lines
-	float indices[4] = { 0, 1, 2, 3 };
+	GLuint indices[4] = { 0, 1, 2, 3 };
 
 	float vertices[8] = {
-			0.5f-crosshair_size, 0.5f,
-			0.5f+crosshair_size, 0.5f,
-			0.5f, 0.5f-crosshair_size,
-			0.5f, 0.5f+crosshair_size
+			-crosshair_size / aspect, 0.0f,
+			crosshair_size / aspect, 0.0f,
+			0.0f, -crosshair_size,
+			0.0f, crosshair_size
 	};
+
+	count_ = 4; // 2 lines, 2 vertices per line
 
 	bind();
 
@@ -296,16 +298,17 @@ crosshair::crosshair(float crosshair_size)
 
 void ground::prepare_shader(shader &shader) const
 {
-	shader.set_uniform("u_color", 0.2f, 0.2f, 0.2f, 1.0f);
+	shader.set_uniform("u_color", GROUND_COLOR);
 }
 
 void nodes::prepare_shader(shader &shader) const
 {
-	shader.set_uniform("u_color", 1.0f, 1.0f, 1.0f, 0.4f);
+	shader.set_uniform("u_color", UNSELECTED_NODE_COLOR);
 }
 
 void crosshair::prepare_shader(shader &shader) const
 {
+	shader.set_uniform("u_color", CROSSHAIR_COLOR);
 	// set view projection matrix to the identity matrix
 	glm::mat4 identity = glm::mat4(1.0f);
 	shader.set_uniform("u_view", identity);
