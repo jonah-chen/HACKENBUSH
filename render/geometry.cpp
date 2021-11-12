@@ -28,21 +28,17 @@ namespace render { namespace geometry {
 void ground::enable_vertex_attribs()
 {
     glEnableVertexAttribArray(0); // (x,y,z) position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
 }
 
 void nodes::enable_vertex_attribs()
 {
     glEnableVertexAttribArray(0); // (x,y,z) position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
 }
 
 void edges::enable_vertex_attribs()
 {
     glEnableVertexAttribArray(0); // (x,y,z) position
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
     glEnableVertexAttribArray(1); // (r,g,b,a) color
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(3*sizeof(float)));
 }
 
 void ground::disable_vertex_attribs()
@@ -73,7 +69,7 @@ void ground::__update(const game::properties& cur_state)
         render_distance_, 0.0f, -render_distance_
     };
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 12*sizeof(float), positions, GL_DYNAMIC_DRAW);
 }
 
 
@@ -201,6 +197,8 @@ ground::ground(float render_distance)
     // 4 vertices per quad * 3 floats per vertex
     glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
+
     unbind();
 }
 
@@ -221,6 +219,8 @@ nodes::nodes(float width, std::size_t max_nodes)
     // 8 vertices per node * 3 floats per vertex
     glBufferData(GL_ARRAY_BUFFER, max_nodes * 8 * 3 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
+
     unbind();
 }
 
@@ -238,8 +238,10 @@ edges::edges(float width, std::size_t max_edges)
     // 8 vertices per node * 7 floats per vertex
     glBufferData(GL_ARRAY_BUFFER, max_edges * 8 * 7 * sizeof(float), nullptr, GL_DYNAMIC_DRAW);
 
-    unbind();
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0x0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(3*sizeof(float)));
 
+    unbind();
 }
 
 }}
