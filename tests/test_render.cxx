@@ -68,8 +68,6 @@ int main(int argc, char **argv)
 	render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs",
 						  "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
 	shader.bind();
-	shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
-
 
 	game::edge::container edges;
 	game::properties p(glm::vec3(0, 0, 0), edges);
@@ -99,7 +97,7 @@ int main(int argc, char **argv)
 	// disable cursor
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-
+    bool playing = true;
 	prev_inputs = user_inputs::fetch(window);
 
 	// debug callback
@@ -112,7 +110,8 @@ int main(int argc, char **argv)
 	{
 		PROFILE_START;
 		cur_inputs = user_inputs::fetch(window);
-
+        if (K_ESC(cur_inputs) and !K_ESC(prev_inputs))
+            playing = !playing;
 		// render
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -123,19 +122,23 @@ int main(int argc, char **argv)
 
 		shader.set_uniform("u_mvp", camera.get_view_projection());
 		// draw
-		ground.bind();
-		ground.update(p);
-		ground.draw();
-		ground.unbind();
-//        r_nodes.bind();
-//        r_nodes.update(p);
-//        r_nodes.draw();
-//        r_nodes.unbind();
+        if (playing)
+        {
+            ground.bind();
+            ground.update(p);
+            shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
+            ground.draw();
+            ground.unbind();
+            r_nodes.bind();
+            r_nodes.update(p);
+            shader.set_uniform("u_color", 1.0f, 0.0f, 0.0f, 1.0f);
+            r_nodes.draw();
+            r_nodes.unbind();
 		// r_edges.bind();
 		// r_edges.update(p);
 		// r_edges.draw();
 		// r_edges.unbind();
-
+        }
 		PROFILE_LOG;
 
 		// swap buffers
