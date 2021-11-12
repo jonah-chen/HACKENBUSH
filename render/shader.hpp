@@ -18,6 +18,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <unordered_map>
 
 namespace render {
@@ -25,7 +26,7 @@ namespace render {
 class shader
 {
 public:
-	shader(const char *vertex_path, const char *fragment_path);
+	shader(const char *vertex_path, const char *fragment_path, const char *geometry_path = nullptr);
 
 	// there is absolutely no reason to copy shaders.
 	shader(const shader &) = delete;

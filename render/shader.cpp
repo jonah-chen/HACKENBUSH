@@ -1,42 +1,61 @@
 #include "shader.hpp"
 
+static void load_shader(GLuint id, const char* path)
+{
+	FILE* file = fopen(path, "rb");
+    if (!file)
+    {
+        printf("Failed to open file: %s\n", path);
+        return;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long size = ftell(file);
+	if (!size)
+		throw std::runtime_error("Shader file is empty");
+    fseek(file, 0, SEEK_SET);
+
+    char* source = (char*)malloc(size + 1);
+    fread(source, 1, size, file);
+    source[size] = '\0';
+    fclose(file);
+
+    glShaderSource(id, 1, (const char**)&source, nullptr);
+	glCompileShader(id);
+    free(source);
+}
+
 namespace render {
 
-shader::shader(const char *vertex_shader, const char *fragment_shader)
+shader::shader(const char *vertex_path, const char *fragment_path, const char *geometry_path)
 {
 	program_ = glCreateProgram();
+
 	GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
 	GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint geometry_shader_id;
 
-	std::ifstream vertex_shader_file(vertex_shader);
-	std::ifstream fragment_shader_file(fragment_shader);
+	load_shader(vertex_shader_id, vertex_path);
+	load_shader(fragment_shader_id, fragment_path);
 
-	std::string vertex_shader_string(
-			(std::istreambuf_iterator<char>(vertex_shader_file)),
-			std::istreambuf_iterator<char>());
-	std::string fragment_shader_string(
-			(std::istreambuf_iterator<char>(fragment_shader_file)),
-			std::istreambuf_iterator<char>());
-
-	if (vertex_shader_string.empty() or fragment_shader_string.empty())
-		throw std::runtime_error("Could not load shader");
-
-	const char *vertex_shader_cstr = vertex_shader_string.c_str();
-	const char *fragment_shader_cstr = fragment_shader_string.c_str();
-
-	glShaderSource(vertex_shader_id, 1, &vertex_shader_cstr, nullptr);
-	glShaderSource(fragment_shader_id, 1, &fragment_shader_cstr, nullptr);
-
-	glCompileShader(vertex_shader_id);
-	glCompileShader(fragment_shader_id);
+	if (geometry_path)
+    {
+        geometry_shader_id = glCreateShader(GL_GEOMETRY_SHADER);
+        load_shader(geometry_shader_id, geometry_path);
+		glAttachShader(program_, geometry_shader_id);
+    }
 
 	glAttachShader(program_, vertex_shader_id);
 	glAttachShader(program_, fragment_shader_id);
+
 	glLinkProgram(program_);
 	glValidateProgram(program_);
 
 	glDeleteShader(vertex_shader_id);
 	glDeleteShader(fragment_shader_id);
+	if (geometry_path)
+        glDeleteShader(geometry_shader_id);
+
 }
 
 shader::~shader()
