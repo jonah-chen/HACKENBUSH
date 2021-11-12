@@ -1,9 +1,10 @@
 #include "geometry.hpp"
 
 
-static std::vector<uint32_t> calculate_cube_indices(std::size_t num_cubes, bool partial=false)
+static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
+                                                    bool partial=false)
 {
-    uint32_t vertex_offset[36] = {
+    GLuint vertex_offset[36] = {
         0, 1, 2, 0, 2, 3,
         4, 5, 6, 4, 6, 7,
         0, 4, 5, 0, 5, 1,
@@ -12,7 +13,7 @@ static std::vector<uint32_t> calculate_cube_indices(std::size_t num_cubes, bool 
         3, 7, 4, 3, 4, 0
     };
 
-    std::vector<uint32_t> indices;
+    std::vector<GLuint> indices;
     indices.reserve(num_cubes * 36);
 
     for (std::size_t cube = 12*partial; cube < num_cubes; ++cube)
@@ -60,20 +61,20 @@ void edges::disable_vertex_attribs()
 ////////////////////////////////////////////////////////////////////////////////
 
 // NOT DONE!!!!!!
-void ground::__update(const game::properties& cur_state)
+void ground::__update(const game::properties &cur_state)
 {
-    float positions[] = { // this is not correct
-        -render_distance_, 0.0f, -render_distance_,
-        -render_distance_, 0.0f, render_distance_,
-        render_distance_, 0.0f, render_distance_,
-        render_distance_, 0.0f, -render_distance_
+    float positions[] = {
+        cur_state.pos.x-render_distance_, 0.0f, cur_state.pos.z-render_distance_,
+        cur_state.pos.x-render_distance_, 0.0f, cur_state.pos.z+render_distance_,
+        cur_state.pos.x+render_distance_, 0.0f, cur_state.pos.z+render_distance_,
+        cur_state.pos.x+render_distance_, 0.0f, cur_state.pos.z-render_distance_
     };
 
-    glBufferData(GL_ARRAY_BUFFER, 12*sizeof(float), positions, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, 4 * 3 * sizeof(float), positions, GL_DYNAMIC_DRAW);
 }
 
 
-void nodes::__update(const game::properties& cur_state)
+void nodes::__update(const game::properties &cur_state)
 {
     // use an node container to store all the nodes
     // and then use the node container to update the buffer
@@ -110,7 +111,7 @@ void nodes::__update(const game::properties& cur_state)
 }
 
 
-void edges::__update(const game::properties& cur_state)
+void edges::__update(const game::properties &cur_state)
 {
     // use an edge container to store all the edges
     // and then use the edge container to update the buffer
@@ -187,7 +188,7 @@ ground::ground(float render_distance)
     bind(); // bind the buffers to write to them
 
     count_ = 6; // 2 triangles per quad, 3 vertices per triangle
-    uint32_t indices[6] = {
+    GLuint indices[6] = {
         0, 1, 2,
         0, 2, 3
     };
@@ -212,8 +213,8 @@ nodes::nodes(float width, std::size_t max_nodes)
     // this is 6*2*3 = 36 vertices per node.
 
     // initialize index buffer
-    std::vector<uint32_t> indices = calculate_cube_indices(max_nodes);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+    std::vector<GLuint> indices = calculate_cube_indices(max_nodes);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
     // allocate memory for the vertex buffer
     // 8 vertices per node * 3 floats per vertex
@@ -231,8 +232,8 @@ edges::edges(float width, std::size_t max_edges)
     bind();
 
     // initialize index buffer
-    std::vector<uint32_t> indices = calculate_cube_indices(max_edges, true);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+    std::vector<GLuint> indices = calculate_cube_indices(max_edges, true);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
     // allocate memory for the vertex buffer
     // 8 vertices per node * 7 floats per vertex

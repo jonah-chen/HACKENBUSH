@@ -39,11 +39,10 @@ public:
 private:
     std::size_t max_nodes_;
     float width_;
-    
+
     void __update(const game::properties &cur_state) override;
     void enable_vertex_attribs() override;
     void disable_vertex_attribs() override;
-    
 };
 
 class edges : public buffer
