@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLM_FORCE_RADIANS
+#define QUARTERNION_ERROR_TOLERANCE 1e-3f
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
