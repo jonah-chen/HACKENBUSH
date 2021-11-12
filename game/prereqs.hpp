@@ -109,7 +109,7 @@ public:
 	 *
 	 * @param pos the 3D position of the node.
 	 */
-	node(const glm::vec3 &pos) : pos_(pos)
+	explicit node(const glm::vec3 &pos) : pos_(pos)
 	{}
 
 

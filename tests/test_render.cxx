@@ -67,10 +67,10 @@ int main(int argc, char **argv)
 	render::geometry::edges r_edges;
 
 	// create and compile shaders
-	render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs",
-						  "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
-	render::shader shader2("/home/hina/Code/HACKENBUSH/render/node_shader.vs",
-						   "/home/hina/Code/HACKENBUSH/render/node_shader.fs");
+	render::shader shader("/home/hina/Code/HACKENBUSH/render/basic.vs",
+						  "/home/hina/Code/HACKENBUSH/render/basic.fs");
+	render::shader shader2("/home/hina/Code/HACKENBUSH/render/edge.vs",
+						   "/home/hina/Code/HACKENBUSH/render/edge.fs");
 
 	game::edge::container edges;
 	game::properties p(glm::vec3(0, 0, 0), edges);
@@ -79,13 +79,13 @@ int main(int argc, char **argv)
 	glm::vec3 bottomleft(-10.0f, 0.0f, -10.0f);
 	glm::vec3 topright(10.0f, 10.0f, 10.0f);
 
-	glm::vec3 v1(1.0f, 0.0f, 0.0f);
-	glm::vec3 v2(1.0f, 1.0f, 0.0f);
+	glm::vec3 v1(8.0f, 0.0f, 0.0f);
+	glm::vec3 v2(8.0f, 1.0f, 0.0f);
 
 	game::nodes::normal n1(v1);
 	game::nodes::normal n2(v2);
 	std::vector<game::edge *> buf;
-	buf.push_back(game::attach(game::red, &n1, &n2));
+	buf.push_back(game::attach(game::green, &n1, &n2));
 
 	n1.log();
 	std::cout << std::endl;
@@ -123,13 +123,12 @@ int main(int argc, char **argv)
 		prev_inputs = cur_inputs;
 		p.pos = camera.get_pos();
 
-		shader.set_uniform("u_view", camera.get_view_matrix());
-		shader.set_uniform("u_projection", camera.get_projection_matrix());
-		shader2.set_uniform("u_view", camera.get_view_matrix());
-		shader2.set_uniform("u_projection", camera.get_projection_matrix());
 		// draw
         if (playing)
 		{
+			shader.set_uniform("u_view", camera.get_view_matrix());
+			shader.set_uniform("u_projection", camera.get_projection_matrix());
+
 			ground.bind();
 			ground.update(p);
 			shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
@@ -138,14 +137,17 @@ int main(int argc, char **argv)
 
 			r_nodes.bind();
 			r_nodes.update(p);
-//			shader.set_uniform("u_color", 1.0f, 0.0f, 0.0f, 1.0f);
-			r_nodes.draw(shader2);
+			shader.set_uniform("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
+			r_nodes.draw(shader);
 			r_nodes.unbind();
 
-//			r_edges.bind();
-//			r_edges.update(p);
-//			r_edges.draw(shader);
-//			r_edges.unbind();
+			shader2.set_uniform("u_view", camera.get_view_matrix());
+			shader2.set_uniform("u_projection", camera.get_projection_matrix());
+
+			r_edges.bind();
+			r_edges.update(p);
+			r_edges.draw(shader2);
+			r_edges.unbind();
 		}
 		PROFILE_LOG;
 

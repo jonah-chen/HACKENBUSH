@@ -50,7 +50,7 @@ execute_movement(render::camera &camera, const game::properties &properties,
 {
 	const float frame_time = 1.0f / fps;
 	// the mouse controls the rotation of the camera
-	const float mouse_sensitivity = 0.01f;
+	const float mouse_sensitivity = 0.027f;
 
 	const double minus_mouse_delta_x = (XPOS(last_inputs) - XPOS(inputs));
 	const double minus_mouse_delta_y = (YPOS(last_inputs) - YPOS(inputs));

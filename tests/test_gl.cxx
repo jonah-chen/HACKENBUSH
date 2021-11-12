@@ -75,8 +75,8 @@ int main(int argc, char **argv)
 	glEnableVertexAttribArray(0);
 
 	// create and compile shaders
-	render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs",
-						  "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
+	render::shader shader("/home/hina/Code/HACKENBUSH/render/basic.vs",
+						  "/home/hina/Code/HACKENBUSH/render/basic.fs");
 	shader.bind();
 	shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
 

@@ -61,7 +61,6 @@ public:
 private:
 	GLuint program_;
 	mutable std::unordered_map<std::string, GLint> uniforms_;
-	bool bound_;
 
 	GLint locate_uniform(const char *name) const;
 };

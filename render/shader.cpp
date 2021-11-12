@@ -30,7 +30,6 @@ namespace render {
 shader *shader::active_shader = nullptr;
 
 shader::shader(const char *vertex_path, const char *fragment_path, const char *geometry_path)
-	: bound_(false)
 {
 	program_ = glCreateProgram();
 

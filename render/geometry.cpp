@@ -16,8 +16,8 @@ static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
 	std::vector<GLuint> indices;
 	indices.reserve(num_cubes * 36);
 
-	for (std::size_t cube = 12 * partial; cube < num_cubes; ++cube)
-		for (std::size_t elem = 0; elem < 36; ++elem)
+	for (std::size_t cube = 0; cube < num_cubes; ++cube)
+		for (std::size_t elem = 12 * partial; elem < 36; ++elem)
 			indices.push_back(vertex_offset[elem] + cube * 8);
 
 	return indices;
@@ -133,7 +133,7 @@ void edges::__update(const game::properties &cur_state)
 	count_ = num_edges * 4 * 6; // 4 faces, 6 vertices per quad
 
 	std::vector<float> vertices;
-	vertices.reserve(num_edges * 7 * 8);
+	vertices.reserve(count_ * 7); // 7 floats per vertex
 
 
 	for (game::edge *e: edges)
@@ -148,8 +148,8 @@ void edges::__update(const game::properties &cur_state)
 		if (dir.x and dir.y) test_vector.z = 1.0f;
 		else test_vector.x = 1.0f;
 
-		glm::vec3 ortho1 = glm::normalize(glm::cross(dir, test_vector));
-		glm::vec3 ortho2 = glm::normalize(glm::cross(dir, ortho1)) * width_;
+		glm::vec3 ortho1 = glm::normalize(glm::cross(test_vector, dir));
+		glm::vec3 ortho2 = glm::normalize(glm::cross(ortho1, dir)) * width_;
 
 		ortho1 *= width_;
         
@@ -248,7 +248,7 @@ nodes::nodes(float width, std::size_t max_nodes)
 
 
 edges::edges(float width, std::size_t max_edges)
-		: buffer(GL_LINES), width_(width), max_edges_(max_edges)
+		: buffer(GL_TRIANGLES), width_(width), max_edges_(max_edges)
 {
 	bind();
 
@@ -259,12 +259,15 @@ edges::edges(float width, std::size_t max_edges)
 
 	// allocate memory for the vertex buffer
 	// 8 vertices per node * 7 floats per vertex
-	glBufferData(GL_ARRAY_BUFFER, max_edges * 8 * 7 * sizeof(float), nullptr,
+
+	constexpr std::size_t vertex_size = 7 * sizeof(float);
+
+	glBufferData(GL_ARRAY_BUFFER, max_edges * 8 * vertex_size, nullptr,
 				 GL_DYNAMIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size,
 						  (void *) 0x0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float),
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertex_size,
 						  (void *) (3 * sizeof(float)));
 
 	unbind();
