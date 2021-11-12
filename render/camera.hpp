@@ -27,7 +27,11 @@ namespace render
         inline glm::vec3 get_pos() const
         { return pos_; }
 
-        glm::mat4 get_view_projection() const;
+        glm::mat4 get_view_matrix() const
+		{ return glm::lookAt(pos_, pos_ + forward_, up_); }
+
+		glm::mat4 get_projection_matrix() const
+		{ return projection_; }
 
         /**
          * @brief

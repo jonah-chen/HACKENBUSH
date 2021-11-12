@@ -17,11 +17,6 @@ camera::camera(const glm::vec3 &pos,
 	assert(!glm::dot(forward_, up_));
 }
 
-glm::mat4 camera::get_view_projection() const
-{
-	return projection_ * glm::lookAt(pos_, pos_ + forward_, up_);
-}
-
 void camera::rotate(float pitch, float yaw)
 {
 	glm::mat4 rotation = glm::mat4(1.0f);
