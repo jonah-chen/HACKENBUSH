@@ -5,12 +5,12 @@ static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
 												  bool partial = false)
 {
 	GLuint vertex_offset[36] = {
-			0, 1, 2, 0, 2, 3,
-			4, 5, 6, 4, 6, 7,
+			0, 1, 3, 0, 3, 2,
+			4, 5, 7, 4, 7, 6,
 			0, 4, 5, 0, 5, 1,
-			1, 5, 6, 1, 6, 2,
-			2, 6, 7, 2, 7, 3,
-			3, 7, 4, 3, 4, 0
+			1, 5, 7, 1, 7, 3,
+			3, 7, 6, 3, 6, 2,
+			2, 6, 4, 2, 4, 0
 	};
 
 	std::vector<GLuint> indices;
@@ -96,6 +96,8 @@ void nodes::__update(const game::properties &cur_state)
 		throw std::runtime_error(
 				"The number of nodes exceeds the render limit");
 
+	count_ = num_nodes * 6 * 6; // 6 faces, 6 vertices per quad
+
 	std::vector<float> vertices;
 	vertices.reserve(num_nodes * 3 * 8);
 	for (game::node *n: nodes)
@@ -107,9 +109,9 @@ void nodes::__update(const game::properties &cur_state)
 
 		for (uint8_t corner = 0b000; corner <= 0b111; ++corner)
 		{
-			vertices.push_back(pos.x + (corner & 0b001) * width_);
-			vertices.push_back(pos.y + (corner & 0b010) * width_);
-			vertices.push_back(pos.z + (corner & 0b100) * width_);
+			vertices.push_back(pos.x + (bool)(corner & 0b001) * width_);
+			vertices.push_back(pos.y + (bool)(corner & 0b010) * width_);
+			vertices.push_back(pos.z + (bool)(corner & 0b100) * width_);
 		}
 	}
 
@@ -128,8 +130,11 @@ void edges::__update(const game::properties &cur_state)
 		throw std::runtime_error(
 				"The number of edges exceeds the render limit");
 
+	count_ = num_edges * 4 * 6; // 4 faces, 6 vertices per quad
+
 	std::vector<float> vertices;
 	vertices.reserve(num_edges * 7 * 8);
+
 
 	for (game::edge *e: edges)
 	{
@@ -143,21 +148,23 @@ void edges::__update(const game::properties &cur_state)
 		if (dir.x and dir.y) test_vector.z = 1.0f;
 		else test_vector.x = 1.0f;
 
-		glm::vec3 ortho1 =
-				glm::normalize(glm::cross(dir, test_vector)) * width_;
+		glm::vec3 ortho1 = glm::normalize(glm::cross(dir, test_vector));
 		glm::vec3 ortho2 = glm::normalize(glm::cross(dir, ortho1)) * width_;
+
+		ortho1 *= width_;
+        
 
 		p1 -= ortho1 / 2.0f + ortho2 / 2.0f;
 		p2 -= ortho1 / 2.0f + ortho2 / 2.0f;
 
 		for (uint8_t corner = 0b00; corner <= 0b11; ++corner)
 		{
-			vertices.push_back(p1.x + ortho1.x * (corner & 0b01)
-							   + ortho2.x * (corner & 0b10));
-			vertices.push_back(p1.y + ortho1.y * (corner & 0b01)
-							   + ortho2.y * (corner & 0b10));
-			vertices.push_back(p1.z + ortho1.z * (corner & 0b01)
-							   + ortho2.z * (corner & 0b10));
+			vertices.push_back(p1.x + ortho1.x * (bool)(corner & 0b01)
+							   + ortho2.x * (bool)(corner & 0b10));
+			vertices.push_back(p1.y + ortho1.y * (bool)(corner & 0b01)
+							   + ortho2.y * (bool)(corner & 0b10));
+			vertices.push_back(p1.z + ortho1.z * (bool)(corner & 0b01)
+							   + ortho2.z * (bool)(corner & 0b10));
 			vertices.push_back(color.r);
 			vertices.push_back(color.g);
 			vertices.push_back(color.b);
@@ -165,12 +172,12 @@ void edges::__update(const game::properties &cur_state)
 		}
 		for (uint8_t corner = 0b00; corner <= 0b11; ++corner)
 		{
-			vertices.push_back(p2.x + ortho1.x * (corner & 0b01)
-							   + ortho2.x * (corner & 0b10));
-			vertices.push_back(p2.y + ortho1.y * (corner & 0b01)
-							   + ortho2.y * (corner & 0b10));
-			vertices.push_back(p2.z + ortho1.z * (corner & 0b01)
-							   + ortho2.z * (corner & 0b10));
+			vertices.push_back(p2.x + ortho1.x * (bool)(corner & 0b01)
+							   + ortho2.x * (bool)(corner & 0b10));
+			vertices.push_back(p2.y + ortho1.y * (bool)(corner & 0b01)
+							   + ortho2.y * (bool)(corner & 0b10));
+			vertices.push_back(p2.z + ortho1.z * (bool)(corner & 0b01)
+							   + ortho2.z * (bool)(corner & 0b10));
 			vertices.push_back(color.r);
 			vertices.push_back(color.g);
 			vertices.push_back(color.b);
@@ -186,8 +193,6 @@ void edges::__update(const game::properties &cur_state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-
 ground::ground(float render_distance)
 		: buffer(GL_TRIANGLES), render_distance_(render_distance)
 {
@@ -197,6 +202,7 @@ ground::ground(float render_distance)
 	bind(); // bind the buffers to write to them
 
 	count_ = 6; // 2 triangles per quad, 3 vertices per triangle
+
 	GLuint indices[6] = {
 			0, 1, 2,
 			0, 2, 3
