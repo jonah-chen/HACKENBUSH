@@ -109,9 +109,9 @@ void nodes::__update(const game::properties &cur_state)
 
 		for (uint8_t corner = 0b000; corner <= 0b111; ++corner)
 		{
-			vertices.push_back(pos.x + (bool)(corner & 0b001) * width_);
-			vertices.push_back(pos.y + (bool)(corner & 0b010) * width_);
-			vertices.push_back(pos.z + (bool)(corner & 0b100) * width_);
+			vertices.push_back(pos.x + (bool) (corner & 0b001) * width_);
+			vertices.push_back(pos.y + (bool) (corner & 0b010) * width_);
+			vertices.push_back(pos.z + (bool) (corner & 0b100) * width_);
 		}
 	}
 
@@ -132,8 +132,8 @@ void edges::__update(const game::properties &cur_state)
 
 	count_ = num_edges * 4 * 6; // 4 faces, 6 vertices per quad
 
-	std::vector<float> vertices;
-	vertices.reserve(count_ * 7); // 7 floats per vertex
+	std::vector<vertex> vertices;
+	vertices.reserve(count_); // 7 floats per vertex
 
 
 	for (game::edge *e: edges)
@@ -150,42 +150,26 @@ void edges::__update(const game::properties &cur_state)
 
 		glm::vec3 ortho1 = glm::normalize(glm::cross(test_vector, dir));
 		glm::vec3 ortho2 = glm::normalize(glm::cross(ortho1, dir)) * width_;
-
 		ortho1 *= width_;
-        
 
+		// get the "bottomleft" vertex position
 		p1 -= ortho1 / 2.0f + ortho2 / 2.0f;
 		p2 -= ortho1 / 2.0f + ortho2 / 2.0f;
 
-		for (uint8_t corner = 0b00; corner <= 0b11; ++corner)
-		{
-			vertices.push_back(p1.x + ortho1.x * (bool)(corner & 0b01)
-							   + ortho2.x * (bool)(corner & 0b10));
-			vertices.push_back(p1.y + ortho1.y * (bool)(corner & 0b01)
-							   + ortho2.y * (bool)(corner & 0b10));
-			vertices.push_back(p1.z + ortho1.z * (bool)(corner & 0b01)
-							   + ortho2.z * (bool)(corner & 0b10));
-			vertices.push_back(color.r);
-			vertices.push_back(color.g);
-			vertices.push_back(color.b);
-			vertices.push_back(color.a);
-		}
-		for (uint8_t corner = 0b00; corner <= 0b11; ++corner)
-		{
-			vertices.push_back(p2.x + ortho1.x * (bool)(corner & 0b01)
-							   + ortho2.x * (bool)(corner & 0b10));
-			vertices.push_back(p2.y + ortho1.y * (bool)(corner & 0b01)
-							   + ortho2.y * (bool)(corner & 0b10));
-			vertices.push_back(p2.z + ortho1.z * (bool)(corner & 0b01)
-							   + ortho2.z * (bool)(corner & 0b10));
-			vertices.push_back(color.r);
-			vertices.push_back(color.g);
-			vertices.push_back(color.b);
-			vertices.push_back(color.a);
-		}
+		// bottom vertices
+		vertices.push_back({p1, color});
+		vertices.push_back({p1 + ortho1, color});
+		vertices.push_back({p1 + ortho2, color});
+		vertices.push_back({p1 + ortho1 + ortho2, color});
+
+		// top vertices
+		vertices.push_back({p2, color});
+		vertices.push_back({p2 + ortho1, color});
+		vertices.push_back({p2 + ortho2, color});
+		vertices.push_back({p2 + ortho1 + ortho2, color});
 	}
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0x0, vertices.size() * sizeof(float),
+	glBufferSubData(GL_ARRAY_BUFFER, 0x0, vertices.size() * sizeof(vertex),
 					vertices.data());
 }
 
@@ -260,15 +244,13 @@ edges::edges(float width, std::size_t max_edges)
 	// allocate memory for the vertex buffer
 	// 8 vertices per node * 7 floats per vertex
 
-	constexpr std::size_t vertex_size = 7 * sizeof(float);
-
-	glBufferData(GL_ARRAY_BUFFER, max_edges * 8 * vertex_size, nullptr,
+	glBufferData(GL_ARRAY_BUFFER, max_edges * 8 * sizeof(vertex), nullptr,
 				 GL_DYNAMIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size,
-						  (void *) 0x0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, vertex_size,
-						  (void *) (3 * sizeof(float)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),
+						  (void *) offsetof(vertex, pos));
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(vertex),
+						  (void *) offsetof(vertex, color));
 
 	unbind();
 }

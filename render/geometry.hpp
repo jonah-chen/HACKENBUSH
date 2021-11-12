@@ -57,6 +57,12 @@ public:
 	edges(float line_width = 0.1f, std::size_t max_edges = RENDER_LIMIT);
 
 private:
+	struct vertex
+	{
+		glm::vec3 pos;
+		glm::vec4 color;
+	};
+
 	std::size_t max_edges_;
 	float width_;
 
