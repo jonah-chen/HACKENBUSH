@@ -19,6 +19,8 @@ debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 {
 	std::cout << "; id: " << id << "; severity: " << severity << "; message: "
 			  << message << std::endl;
+	if (severity == GL_DEBUG_SEVERITY_HIGH)
+        exit(1);
 }
 
 
@@ -67,7 +69,8 @@ int main(int argc, char **argv)
 	// create and compile shaders
 	render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs",
 						  "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
-	shader.bind();
+	render::shader shader2("/home/hina/Code/HACKENBUSH/render/node_shader.vs",
+						   "/home/hina/Code/HACKENBUSH/render/node_shader.fs");
 
 	game::edge::container edges;
 	game::properties p(glm::vec3(0, 0, 0), edges);
@@ -120,25 +123,30 @@ int main(int argc, char **argv)
 		prev_inputs = cur_inputs;
 		p.pos = camera.get_pos();
 
-		shader.set_uniform("u_mvp", camera.get_view_projection());
+		shader.set_uniform("u_view", camera.get_view_matrix());
+		shader.set_uniform("u_projection", camera.get_projection_matrix());
+		shader2.set_uniform("u_view", camera.get_view_matrix());
+		shader2.set_uniform("u_projection", camera.get_projection_matrix());
 		// draw
         if (playing)
-        {
-            ground.bind();
-            ground.update(p);
-            shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
-            ground.draw();
-            ground.unbind();
-            r_nodes.bind();
-            r_nodes.update(p);
-            shader.set_uniform("u_color", 1.0f, 0.0f, 0.0f, 1.0f);
-            r_nodes.draw();
-            r_nodes.unbind();
-		// r_edges.bind();
-		// r_edges.update(p);
-		// r_edges.draw();
-		// r_edges.unbind();
-        }
+		{
+			ground.bind();
+			ground.update(p);
+			shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
+			ground.draw(shader);
+			ground.unbind();
+
+			r_nodes.bind();
+			r_nodes.update(p);
+//			shader.set_uniform("u_color", 1.0f, 0.0f, 0.0f, 1.0f);
+			r_nodes.draw(shader2);
+			r_nodes.unbind();
+
+//			r_edges.bind();
+//			r_edges.update(p);
+//			r_edges.draw(shader);
+//			r_edges.unbind();
+		}
 		PROFILE_LOG;
 
 		// swap buffers

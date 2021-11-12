@@ -27,7 +27,10 @@ static void load_shader(GLuint id, const char* path)
 
 namespace render {
 
+shader *shader::active_shader = nullptr;
+
 shader::shader(const char *vertex_path, const char *fragment_path, const char *geometry_path)
+	: bound_(false)
 {
 	program_ = glCreateProgram();
 
@@ -55,7 +58,6 @@ shader::shader(const char *vertex_path, const char *fragment_path, const char *g
 	glDeleteShader(fragment_shader_id);
 	if (geometry_path)
         glDeleteShader(geometry_shader_id);
-
 }
 
 shader::~shader()
@@ -63,20 +65,39 @@ shader::~shader()
 	glDeleteProgram(program_);
 }
 
+void shader::bind()
+{
+	if (active_shader != this)
+		glUseProgram(program_);
+	active_shader = this;
+}
+
+void shader::unbind()
+{
+	if (active_shader == this)
+	{
+		glUseProgram(0);
+		active_shader = nullptr;
+	}
+}
+
 void shader::set_uniform(const char *name, int value)
 {
+	bind();
 	glUniform1i(locate_uniform(name),
 				value);
 }
 
 void shader::set_uniform(const char *name, float x, float y, float z, float w)
 {
+	bind();
 	glUniform4f(locate_uniform(name),
 				x, y, z, w);
 }
 
 void shader::set_uniform(const char *name, const glm::vec4 &data)
 {
+	bind();
 	glUniform4f(locate_uniform(name),
 				data.x, data.y, data.z, data.w);
 }
@@ -84,6 +105,7 @@ void shader::set_uniform(const char *name, const glm::vec4 &data)
 void
 shader::set_uniform(const char *name, const glm::mat4 &data, bool transpose)
 {
+	bind();
 	glUniformMatrix4fv(locate_uniform(name),
 					   1, transpose, glm::value_ptr(data));
 }

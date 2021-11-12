@@ -15,6 +15,7 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <game/prereqs.hpp>
+#include "shader.hpp"
 
 namespace render {
 
@@ -85,7 +86,7 @@ public:
 	 * @note to self: I have to determine what order to draw the objects.
 	 *
 	 */
-	void draw() const;
+	void draw(shader &shader) const;
 
 
 	inline bool is_bound() const

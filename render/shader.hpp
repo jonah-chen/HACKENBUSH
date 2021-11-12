@@ -25,6 +25,8 @@ namespace render {
 
 class shader
 {
+private:
+	static shader *active_shader;
 public:
 	shader(const char *vertex_path, const char *fragment_path, const char *geometry_path = nullptr);
 
@@ -35,14 +37,18 @@ public:
 
 	~shader();
 
-	void use();
+	void bind();
 
-	inline void bind() const
-	{ glUseProgram(program_); }
+	void unbind();
 
-	inline void unbind() const
-	{ glUseProgram(0); }
-
+	/**
+	 * @brief sets a uniform for the shader.
+	 *
+	 * @warning the shader will be bound after the uniform is set.
+	 *
+	 * @param name
+	 * @param value
+	 */
 	void set_uniform(const char *name, int value);
 
 	void set_uniform(const char *name, float x, float y, float z, float w);
@@ -55,6 +61,7 @@ public:
 private:
 	GLuint program_;
 	mutable std::unordered_map<std::string, GLint> uniforms_;
+	bool bound_;
 
 	GLint locate_uniform(const char *name) const;
 };

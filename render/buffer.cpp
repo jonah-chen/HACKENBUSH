@@ -40,8 +40,9 @@ void buffer::unbind()
 	disable_vertex_attribs();
 }
 
-void buffer::draw() const
+void buffer::draw(shader &shader) const
 {
+	shader.bind();
 	glDrawElements(shape_, count_, GL_UNSIGNED_INT,
 				   nullptr); // count and type refer to the index buffer
 }
