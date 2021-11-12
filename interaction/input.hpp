@@ -3,6 +3,7 @@
 #include "render/camera.hpp"
 #include "game/prereqs.hpp"
 #include <iostream>
+#include <limits>
 #include <GLFW/glfw3.h>
 
 #define     YPOS(IN) ( ((IN).fp)[1] )
@@ -19,6 +20,8 @@
 
 #define FLOATPOINT_INPUTS 2
 #define TRUE_FALSE_INPUTS 9
+
+#define MIN_WACK_DISTANCE 0.1f
 
 /**
  * @brief class storing the use input data at a given frame. Members should not 
@@ -83,3 +86,7 @@ public:
 void execute_movement(render::camera &camera, const game::properties &cur_state,
 					  const user_inputs &inputs, const user_inputs &last_inputs,
 					  float fps = 60.0f);
+
+game::edge *select(const render::camera &camera, const game::properties
+&properties, const user_inputs &inputs, const game::edge::container
+&candidates);

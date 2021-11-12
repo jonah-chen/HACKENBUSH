@@ -1,4 +1,4 @@
-#define RELEASE
+//#define RELEASE
 #define GLEW_STATIC
 
 #include <GL/glew.h>
@@ -59,13 +59,16 @@ int main(int argc, char **argv)
 
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
+
 	user_inputs prev_inputs, cur_inputs;
 
 	render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
 
+	// create meshes
 	render::geometry::ground ground(10.0f);
 	render::geometry::nodes r_nodes;
 	render::geometry::edges r_edges;
+	render::geometry::crosshair r_crosshair;
 
 	// create and compile shaders
 	render::shader shader("/home/hina/Code/HACKENBUSH/render/basic.vs",
@@ -133,6 +136,9 @@ int main(int argc, char **argv)
 
 		execute_movement(camera, p, cur_inputs, prev_inputs);
 
+		//std::cout << select(camera, p, cur_inputs, edges) << std::endl;
+
+
 		prev_inputs = cur_inputs;
 		p.pos = camera.get_pos();
 
@@ -146,17 +152,23 @@ int main(int argc, char **argv)
 			ground.draw(shader);
 			ground.unbind();
 
-			r_nodes.bind();
-			r_nodes.update(p);
-			r_nodes.draw(shader);
-			r_nodes.unbind();
-
 			camera.set_view_projection(shader2);
 
 			r_edges.bind();
 			r_edges.update(p);
 			r_edges.draw(shader2);
 			r_edges.unbind();
+
+			r_nodes.bind();
+			r_nodes.update(p);
+			r_nodes.draw(shader);
+			r_nodes.unbind();
+
+			r_crosshair.bind();
+			r_crosshair.update(p);
+			r_crosshair.draw(shader);
+			r_crosshair.unbind();
+
 		}
 		PROFILE_LOG;
 
@@ -169,6 +181,7 @@ int main(int argc, char **argv)
 
 	for (auto *e: buf)
 		delete e;
+
 
 	// terminate
 	glfwTerminate();
