@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
     user_inputs prev_inputs, cur_inputs;
 
-    render::camera camera(glm::vec3(0.0f, 1.0f, 0.0f));
+    render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
 
     render::geometry::ground ground(10.0f);
     render::geometry::nodes r_nodes;
@@ -93,9 +93,6 @@ int main(int argc, char** argv)
 
 
 
-    // set the initial mouse position
-    glfwGetCursorPos(window, &XPOS(prev_inputs), &YPOS(prev_inputs));
-
     prev_inputs = user_inputs::fetch(window);
 
     // debug callback
@@ -112,19 +109,21 @@ int main(int argc, char** argv)
         // render
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // std::cout << cur_inputs - prev_inputs << std::endl;
+        execute_movement(camera, p, cur_inputs, prev_inputs);
+
         prev_inputs = cur_inputs;
+        p.pos = camera.get_pos();
 
         shader.set_uniform("u_mvp", camera.get_view_projection());
         // draw
-        // ground.bind();
-        // ground.update(p);
-        // ground.draw();
-        // ground.unbind();
-        r_nodes.bind();
-        r_nodes.update(p);
-        r_nodes.draw();
-        r_nodes.unbind();
+        ground.bind();
+        ground.update(p);
+        ground.draw();
+        ground.unbind();
+//        r_nodes.bind();
+//        r_nodes.update(p);
+//        r_nodes.draw();
+//        r_nodes.unbind();
         // r_edges.bind();
         // r_edges.update(p);
         // r_edges.draw();

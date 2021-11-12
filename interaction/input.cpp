@@ -50,14 +50,16 @@ void execute_movement(render::camera& camera,
     // the mouse controls the rotation of the camera
     const float mouse_sensitivity = 0.01f;
 
-    const double mouse_delta_x = (XPOS(inputs) - XPOS(last_inputs));
-    const double mouse_delta_y = (YPOS(inputs) - YPOS(last_inputs));
+    const double minus_mouse_delta_x = (XPOS(last_inputs) - XPOS(inputs));
+    const double minus_mouse_delta_y = (YPOS(last_inputs) - YPOS(inputs));
 
-    const float yaw = mouse_delta_x * mouse_sensitivity * frame_time;
-    const float pitch = mouse_delta_y * mouse_sensitivity * frame_time;
+    const float yaw = minus_mouse_delta_x * mouse_sensitivity * frame_time;
+
+    const float pitch = minus_mouse_delta_y * mouse_sensitivity * frame_time;
+
 
     // no acceleration yet
-    const float velocity = 2.0f;
+    const float velocity = 20.0f;
     const float acceleration = 0.0f;
 
     // the WASD keys control the movement of the camera
