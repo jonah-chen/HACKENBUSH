@@ -30,8 +30,7 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 
-namespace game
-{
+namespace game {
 
 class node; // forward decloration
 
@@ -43,10 +42,10 @@ class node; // forward decloration
  */
 enum branch_type : int8_t
 {
-    invalid = -127,
-    blue    =    1,
-    green   =    0,
-    red     =   -1
+	invalid = -127,
+	blue = 1,
+	green = 0,
+	red = -1
 };
 
 glm::vec4 branch_color(branch_type type);
@@ -63,17 +62,21 @@ glm::vec4 branch_color(branch_type type);
  */
 struct edge
 {
-    using container = std::unordered_set<edge*>;
-    node *p1;
-    node *p2;
-    branch_type type;
-    edge(branch_type type, node *p1, node *p2)
-        : p1(p1), p2(p2), type(type) {}
-    
-    edge(const edge &e) = delete;
-    edge &operator=(const edge &e) = delete;
+	using container = std::unordered_set<edge *>;
+	node *p1;
+	node *p2;
+	branch_type type;
 
-    inline node *get_other(const node *p) const { return p1 == p ? p2 : p1; }
+	edge(branch_type type, node *p1, node *p2)
+			: p1(p1), p2(p2), type(type)
+	{}
+
+	edge(const edge &e) = delete;
+
+	edge &operator=(const edge &e) = delete;
+
+	inline node *get_other(const node *p) const
+	{ return p1 == p ? p2 : p1; }
 };
 
 
@@ -98,113 +101,118 @@ struct edge
 class node
 {
 public:
-    using container = std::unordered_set<node*>;
+	using container = std::unordered_set<node *>;
 
-    /**
-     * @brief Construct a new branch object with the invalid type and with
-     * children located at the a specified position.
-     * 
-     * @param pos the 3D position of the node.
-     */
-    node(const glm::vec3 &pos) : pos_(pos) {}
-
-
-    /**
-     * Delete the copy constructor and assignment operator because they may
-     * cause many undefined and erroneous behaviors.
-     * 
-     */
-    node(const node&)               = delete;
-    node &operator=(const node&)    = delete;
-
-    virtual ~node() = default;
-
-    /**
-     * @brief get the nodes that are contained in the volume specified by two 
-     * diagonally opposite corners.
-     * 
-     * @param nodes: a container where  all the nodes contained in the volume 
-     * will be added to by this method. The nodes then can be used to render 
-     * branches to the screen and interact with the player.
-     * @param bottomleft: 3d position of the bottom left corner of the volume. 
-     * @note the top left corner is the corner with the smallest x, y, and z 
-     * values.
-     * @param topright: 3d position the top right corner of the volume. 
-     * @note the bottom right corner is the corner with the largest x, y, and z 
-     * values.
-     * @param max_depth: 32-bit integer of the maximum number depth to search. 
-     * Defaults to DEFAULT_MAX_DEPTH.
-     */
-    virtual void operator()(container &nodes, const glm::vec3 &bottomleft, 
-                            const glm::vec3 &topright, 
-                            int32_t max_depth = DEFAULT_MAX_DEPTH)=0;
+	/**
+	 * @brief Construct a new branch object with the invalid type and with
+	 * children located at the a specified position.
+	 *
+	 * @param pos the 3D position of the node.
+	 */
+	node(const glm::vec3 &pos) : pos_(pos)
+	{}
 
 
-    /**
-     * @brief get the vertex positions that will be used for rendering the 
-     * branch. 
-     * @note render should be really dumb, and should be used after determining 
-     * which nodes are needed. The upside of it being dumb is that it should 
-     * work universally.
-     * 
-     * @param edges: a container where a reference of all the edges attached to 
-     * this node will be added to. 
-     * @param max_breadth: 32-bit integer of the maximum number of branches to
-     * return. Defaults to DEFAULT_MAX_BRANCH_DEPTH.
-     */
-    virtual void render(edge::container &edges, 
-                        int32_t max_breadth = DEFAULT_MAX_BREADTH)=0;
+	/**
+	 * Delete the copy constructor and assignment operator because they may
+	 * cause many undefined and erroneous behaviors.
+	 *
+	 */
+	node(const node &) = delete;
+
+	node &operator=(const node &) = delete;
+
+	virtual ~node() = default;
+
+	/**
+	 * @brief get the nodes that are contained in the volume specified by two
+	 * diagonally opposite corners.
+	 *
+	 * @param nodes: a container where  all the nodes contained in the volume
+	 * will be added to by this method. The nodes then can be used to render
+	 * branches to the screen and interact with the player.
+	 * @param bottomleft: 3d position of the bottom left corner of the volume.
+	 * @note the top left corner is the corner with the smallest x, y, and z
+	 * values.
+	 * @param topright: 3d position the top right corner of the volume.
+	 * @note the bottom right corner is the corner with the largest x, y, and z
+	 * values.
+	 * @param max_depth: 32-bit integer of the maximum number depth to search.
+	 * Defaults to DEFAULT_MAX_DEPTH.
+	 */
+	virtual void operator()(container &nodes, const glm::vec3 &bottomleft,
+							const glm::vec3 &topright,
+							int32_t max_depth = DEFAULT_MAX_DEPTH) = 0;
 
 
-    /**
-     * @brief write relevant logging info to the output stream.
-     * 
-     * @param os reference to output stream. Defaults to std::cout.
-     * @param layers: 8-bit integer of the number of recursions to print the 
-     * nodes this node is connected to. Defaults to 0, must be less than 6.
-     * @param counter: 8-bit integer used for intermediate recursion. Defaults
-     * to 0. 
-     * @warning counter should NEVER be explicitly passed into the method.
-     */
-    virtual void log(std::ostream &os = std::cout,
-                     uint8_t layers = 0, uint8_t counter = 0) const=0;
+	/**
+	 * @brief get the vertex positions that will be used for rendering the
+	 * branch.
+	 * @note render should be really dumb, and should be used after determining
+	 * which nodes are needed. The upside of it being dumb is that it should
+	 * work universally.
+	 *
+	 * @param edges: a container where a reference of all the edges attached to
+	 * this node will be added to.
+	 * @param max_breadth: 32-bit integer of the maximum number of branches to
+	 * return. Defaults to DEFAULT_MAX_BRANCH_DEPTH.
+	 */
+	virtual void render(edge::container &edges,
+						int32_t max_breadth = DEFAULT_MAX_BREADTH) = 0;
 
 
-    /**
-     * @brief attach this node and another node via the specified edge. The 
-     * default behavior is to do nothing and return false.
-     * 
-     * @warning this method is not meant to be called explicitly.
-     * 
-     * @param e pointer to edge used to attach the nodes. 
-     * @return true when the edge is attached succesfully.
-     * @return false when the edge cannot be attached.
-     */
-    virtual bool attach(edge *e) { return false; };
+	/**
+	 * @brief write relevant logging info to the output stream.
+	 *
+	 * @param os reference to output stream. Defaults to std::cout.
+	 * @param layers: 8-bit integer of the number of recursions to print the
+	 * nodes this node is connected to. Defaults to 0, must be less than 6.
+	 * @param counter: 8-bit integer used for intermediate recursion. Defaults
+	 * to 0.
+	 * @warning counter should NEVER be explicitly passed into the method.
+	 */
+	virtual void log(std::ostream &os = std::cout,
+					 uint8_t layers = 0, uint8_t counter = 0) const = 0;
 
 
-    /**
-     * @brief detach an edge from this node because either it is chopped by a 
-     * player or it is unable to withstand the force of gravity. The default 
-     * behavior is to do nothing.
-     * 
-     * @warning this method is not meant to be called explicitly.
-     * @warning implementations of this method must NOT deallocate the pointer.
-     * 
-     * @param e pointer to the edge to detach.
-     */
-    virtual void detach(edge *e) {}
-    
+	/**
+	 * @brief attach this node and another node via the specified edge. The
+	 * default behavior is to do nothing and return false.
+	 *
+	 * @warning this method is not meant to be called explicitly.
+	 *
+	 * @param e pointer to edge used to attach the nodes.
+	 * @return true when the edge is attached succesfully.
+	 * @return false when the edge cannot be attached.
+	 */
+	virtual bool attach(edge *e)
+	{ return false; };
 
-    /**
-     * @brief return the position of the node
-     * 
-     * @return glm::vec3 of the position of the node.
-     */
-    inline glm::vec3 get_pos() const { return pos_; }
+
+	/**
+	 * @brief detach an edge from this node because either it is chopped by a
+	 * player or it is unable to withstand the force of gravity. The default
+	 * behavior is to do nothing.
+	 *
+	 * @warning this method is not meant to be called explicitly.
+	 * @warning implementations of this method must NOT deallocate the pointer.
+	 *
+	 * @param e pointer to the edge to detach.
+	 */
+	virtual void detach(edge *e)
+	{}
+
+
+	/**
+	 * @brief return the position of the node
+	 *
+	 * @return glm::vec3 of the position of the node.
+	 */
+	inline glm::vec3 get_pos() const
+	{ return pos_; }
 
 protected:
-    glm::vec3 pos_; // 3D position of the node.
+	glm::vec3 pos_; // 3D position of the node.
 };
 
 /**
@@ -220,7 +228,7 @@ protected:
  * @warning the edge pointer is heap allocated and should be freed elsewhere in 
  * the program.
  */
-edge* attach(branch_type type, node *node1, node *node2);
+edge *attach(branch_type type, node *node1, node *node2);
 
 
 /**
@@ -245,12 +253,14 @@ void detach(edge *e);
 void soft_detach(edge *e);
 
 
-struct properties 
+struct properties
 {
-    glm::vec3 pos;
-    edge::container &visible_gamestate;
-    properties(glm::vec3 pos, edge::container &visible_gamestate) : 
-        pos(pos), visible_gamestate(visible_gamestate) {}
+	glm::vec3 pos;
+	edge::container &visible_gamestate;
+
+	properties(glm::vec3 pos, edge::container &visible_gamestate) :
+			pos(pos), visible_gamestate(visible_gamestate)
+	{}
 };
 
 }

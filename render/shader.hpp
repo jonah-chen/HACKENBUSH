@@ -12,6 +12,7 @@
 
 #pragma once
 #define GLEW_STATIC
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,35 +22,40 @@
 
 namespace render {
 
-class shader 
+class shader
 {
 public:
-    shader(const char* vertex_path, const char* fragment_path);
+	shader(const char *vertex_path, const char *fragment_path);
 
-    // there is absolutely no reason to copy shaders.
-    shader(const shader&) = delete;
-    shader& operator=(const shader&) = delete;
+	// there is absolutely no reason to copy shaders.
+	shader(const shader &) = delete;
 
-    ~shader();
+	shader &operator=(const shader &) = delete;
 
-    void use();
+	~shader();
 
-    inline void bind() const { glUseProgram(program_); }
-    inline void unbind() const { glUseProgram(0); }
+	void use();
 
-    void set_uniform(const char* name, int value);
+	inline void bind() const
+	{ glUseProgram(program_); }
 
-    void set_uniform(const char* name, float x, float y, float z, float w);
-    void set_uniform(const char* u_name, const glm::vec4 &data);
+	inline void unbind() const
+	{ glUseProgram(0); }
 
-    void set_uniform(const char* name, const glm::mat4 &data, 
-                                                    bool transpose = false);
+	void set_uniform(const char *name, int value);
+
+	void set_uniform(const char *name, float x, float y, float z, float w);
+
+	void set_uniform(const char *u_name, const glm::vec4 &data);
+
+	void set_uniform(const char *name, const glm::mat4 &data,
+					 bool transpose = false);
 
 private:
-    GLuint program_;
-    mutable std::unordered_map<std::string, GLint> uniforms_;
+	GLuint program_;
+	mutable std::unordered_map<std::string, GLint> uniforms_;
 
-    GLint locate_uniform(const char* name) const;
+	GLint locate_uniform(const char *name) const;
 };
 
 }

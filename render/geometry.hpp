@@ -18,46 +18,55 @@
 #include "buffer.hpp"
 #include <vector>
 
-namespace render { namespace geometry {
+namespace render {
+namespace geometry {
 
 class ground : public buffer
 {
 public:
-    ground(float render_distance); // the ground is y=0
+	ground(float render_distance); // the ground is y=0
 private:
-    float render_distance_;
-    void __update(const game::properties &cur_state) override;
-    void enable_vertex_attribs() override;
-    void disable_vertex_attribs() override;
+	float render_distance_;
+
+	void __update(const game::properties &cur_state) override;
+
+	void enable_vertex_attribs() override;
+
+	void disable_vertex_attribs() override;
 };
 
 class nodes : public buffer
 {
 public:
-    nodes(float width=0.2f, std::size_t max_nodes = RENDER_LIMIT);
-    
-private:
-    std::size_t max_nodes_;
-    float width_;
+	nodes(float width = 0.2f, std::size_t max_nodes = RENDER_LIMIT);
 
-    void __update(const game::properties &cur_state) override;
-    void enable_vertex_attribs() override;
-    void disable_vertex_attribs() override;
+private:
+	std::size_t max_nodes_;
+	float width_;
+
+	void __update(const game::properties &cur_state) override;
+
+	void enable_vertex_attribs() override;
+
+	void disable_vertex_attribs() override;
 };
 
 class edges : public buffer
 {
 public:
-    edges(float line_width=0.1f, std::size_t max_edges = RENDER_LIMIT);
+	edges(float line_width = 0.1f, std::size_t max_edges = RENDER_LIMIT);
 
 private:
-    std::size_t max_edges_;
-    float width_;
-    
-    void __update(const game::properties &cur_state) override;
-    void enable_vertex_attribs() override;
-    void disable_vertex_attribs() override;
+	std::size_t max_edges_;
+	float width_;
+
+	void __update(const game::properties &cur_state) override;
+
+	void enable_vertex_attribs() override;
+
+	void disable_vertex_attribs() override;
 };
 
-}}
+}
+}
 

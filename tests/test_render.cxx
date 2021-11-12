@@ -1,5 +1,6 @@
 #define RELEASE
 #define GLEW_STATIC
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -12,136 +13,142 @@
 
 
 // write glDebugMessageCallback to print to console
-void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
-    std::cout << "; id: " << id << "; severity: " << severity << "; message: " << message << std::endl;
+void APIENTRY
+debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+			  GLsizei length, const GLchar *message, const void *userParam)
+{
+	std::cout << "; id: " << id << "; severity: " << severity << "; message: "
+			  << message << std::endl;
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        return 1;
-    }
+	if (!glfwInit())
+	{
+		std::cerr << "Failed to initialize GLFW" << std::endl;
+		return 1;
+	}
 
-    // Use opengl 4.6
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// Use opengl 4.6
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Create a windowed mode window and its OpenGL context
-    GLFWwindow* window = glfwCreateWindow(1920, 1080, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return 2;
-    }
-    // Make the window's context current
-    glfwMakeContextCurrent(window);
+	// Create a windowed mode window and its OpenGL context
+	GLFWwindow *window = glfwCreateWindow(1920, 1080, "Hello World", NULL,
+										  NULL);
+	if (!window)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return 2;
+	}
+	// Make the window's context current
+	glfwMakeContextCurrent(window);
 
-    // initialize modern opengl
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Failed to initialize OpenGL" << std::endl;
-        return 3;
-    }
+	// initialize modern opengl
+	if (glewInit() != GLEW_OK)
+	{
+		std::cerr << "Failed to initialize OpenGL" << std::endl;
+		return 3;
+	}
 
-    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    user_inputs prev_inputs, cur_inputs;
+	user_inputs prev_inputs, cur_inputs;
 
-    render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
+	render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
 
-    render::geometry::ground ground(10.0f);
-    render::geometry::nodes r_nodes;
-    render::geometry::edges r_edges;
+	render::geometry::ground ground(10.0f);
+	render::geometry::nodes r_nodes;
+	render::geometry::edges r_edges;
 
-    // create and compile shaders
-    render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs", "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
-    shader.bind();
-    shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
-
-
-    game::edge::container edges;
-    game::properties p(glm::vec3(0,0,0), edges);
+	// create and compile shaders
+	render::shader shader("/home/hina/Code/HACKENBUSH/render/test_shader.vs",
+						  "/home/hina/Code/HACKENBUSH/render/test_shader.fs");
+	shader.bind();
+	shader.set_uniform("u_color", 0.0f, 1.0f, 1.0f, 1.0f);
 
 
-    glm::vec3 bottomleft (-10.0f, 0.0f, -10.0f);
-    glm::vec3 topright (10.0f, 10.0f, 10.0f);
+	game::edge::container edges;
+	game::properties p(glm::vec3(0, 0, 0), edges);
 
-    glm::vec3 v1 (1.0f, 0.0f, 0.0f);
-    glm::vec3 v2 (1.0f, 1.0f, 0.0f);
 
-    game::nodes::normal n1 (v1);
-    game::nodes::normal n2 (v2);
-    std::vector<game::edge*> buf;
-    buf.push_back(game::attach(game::red, &n1, &n2));
+	glm::vec3 bottomleft(-10.0f, 0.0f, -10.0f);
+	glm::vec3 topright(10.0f, 10.0f, 10.0f);
 
-    n1.log(); std::cout << std::endl;
+	glm::vec3 v1(1.0f, 0.0f, 0.0f);
+	glm::vec3 v2(1.0f, 1.0f, 0.0f);
 
-    game::node::container c1;
-    n1(c1, bottomleft, topright);
+	game::nodes::normal n1(v1);
+	game::nodes::normal n2(v2);
+	std::vector<game::edge *> buf;
+	buf.push_back(game::attach(game::red, &n1, &n2));
 
-    n1.render(edges);
+	n1.log();
+	std::cout << std::endl;
 
-    
+	game::node::container c1;
+	n1(c1, bottomleft, topright);
 
-    // disable cursor
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	n1.render(edges);
 
 
 
-    prev_inputs = user_inputs::fetch(window);
+	// disable cursor
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // debug callback
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-    glDebugMessageCallback(debugCallback, nullptr);
 
-    // rendering loop
-    while (!glfwWindowShouldClose(window))
-    {
-    PROFILE_START;
-        cur_inputs = user_inputs::fetch(window);
+	prev_inputs = user_inputs::fetch(window);
 
-        // render
-        glClear(GL_COLOR_BUFFER_BIT);
+	// debug callback
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(debugCallback, nullptr);
 
-        execute_movement(camera, p, cur_inputs, prev_inputs);
+	// rendering loop
+	while (!glfwWindowShouldClose(window))
+	{
+		PROFILE_START;
+		cur_inputs = user_inputs::fetch(window);
 
-        prev_inputs = cur_inputs;
-        p.pos = camera.get_pos();
+		// render
+		glClear(GL_COLOR_BUFFER_BIT);
 
-        shader.set_uniform("u_mvp", camera.get_view_projection());
-        // draw
-        ground.bind();
-        ground.update(p);
-        ground.draw();
-        ground.unbind();
+		execute_movement(camera, p, cur_inputs, prev_inputs);
+
+		prev_inputs = cur_inputs;
+		p.pos = camera.get_pos();
+
+		shader.set_uniform("u_mvp", camera.get_view_projection());
+		// draw
+		ground.bind();
+		ground.update(p);
+		ground.draw();
+		ground.unbind();
 //        r_nodes.bind();
 //        r_nodes.update(p);
 //        r_nodes.draw();
 //        r_nodes.unbind();
-        // r_edges.bind();
-        // r_edges.update(p);
-        // r_edges.draw();
-        // r_edges.unbind();
+		// r_edges.bind();
+		// r_edges.update(p);
+		// r_edges.draw();
+		// r_edges.unbind();
 
-    PROFILE_LOG;
+		PROFILE_LOG;
 
-        // swap buffers
-        glfwSwapBuffers(window);// this is what takes up the rest of the time
-                                // to maintain 60fps.
-        // poll events
-        glfwPollEvents();
-    }
+		// swap buffers
+		glfwSwapBuffers(window);// this is what takes up the rest of the time
+		// to maintain 60fps.
+		// poll events
+		glfwPollEvents();
+	}
 
-    for (auto *e : buf)
-        delete e;
+	for (auto *e: buf)
+		delete e;
 
-    // terminate
-    glfwTerminate();
-    return 0;
+	// terminate
+	glfwTerminate();
+	return 0;
 }

@@ -33,32 +33,33 @@
 class Timer
 {
 public:
-    Timer(const char *file, const char *function, int start_line)
-        : file_(file), function_(function), start_line_(start_line)
-    {
-        start_ = clock::now();
-    }
-    void log(int end_line)
-    {
-        timepoint end = clock::now();
-        duration elapsed = end - start_;
-        double exec_time = elapsed.count();
+	Timer(const char *file, const char *function, int start_line)
+			: file_(file), function_(function), start_line_(start_line)
+	{
+		start_ = clock::now();
+	}
 
-        std::cout << file_ << ":" << start_line_ << "-" << end_line 
-                  << "(" << function_ << ")@";
+	void log(int end_line)
+	{
+		timepoint end = clock::now();
+		duration elapsed = end - start_;
+		double exec_time = elapsed.count();
 
-        if (exec_time >= 1.0)
-            std::cout << exec_time << "s/it" << std::endl;
-        else
-            std::cout << 1.0/exec_time << "it/s" << std::endl;
-    }
+		std::cout << file_ << ":" << start_line_ << "-" << end_line
+				  << "(" << function_ << ")@";
+
+		if (exec_time >= 1.0)
+			std::cout << exec_time << "s/it" << std::endl;
+		else
+			std::cout << 1.0 / exec_time << "it/s" << std::endl;
+	}
 
 private:
-    using timepoint=std::chrono::time_point<std::chrono::high_resolution_clock>;
-    using clock=std::chrono::high_resolution_clock;
-    using duration=std::chrono::duration<double>;
-    timepoint start_;
-    const char* file_;
-    const char* function_;
-    int start_line_;
+	using timepoint = std::chrono::time_point<std::chrono::high_resolution_clock>;
+	using clock = std::chrono::high_resolution_clock;
+	using duration = std::chrono::duration<double>;
+	timepoint start_;
+	const char *file_;
+	const char *function_;
+	int start_line_;
 };

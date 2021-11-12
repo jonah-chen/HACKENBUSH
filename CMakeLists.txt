@@ -15,7 +15,7 @@ include_directories(${OPENGL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS})
 
 include_directories(.)
 
-add_executable(HACKENBUSH tests/test_gl.cxx
+add_executable(HACKENBUSH tests/test_render.cxx
         common/profile.hpp
         game/game.hpp
         game/generators.cpp
