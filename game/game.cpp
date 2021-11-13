@@ -14,11 +14,12 @@ hackenbush::hackenbush()
     auto *n3 = new game::nodes::normal(v3);
     auto *n4 = new game::nodes::stack_root (v4, glm::vec3(0.0f, 3.0f, 0.0f), ALL_GREEN,
 							   GEOMETRIC, nullptr);
+
     grounded_nodes_.insert(n1);
-    node_buf.insert(n1);
-    node_buf.insert(n2);
-	node_buf.insert(n3);
-	node_buf.insert(n4);
+    node_buf.push_back(n1);
+    node_buf.push_back(n2);
+	node_buf.push_back(n3);
+	node_buf.push_back(n4);
 
 	edge_buf.push_back(game::attach(game::green, n1, n2));
 	edge_buf.push_back(game::attach(game::blue, n2, n3));
@@ -31,10 +32,15 @@ hackenbush::hackenbush()
 
 hackenbush::~hackenbush()
 {
+    for (auto *n : node_buf)
+        delete n;
+    for (auto *e : edge_buf)
+        delete e;
 }
 
 void hackenbush::get_visible_edges(game::edge::container& edges, const glm::vec3 &bottomleft, const glm::vec3 &topright) const
 {
+	edges.clear();
     game::node::container visible_nodes;
     for (game::node *g_node : grounded_nodes_)
         (*g_node)(visible_nodes, bottomleft, topright);
