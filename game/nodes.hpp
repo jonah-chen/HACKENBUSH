@@ -23,6 +23,14 @@
 #include <limits>
 #include "prereqs.hpp"
 
+// hash struct for pair of int32_t
+template <>
+struct std::hash<std::pair<int32_t, int32_t>> {
+	size_t operator()(const std::pair<int32_t, int32_t>& p) const {
+		return hash<int32_t>()(p.first) ^ hash<int32_t>()(p.second);
+	}
+};
+
 namespace game::nodes {
 
 class normal;
@@ -159,7 +167,7 @@ branch_type green(const int64_t order, void *kwargs);
 
 branch_type blue(const int64_t order, void *kwargs);
 
-branch_type num(const int64_t order, void *kwargs);
+branch_type fraction(const int64_t order, void *kwargs);
 }
 
 /**
@@ -297,8 +305,6 @@ public:
 
 protected:
 	int64_t order_; // The order or index or id of this node.
-	void *kwargs_;// Optional arguments to be passed to the generator
-	// functions.
 	stack_root *root_;  // Pointer to the root of the stack.
 };
 
@@ -306,6 +312,9 @@ protected:
 class stack_root : public stack
 {
 public:
+	// Lookup table for the binary representation of repeating fractions.
+	static std::unordered_map<std::pair<int32_t, int32_t>, std::vector<bool>>
+	fraction_lut;
 	/**
 	 * @brief Construct a node that admits a (possibly infinite) stack of
 	 * branches that is procedurally generated.
@@ -329,7 +338,7 @@ public:
 
 	stack_root &operator=(const stack_root &) = delete;
 
-	~stack_root();
+	~stack_root() override;
 
 	stack *operator[](std::size_t i);
 
@@ -360,6 +369,8 @@ private:
 	generators::step_gen sgen_;
 	int64_t cap_;
 	glm::vec3 vec_kwargs_;
+	void *kwargs_;// Optional arguments to be passed to the generator
+	// functions.
 };
 
 

@@ -64,6 +64,7 @@ static float intersect(const glm::vec3 &A, const glm::vec3 &B,
 	return tmin;
 }
 
+
 namespace game::nodes::generators {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,8 +80,85 @@ branch_type green(const int64_t order, void *kwargs)
 branch_type blue(const int64_t order, void *kwargs)
 { return game::blue; }
 
+static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
+					 branch_type zero)
+{
+	int32_t numerator = ((int32_t *) kwargs)[0];
+	uint32_t denominator = ((uint32_t *) (kwargs))[1];
+	assert(numerator and denominator);
+	assert(denominator & (denominator - 1));
+
+	// compute the fraction
+	// don't want to deal with negative numbers. Thus, we use the absolute value
+	if (numerator < 0)
+	{
+		branch_type tmp = one;
+		one = zero;
+		zero = tmp;
+		numerator = -numerator;
+	}
+
+	uint32_t integral_part = numerator / denominator;
+
+	int64_t fractional_order = order - integral_part;
+	if (fractional_order < 0)
+		return one;
+
+	uint32_t fractional_part = numerator % denominator;
+	auto frac = std::make_pair(numerator % denominator, denominator);
+	auto it = stack_root::fraction_lut.find(frac);
+
+	// if it is not in the LUT, compute it and insert it
+	if (it != stack_root::fraction_lut.end())
+	{
+		auto &bits = it->second;
+		return bits[fractional_order % bits.size()] ? one : zero;
+	}
+	else
+	{
+		std::vector<bool> bits;
+		while(true)
+		{
+			fractional_part <<= 1;
+			bits.push_back(fractional_part >= denominator);
+			fractional_part %= denominator;
+			const std::size_t length = bits.size();
+			if (!(length & 1))
+			{
+				auto begining = bits.begin();
+				auto half_way = begining + length / 2;
+				if (std::equal(begining, half_way, half_way))
+				{
+					bits.erase(half_way, bits.end());
+					break;
+				}
+			}
+		}
+		// add bits to lut
+		stack_root::fraction_lut[frac] = bits;
+		return bits[fractional_order % bits.size()] ? one : zero;
+	}
+}
+	/**
+	 * @brief
+	 *
+	 * @pre Numerator and denominator must be nonzero.
+	 * @pre denominator must be positive, and not a power of 2.
+	 *
+	 * @param order
+	 * @param kwargs
+	 * @return
+	 */
+	// kwargs is 2 int32_t's. Meaning it must be 8 bytes.
+branch_type fraction(const int64_t order, void *kwargs)
+{
+	if (kwargs)
+		return fraction(order, kwargs, game::red, game::blue);
+	throw std::runtime_error("Fractional generator requires two int32_t's as kwargs");
+}
 
 }
+
 
 glm::vec3 f::geometric(const int64_t order, const glm::vec3 &rootpos,
 					   const glm::vec3 &kwargs)

@@ -128,10 +128,15 @@ void stack::detach(edge *e)
 ///////////////////////////////////////////////////////////////////////////////
 // Implementation of the stack root
 ///////////////////////////////////////////////////////////////////////////////
+
+std::unordered_map<std::pair<int32_t, int32_t>, std::vector<bool>>
+stack_root::fraction_lut;
+
 stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 					   generators::type_gen tgen, generators::step_gen sgen,
 					   void *kwargs, int64_t order, int64_t cap)
-		: stack(pos, nullptr, order), vec_kwargs_(vec_kwargs),
+		: stack(pos, nullptr, order),
+		  kwargs_(kwargs), vec_kwargs_(vec_kwargs),
 		  tgen_(tgen), sgen_(sgen), cap_(cap)
 {
 	const glm::vec3 end = sgen.a(INF, pos, vec_kwargs);
@@ -139,6 +144,7 @@ stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 		grandchild_ = nullptr;
 	else
 		grandchild_ = new normal(end);
+
 }
 
 stack_root::~stack_root()

@@ -5,6 +5,8 @@
 #define ALL_RED   (game::nodes::generators::type_gen)game::nodes::generators::F::red
 #define ALL_GREEN (game::nodes::generators::type_gen)game::nodes::generators::F::green
 #define ALL_BLUE  (game::nodes::generators::type_gen)game::nodes::generators::F::blue
+#define FRACTION  (game::nodes::generators::type_gen) \
+game::nodes::generators::F::fraction
 
 #define STEP_GENERATORS
 
