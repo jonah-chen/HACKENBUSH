@@ -51,6 +51,7 @@ user_inputs user_inputs::fetch(GLFWwindow *window)
 	K_S(inputs) = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
 	K_D(inputs) = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
 	K_ESC(inputs) = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+	K_P(inputs) = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS;
 	return inputs;
 }
 
@@ -73,7 +74,8 @@ std::ostream &operator<<(std::ostream &os, const user_inputs &inputs)
 	   << " lmb:" << LMB(inputs) << " rmb:" << RMB(inputs)
 	   << " W:" << K_W(inputs) << " A:" << K_A(inputs)
 	   << " S:" << K_S(inputs) << " D:" << K_D(inputs)
-	   << " ESC:" << K_ESC(inputs);
+	   << " SPACE:" << K_SPACE(inputs) << " LSHIFT:" << K_LSHIFT(inputs)
+	   << " ESC:" << K_ESC(inputs) << " P:" << K_P(inputs);
 	return os;
 }
 

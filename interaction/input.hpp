@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <GLFW/glfw3.h>
+#include "game/game.hpp"
 
 #define     YPOS(IN) ( ((IN).fp)[1] )
 #define     XPOS(IN) ( ((IN).fp)[0] )
@@ -17,11 +18,14 @@
 #define      K_S(IN) ( ((IN).tf)[6] ) // move down
 #define      K_D(IN) ( ((IN).tf)[7] ) // move right
 #define    K_ESC(IN) ( ((IN).tf)[8] ) // change to menu
+#define	     K_P(IN) ( ((IN).tf)[9] ) // pass your turn
+
+#define DOWN(KEY,CUR,PREV) (KEY(CUR) and !KEY(PREV))
 
 #define FLOATPOINT_INPUTS 2
-#define TRUE_FALSE_INPUTS 9
+#define TRUE_FALSE_INPUTS 10
 
-#define MIN_WACK_DISTANCE 0.1f
+#define MIN_WACK_DISTANCE 0.17f
 
 /**
  * @brief class storing the use input data at a given frame. Members should not 
@@ -59,7 +63,7 @@ public:
 	 *
 	 * @param window GLFWwindow pointer to the window to fetch the inputs from
 	 * @return struct of the user inputs consisting of the mouse position,
-	 * relavent keys, and mouse buttons presses.
+	 * relevant keys, and mouse buttons presses.
 	 */
 	static user_inputs fetch(GLFWwindow *window);
 
@@ -90,3 +94,4 @@ void execute_movement(render::camera &camera, const game::properties &cur_state,
 game::edge *select(const render::camera &camera, const game::properties
 &properties, const user_inputs &inputs, const game::edge::container
 				   &candidates);
+
