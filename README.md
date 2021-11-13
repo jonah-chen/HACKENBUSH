@@ -16,7 +16,7 @@ number system, intricately entangled with a host of new and exotic numeric speci
 
 - Make sure the prerequisites are installed. I am compiling with OpenGL4.6 and C++20 using cmake (make, clang, glm, GLFW
   are required too).
-- Generate build configuration using `cmake CMakeLists.txt`
+- Generate build configuration using `cmake .`
 - Build with `cd build && make`.
 - Execute `./HACKENBUSH` with the `--help` flag to see the available options.
 
