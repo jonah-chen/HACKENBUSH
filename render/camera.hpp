@@ -27,11 +27,11 @@ public:
 	inline glm::vec3 get_pos() const
 	{ return pos_; }
 
-    inline glm::vec3 get_up() const
-    { return up_; }
+	inline glm::vec3 get_up() const
+	{ return up_; }
 
-    inline glm::vec3 get_right() const
-    { return right_; }
+	inline glm::vec3 get_right() const
+	{ return right_; }
 
 
 	void set_view_projection(shader &shader) const;

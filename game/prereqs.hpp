@@ -215,8 +215,8 @@ protected:
 	glm::vec3 pos_; // 3D position of the node.
 
 	static container nodes_discard; // container for nodes that are outside
-									// render volume but marked as 'visited'
-									// by graph traversal.
+	// render volume but marked as 'visited'
+	// by graph traversal.
 };
 
 /**
@@ -261,6 +261,7 @@ struct properties
 {
 	glm::vec3 pos;
 	edge::container &visible_gamestate;
+	edge *selected;
 
 	properties(glm::vec3 pos, edge::container &visible_gamestate) :
 			pos(pos), visible_gamestate(visible_gamestate)

@@ -4,8 +4,9 @@ project(HACKENBUSH)
 set(CMAKE_CXX_STANDARD 20)
 
 # Use openmp
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fopenmp")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fopenmp -Wall")
 set(OpenGlLinkers -lglfw3 -lpthread -lm -lz -lGL -lX11 -lXext -lXfixes -ldl -lGLEW)
+set(CMAKE_BUILD_TYPE Release)
 
 
 find_package(OpenGL REQUIRED)

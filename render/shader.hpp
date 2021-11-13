@@ -31,8 +31,9 @@ public:
 	explicit shader(const char *vertex_path, const char *fragment_path,
 					const char *geometry_path = nullptr);
 
-	explicit shader(const std::string &vertex_source, const std::string &fragment_source,
-	float dummy, const std::string &geometry_source = "");
+	explicit shader(const std::string &vertex_source,
+					const std::string &fragment_source,
+					float dummy, const std::string &geometry_source = "");
 
 
 	// there is absolutely no reason to copy shaders.
@@ -40,8 +41,9 @@ public:
 
 	shader &operator=(const shader &) = delete;
 
-    shader(shader &&) = default;
-    shader &operator=(shader &&) = default;
+	shader(shader &&) = default;
+
+	shader &operator=(shader &&) = default;
 
 	~shader();
 

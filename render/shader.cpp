@@ -1,4 +1,5 @@
 #include "shader.hpp"
+
 static void load_shader(GLuint id, const char *path)
 {
 	FILE *file = fopen(path, "rb");
@@ -90,7 +91,7 @@ shader::shader(const std::string &vertex_source,
 	glDeleteShader(vertex_shader_id);
 	glDeleteShader(fragment_shader_id);
 	if (geometry_shader_id)
-        glDeleteShader(geometry_shader_id);
+		glDeleteShader(geometry_shader_id);
 }
 
 shader::~shader()

@@ -34,7 +34,7 @@ void normal::operator()(container &nodes, const glm::vec3 &bottomleft,
 		{
 			node *other = edge->get_other(this);
 			if (nodes.find(other) == nodes.end() and nodes_discard.find
-			(other) == nodes_discard.end())	//
+					(other) == nodes_discard.end())    //
 				// when other node not
 				// visited
 				(*other)(nodes, bottomleft, topright, max_depth - 1);
@@ -93,7 +93,8 @@ void normal::detach(edge *e)
 void stack::operator()(node::container &nodes, const glm::vec3 &bottomleft,
 					   const glm::vec3 &topright, int32_t max_depth)
 {
-	throw "not implemented because stack objects should not be called!";
+	throw std::logic_error("not implemented because stack objects should not "
+						   "be called!");
 }
 
 // return the edge that is BOTH moving away or towards the root
@@ -135,7 +136,7 @@ stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 {
 	const glm::vec3 end = sgen.a(INF, pos, vec_kwargs);
 	if (end.x == std::numeric_limits<float>::quiet_NaN())
-        grandchild_ == nullptr;
+		grandchild_ = nullptr;
 	else
 		grandchild_ = new normal(end);
 }

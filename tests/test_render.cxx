@@ -27,7 +27,7 @@ debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 
 int main(int argc, char **argv)
 {
-    game::edge::container edges;
+	game::edge::container edges;
 	game::properties p(glm::vec3(0, 0, 0), edges);
 
 
