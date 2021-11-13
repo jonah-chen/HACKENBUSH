@@ -1,5 +1,7 @@
 #include "nodes.hpp"
 
+#define FLOAT_EPSILON 1e-7f
+
 static inline glm::vec3 operator*(const glm::vec3 &v, float m)
 {
 	return glm::vec3(v.x * m, v.y * m, v.z * m);
@@ -35,16 +37,16 @@ static float intersect(const glm::vec3 &A, const glm::vec3 &B,
 					   const glm::vec3 &bottomleft, const glm::vec3 &topright)
 {
 	// compute when the line At+B intersects the x boundaries of the box
-	float tx1 = (bottomleft.x - B.x) / A.x;
-	float tx2 = (topright.x - B.x) / A.x;
+	float tx1 = (bottomleft.x - B.x) / (A.x + FLOAT_EPSILON);
+	float tx2 = (topright.x - B.x) / (A.x + FLOAT_EPSILON);
 
 	// compute when the line At+B intersects the y boundaries of the box
-	float ty1 = (bottomleft.y - B.y) / A.y;
-	float ty2 = (topright.y - B.y) / A.y;
+	float ty1 = (bottomleft.y - B.y) / (A.y + FLOAT_EPSILON);
+	float ty2 = (topright.y - B.y) / (A.y + FLOAT_EPSILON);
 
 	// compute when the line At+B intersects the z boundaries of the box
-	float tz1 = (bottomleft.z - B.z) / A.z;
-	float tz2 = (topright.z - B.z) / A.z;
+	float tz1 = (bottomleft.z - B.z) / (A.z + FLOAT_EPSILON);
+	float tz2 = (topright.z - B.z) / (A.z + FLOAT_EPSILON);
 
 	// find the earliest and latest times of intersection
 	float tmin = std::max(std::max(std::min(tx1, tx2), std::min(ty1, ty2)),
