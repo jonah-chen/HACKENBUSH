@@ -1,13 +1,9 @@
 #include "shader.hpp"
-
 static void load_shader(GLuint id, const char *path)
 {
 	FILE *file = fopen(path, "rb");
 	if (!file)
-	{
-		printf("Failed to open file: %s\n", path);
-		return;
-	}
+		throw std::runtime_error("Failed to open shader file");
 
 	fseek(file, 0, SEEK_END);
 	long size = ftell(file);
@@ -58,6 +54,43 @@ shader::shader(const char *vertex_path, const char *fragment_path,
 	glDeleteShader(fragment_shader_id);
 	if (geometry_path)
 		glDeleteShader(geometry_shader_id);
+}
+
+shader::shader(const std::string &vertex_source,
+			   const std::string &fragment_source, float dummy, const
+			   std::string &geometry_source)
+{
+	program_ = glCreateProgram();
+
+	GLuint vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint geometry_shader_id = 0u;
+
+	const char *vertex_source_c = vertex_source.c_str();
+	const char *fragment_source_c = fragment_source.c_str();
+
+	glShaderSource(vertex_shader_id, 1, &vertex_source_c, nullptr);
+	glShaderSource(fragment_shader_id, 1, &fragment_source_c, nullptr);
+
+	if (!geometry_source.empty())
+	{
+		geometry_shader_id = glCreateShader(GL_GEOMETRY_SHADER);
+		const char *geometry_source_c = geometry_source.c_str();
+		glShaderSource(geometry_shader_id, 1,
+					   (const char **) &geometry_source_c, nullptr);
+		glAttachShader(program_, geometry_shader_id);
+	}
+
+	glAttachShader(program_, vertex_shader_id);
+	glAttachShader(program_, fragment_shader_id);
+
+	glLinkProgram(program_);
+	glValidateProgram(program_);
+
+	glDeleteShader(vertex_shader_id);
+	glDeleteShader(fragment_shader_id);
+	if (geometry_shader_id)
+        glDeleteShader(geometry_shader_id);
 }
 
 shader::~shader()
