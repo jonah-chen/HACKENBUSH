@@ -5,8 +5,11 @@
 #include <vector>
 #include <unordered_map>
 #include <list>
+#include <cstring>
 #include "interaction/input.hpp"
 #include "worldgen/parser.hpp"
+#include "nodes.hpp"
+#include "generators.hpp"
 
 enum player
 {
@@ -24,7 +27,7 @@ public:
 
 	void tick();
 
-	void chop(game::edge *edge, player player);
+	bool chop(game::edge *edge, player player);
 
 	void
 	get_visible_edges(game::edge::container &edges, const glm::vec3 &bottomleft,

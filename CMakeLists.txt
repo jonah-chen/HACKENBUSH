@@ -4,7 +4,7 @@ project(HACKENBUSH)
 set(CMAKE_CXX_STANDARD 20)
 
 # Use openmp
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fopenmp -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fopenmp")
 set(OpenGlLinkers -lglfw3 -lpthread -lm -lz -lGL -lX11 -lXext -lXfixes -ldl -lGLEW)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -16,8 +16,7 @@ include_directories(${OPENGL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS})
 
 include_directories(.)
 
-add_executable(HACKENBUSH tests/test_prototype.cxx
-        common/profile.hpp
+add_executable(HACKENBUSH common/profile.hpp
         game/game.hpp
         game/generators.cpp
         game/generators.hpp
@@ -36,7 +35,6 @@ add_executable(HACKENBUSH tests/test_prototype.cxx
         render/shader.cpp
         render/shader.hpp
         game/game.cpp
-        game/client.hpp
-        game/client.cpp)
+        worldgen/parser.cpp worldgen/parser.hpp game/main.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY} ${OpenGlLinkers})

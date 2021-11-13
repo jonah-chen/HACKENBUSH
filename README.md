@@ -18,7 +18,7 @@ number system, intricately entangled with a host of new and exotic numeric speci
   are required too).
 - Generate build configuration using `cmake CMakeLists.txt`
 - Build with `cd build && make`.
-- Execute `./HACKENBUSH`
+- Execute `./HACKENBUSH` with the `--help` flag to see the available options.
 
 ### Features:
 
@@ -26,14 +26,15 @@ number system, intricately entangled with a host of new and exotic numeric speci
 - Rendering of nodes and edges in 3D space.
 - Infinite world.
 - Finite collections of red, blue, or green branches.
-- Infinite stacks of branches (only the harmonic generator is implemented for now)
+- Infinite stacks of branches (only the harmonic generator is implemented for now).
+- Player can chop down branches, and unsupported branches will disappear.
+- Basic world generator (see `testworld.hkb`).
 
 ### TODO:
 
 - Menu screen
 - Ground texture
-- Player chopping down branches
-- World generation
+- Procedural world generation
 
 ### More Ambitious Goals:
 

@@ -1,6 +1,6 @@
 #include "game.hpp"
-#include "game/nodes.hpp"
-#include "game/generators.hpp"
+
+
 
 hackenbush::~hackenbush()
 {
@@ -12,6 +12,13 @@ hackenbush::~hackenbush()
 
 void hackenbush::load_world(const char *filename)
 {
+	if (!filename)
+	{
+		std::cerr << "No filename given...loading default world" << std::endl;
+		load_default();
+		return;
+	}
+
 	worldgen::lut_t lut;
 	worldgen::adj_list_t adj_list;
 
@@ -78,13 +85,15 @@ void hackenbush::get_visible_edges(game::edge::container &edges,
 		n->render(edges);
 }
 
-void hackenbush::chop(game::edge *edge, player player)
+bool hackenbush::chop(game::edge *edge, player player)
 {
 	if ((player == blue_player and edge->type != game::red) or
 		(player == red_player and edge->type != game::blue))
 	{
 		game::detach(edge);
 		edge_buf.erase(edge);
+		return true;
 	}
+	return false;
 }
 

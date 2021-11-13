@@ -134,7 +134,7 @@ void nodes::__update(const game::properties &cur_state)
 void selected_nodes::__update(const game::properties &cur_state)
 {
 	game::edge::container selected_edges;
-	selected_edges.insert(cur_state.selected);
+	selected_edges.insert(cur_state.selected_branch);
 	game::properties temp_state(cur_state.pos, selected_edges);
 	nodes::__update(temp_state);
 }
@@ -275,8 +275,9 @@ edges::edges(shader &shader, float width, std::size_t max_edges)
 	unbind();
 }
 
-crosshair::crosshair(shader &shader, float crosshair_size, float aspect)
-		: mesh(shader, GL_LINES)
+crosshair::crosshair(shader &shader, bool player, float crosshair_size, float
+aspect)
+		: mesh(shader, GL_LINES), is_blue_player(player)
 {
 	// indices for 2 lines
 	GLuint indices[4] = {0, 1, 2, 3};
@@ -317,7 +318,10 @@ void nodes::prepare_shader(shader &shader) const
 
 void crosshair::prepare_shader(shader &shader) const
 {
-	shader.set_uniform("u_color", CROSSHAIR_COLOR);
+	if (is_blue_player)
+        shader.set_uniform("u_color", BLUE_CROSSHAIR_COLOR);
+    else
+        shader.set_uniform("u_color", RED_CROSSHAIR_COLOR);
 	// set view projection matrix to the identity matrix
 	glm::mat4 identity = glm::mat4(1.0f);
 	shader.set_uniform("u_view", identity);
@@ -327,6 +331,11 @@ void crosshair::prepare_shader(shader &shader) const
 void selected_nodes::prepare_shader(shader &shader) const
 {
 	shader.set_uniform("u_color", SELECTED_NODE_COLOR);
+}
+
+void crosshair::switch_player()
+{
+	is_blue_player = !is_blue_player;
 }
 
 }

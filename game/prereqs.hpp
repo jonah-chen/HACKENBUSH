@@ -261,7 +261,7 @@ struct properties
 {
 	glm::vec3 pos;
 	edge::container &visible_gamestate;
-	edge *selected;
+	edge *selected_branch;
 
 	properties(glm::vec3 pos, edge::container &visible_gamestate) :
 			pos(pos), visible_gamestate(visible_gamestate)

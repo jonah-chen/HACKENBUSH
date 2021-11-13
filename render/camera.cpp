@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include <iostream>
 
 namespace render {
 
@@ -28,8 +27,8 @@ void camera::rotate(float pitch, float yaw)
 
 	// quaternion rotations can cause floating point errors.
 	// correct using the small angle approximation.
-	if (right_.y > QUARTERNION_ERROR_TOLERANCE
-		or right_.y < -QUARTERNION_ERROR_TOLERANCE and up_.y > 0.5f)
+	if ((right_.y > QUARTERNION_ERROR_TOLERANCE
+		or right_.y < -QUARTERNION_ERROR_TOLERANCE) and up_.y > 0.5f)
 		rotation = glm::rotate(rotation, right_.y,
 							   glm::vec3(forward_.x, 0.0f, forward_.z));
 
@@ -52,6 +51,28 @@ void camera::set_view_projection(shader &shader) const
 {
 	shader.set_uniform("u_view", glm::lookAt(pos_, pos_ + forward_, up_));
 	shader.set_uniform("u_projection", projection_);
+}
+
+void camera::get_viewport(glm::vec3 &bottomleft, glm::vec3 &topright, const
+game::properties &cur_state, float render_distance) const
+{
+	const float x_min = std::min(std::min(right_.x, -right_.x),
+								 std::min(forward_.x + right_.x,
+										  forward_.x - right_.x));
+	const float x_max = std::max(std::max(right_.x, -right_.x),
+								 std::max(forward_.x + right_.x,
+										  forward_.x - right_.x));
+	const float z_min = std::min(std::min(right_.z, -right_.z),
+								 std::min(forward_.z + right_.z,
+										  forward_.z - right_.z));
+	const float z_max = std::max(std::max(right_.z, -right_.z),
+								 std::max(forward_.z + right_.z,
+										  forward_.z - right_.z));
+
+	bottomleft = cur_state.pos +
+				 glm::vec3(x_min, -1.0f, z_min) * render_distance;
+	topright = cur_state.pos +
+			   glm::vec3(x_max, 1.0f, z_max) * render_distance;
 }
 
 }

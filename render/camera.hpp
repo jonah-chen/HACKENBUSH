@@ -3,6 +3,7 @@
 #define GLM_FORCE_RADIANS
 #define QUARTERNION_ERROR_TOLERANCE 1e-3f
 
+#include "game/prereqs.hpp"
 #include "shader.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -35,6 +36,10 @@ public:
 
 
 	void set_view_projection(shader &shader) const;
+
+	void get_viewport(glm::vec3 &bottomleft, glm::vec3 &topright,
+					  const game::properties &cur_state,
+					  float render_distance_) const;
 
 	/**
 	 * @brief
