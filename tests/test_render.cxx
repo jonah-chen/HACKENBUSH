@@ -65,10 +65,10 @@ int main(int argc, char **argv)
 	render::camera camera(glm::vec3(0.0f, 0.5f, 0.0f));
 
 	// create and compile shaders
-	render::shader shader("/home/hina/Code/HACKENBUSH/render/basic.vs",
-						  "/home/hina/Code/HACKENBUSH/render/basic.fs");
-	render::shader shader2("/home/hina/Code/HACKENBUSH/render/edge.vs",
-						   "/home/hina/Code/HACKENBUSH/render/edge.fs");
+	render::shader shader("./render/basic.vs",
+						  "./render/basic.fs");
+	render::shader shader2("./render/edge.vs",
+						   "./render/edge.fs");
 
 	// create meshes
 	render::geometry::ground ground(shader, 10.0f);
@@ -154,7 +154,6 @@ int main(int argc, char **argv)
 			r_edges.update(p);
 			r_nodes.update(p);
 			r_crosshair.update(p);
-
 		}
 		PROFILE_LOG;
 

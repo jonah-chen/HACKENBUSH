@@ -54,6 +54,9 @@ public:
 
 	mesh &operator=(const mesh &) = delete;
 
+    mesh(mesh &&) = default;
+    mesh &operator=(mesh &&) = default;
+
 	/**
 	 * @brief Bind the buffers of this object to the current context.
 	 *
@@ -117,9 +120,9 @@ protected:
 	virtual void prepare_shader(shader &shader) const
 	{}
 
-	virtual void enable_vertex_attribs() = 0;
+	virtual void enable_vertex_attribs() {};
 
-	virtual void disable_vertex_attribs() = 0;
+	virtual void disable_vertex_attribs() {};
 
 };
 

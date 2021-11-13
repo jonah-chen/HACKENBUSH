@@ -36,6 +36,9 @@ public:
 
 	shader &operator=(const shader &) = delete;
 
+    shader(shader &&) = default;
+    shader &operator=(shader &&) = default;
+
 	~shader();
 
 	void bind();

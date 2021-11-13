@@ -15,7 +15,7 @@ include_directories(${OPENGL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS})
 
 include_directories(.)
 
-add_executable(HACKENBUSH tests/test_render.cxx
+add_executable(HACKENBUSH tests/test_prototype.cxx
         common/profile.hpp
         game/game.hpp
         game/generators.cpp
@@ -34,6 +34,8 @@ add_executable(HACKENBUSH tests/test_render.cxx
         render/geometry.hpp
         render/shader.cpp
         render/shader.hpp
-        game/game.cpp)
+        game/game.cpp
+        game/client.hpp
+        game/client.cpp)
 
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY} ${OpenGlLinkers})
