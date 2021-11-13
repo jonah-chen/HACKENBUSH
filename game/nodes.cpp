@@ -26,17 +26,22 @@ namespace game::nodes {
 void normal::operator()(container &nodes, const glm::vec3 &bottomleft,
 						const glm::vec3 &topright, int32_t max_depth)
 {
-	if (IN(pos_, bottomleft, topright))
-		nodes.insert(this);
+	(IN(pos_, bottomleft, topright) ? nodes : nodes_discard).insert(this);
+
 	if (max_depth)
 	{
 		for (edge *edge: edges_)
 		{
 			node *other = edge->get_other(this);
-			if (nodes.find(other) == nodes.end()) // when other node not visited
+			if (nodes.find(other) == nodes.end() and nodes_discard.find
+			(other) == nodes_discard.end())	//
+				// when other node not
+				// visited
 				(*other)(nodes, bottomleft, topright, max_depth - 1);
 		}
 	}
+	if (max_depth == DEFAULT_MAX_DEPTH)
+		nodes_discard.clear();
 }
 
 // add the edges attached to this node using std::set_union

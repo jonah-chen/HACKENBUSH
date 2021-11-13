@@ -16,7 +16,7 @@
 #pragma once
 
 // define max search depths
-#define DEFAULT_MAX_DEPTH 1024
+#define DEFAULT_MAX_DEPTH 2047
 #define DEFAULT_MAX_BREADTH 1024
 
 // define negative int64_t constants: `special` numbers
@@ -213,6 +213,10 @@ public:
 
 protected:
 	glm::vec3 pos_; // 3D position of the node.
+
+	static container nodes_discard; // container for nodes that are outside
+									// render volume but marked as 'visited'
+									// by graph traversal.
 };
 
 /**
