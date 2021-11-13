@@ -134,6 +134,7 @@ void nodes::__update(const game::properties &cur_state)
 void selected_nodes::__update(const game::properties &cur_state)
 {
 	game::edge::container selected_edges;
+	type_ = cur_state.selected_branch->type;
 	selected_edges.insert(cur_state.selected_branch);
 	game::properties temp_state(cur_state.pos, selected_edges);
 	nodes::__update(temp_state);
@@ -330,7 +331,21 @@ void crosshair::prepare_shader(shader &shader) const
 
 void selected_nodes::prepare_shader(shader &shader) const
 {
-	shader.set_uniform("u_color", SELECTED_NODE_COLOR);
+	switch (type_)
+	{
+	case game::red:
+		shader.set_uniform("u_color", SELECTED_NODE_COLOR_R);
+		break;
+	case game::blue:
+		shader.set_uniform("u_color", SELECTED_NODE_COLOR_B);
+		break;
+	case game::green:
+		shader.set_uniform("u_color", SELECTED_NODE_COLOR_G);
+		break;
+	default:
+		shader.set_uniform("u_color", SELECTED_NODE_COLOR_0);
+		break;
+	}
 }
 
 void crosshair::switch_player()
