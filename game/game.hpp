@@ -5,6 +5,10 @@
 #include <vector>
 #include "interaction/input.hpp"
 
+enum player {
+	red_player = 0, blue_player
+};
+
 class hackenbush
 {
 public:
@@ -12,6 +16,8 @@ public:
     ~hackenbush();
 
     void tick();
+
+	void chop(game::edge *edge, player player);
 
     void get_visible_edges(game::edge::container& edges, const glm::vec3 &bottomleft, const glm::vec3 &topright) const;
 

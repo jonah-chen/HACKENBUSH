@@ -1,4 +1,4 @@
-//#define RELEASE
+#define RELEASE
 #define GLEW_STATIC
 
 #include <GL/glew.h>
@@ -27,6 +27,38 @@ debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 
 int main(int argc, char **argv)
 {
+    game::edge::container edges;
+	game::properties p(glm::vec3(0, 0, 0), edges);
+
+
+	glm::vec3 bottomleft(-10.0f, 0.0f, -10.0f);
+	glm::vec3 topright(10.0f, 10.0f, 10.0f);
+
+	glm::vec3 v1(8.0f, 0.0f, 0.0f);
+	glm::vec3 v2(8.0f, 1.0f, 0.0f);
+	glm::vec3 v3(8.0f, 2.0f, 0.0f);
+	glm::vec3 v4(8.0f, 2.0f, 1.0f);
+
+	game::nodes::normal n1(v1);
+	game::nodes::normal n2(v2);
+	game::nodes::normal n3(v3);
+	game::nodes::stack_root n4(v4, glm::vec3(0.0f, 3.0f, 0.0f), ALL_GREEN,
+							   GEOMETRIC, nullptr);
+
+	std::vector<game::edge *> buf;
+	buf.push_back(game::attach(game::green, &n1, &n2));
+	buf.push_back(game::attach(game::blue, &n2, &n3));
+	buf.push_back(game::attach(game::red, &n2, &n4));
+	n2.log();
+
+	std::cout << std::endl;
+
+	game::node::container c1;
+	n1(c1, bottomleft, topright);
+	for (auto *n: c1)
+		n->render(edges);
+
+
 	if (!glfwInit())
 	{
 		std::cerr << "Failed to initialize GLFW" << std::endl;
@@ -75,38 +107,6 @@ int main(int argc, char **argv)
 	render::geometry::nodes r_nodes(shader);
 	render::geometry::edges r_edges(shader2);
 	render::geometry::crosshair r_crosshair(shader);
-
-	game::edge::container edges;
-	game::properties p(glm::vec3(0, 0, 0), edges);
-
-
-	glm::vec3 bottomleft(-10.0f, 0.0f, -10.0f);
-	glm::vec3 topright(10.0f, 10.0f, 10.0f);
-
-	glm::vec3 v1(8.0f, 0.0f, 0.0f);
-	glm::vec3 v2(8.0f, 1.0f, 0.0f);
-	glm::vec3 v3(8.0f, 2.0f, 0.0f);
-	glm::vec3 v4(8.0f, 2.0f, 1.0f);
-
-	game::nodes::normal n1(v1);
-	game::nodes::normal n2(v2);
-	game::nodes::normal n3(v3);
-	game::nodes::stack_root n4(v4, glm::vec3(0.0f, 3.0f, 0.0f), ALL_GREEN,
-							   GEOMETRIC, nullptr);
-
-	std::vector<game::edge *> buf;
-	buf.push_back(game::attach(game::green, &n1, &n2));
-	buf.push_back(game::attach(game::blue, &n2, &n3));
-	buf.push_back(game::attach(game::red, &n2, &n4));
-	n2.log();
-
-	std::cout << std::endl;
-
-	game::node::container c1;
-	n1(c1, bottomleft, topright);
-	for (auto *n: c1)
-		n->render(edges);
-
 
 
 	// disable cursor

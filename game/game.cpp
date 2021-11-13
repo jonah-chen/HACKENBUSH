@@ -47,3 +47,12 @@ void hackenbush::get_visible_edges(game::edge::container& edges, const glm::vec3
 	for (game::node *n: visible_nodes)
 		n->render(edges);
 }
+
+void hackenbush::chop(game::edge *edge, player player)
+{
+	if (player == blue_player and edge->type != game::red or
+		player == red_player and edge->type != game::blue)
+	{
+		game::detach(edge);
+	}
+}
