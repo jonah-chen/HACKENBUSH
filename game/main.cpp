@@ -134,8 +134,13 @@ PROFILE_START;
 		cur_inputs = user_inputs::fetch(window); // fetch current inputs
 
 		if (DOWN(K_ESC, cur_inputs, prev_inputs))
+		{
+			if (playing)
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			else
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			playing = !playing;
-
+		}
 
 		if (playing)
 		{
@@ -176,7 +181,7 @@ PROFILE_START;
         else
 		{
 			if (DOWN(RMB, cur_inputs, prev_inputs))
-				switch_player(player, crosshair);
+				game.command_terminal();
 		}
 
 		prev_inputs = cur_inputs; // update prev_inputs

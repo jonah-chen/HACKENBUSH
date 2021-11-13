@@ -67,6 +67,6 @@ struct edge
 using lut_t = std::unordered_map<int32_t, glm::vec3>;
 using adj_list_t = std::vector<std::list<edge>>;
 
-void parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list);
+bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list);
 
 }

@@ -38,7 +38,7 @@ namespace worldgen {
  * rendered into the world.
  *
  */
-void parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
+bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 {
 	std::unordered_map<glm::vec3, int32_t> node_ids;
 
@@ -46,7 +46,7 @@ void parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
     if (!file.is_open())
 	{
         std::cerr << "Could not open file: " << filename << std::endl;
-        return;
+        return false;
     }
 
 	int line_number = 0;
@@ -192,6 +192,7 @@ void parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 			}
 		}
     }
+	return true;
 }
 
 }
