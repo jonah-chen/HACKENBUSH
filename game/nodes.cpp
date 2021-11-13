@@ -129,11 +129,15 @@ void stack::detach(edge *e)
 ///////////////////////////////////////////////////////////////////////////////
 stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 					   generators::type_gen tgen, generators::step_gen sgen,
-					   void *kwargs, stack_root *grandchild,
-					   int64_t order, int64_t cap)
+					   void *kwargs, int64_t order, int64_t cap)
 		: stack(pos, nullptr, order), vec_kwargs_(vec_kwargs),
-		  tgen_(tgen), sgen_(sgen), cap_(cap), grandchild_(grandchild)
+		  tgen_(tgen), sgen_(sgen), cap_(cap)
 {
+	const glm::vec3 end = sgen.a(INF, pos, vec_kwargs);
+	if (end.x == std::numeric_limits<float>::quiet_NaN())
+        grandchild_ == nullptr;
+	else
+		grandchild_ = new normal(end);
 }
 
 stack_root::~stack_root()
@@ -265,6 +269,11 @@ void stack_root::detach(int64_t order)
 	for (auto j = children_.find(order); j != children_.end(); ++j)
 		delete j->second;
 	children_.erase(it, children_.end());
+}
+
+node *stack_root::get_grandchild() const
+{
+	return grandchild_;
 }
 
 }

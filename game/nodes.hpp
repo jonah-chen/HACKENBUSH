@@ -20,6 +20,7 @@
 
 #include <map>
 #include <cmath>
+#include <limits>
 #include "prereqs.hpp"
 
 namespace game::nodes {
@@ -167,11 +168,13 @@ branch_type num(const int64_t order, void *kwargs);
  *      glm::vec3 (const int64_t, const glm::vec3&, const glm::vec3&)
  * 
  * @param order an integer representing the order of the step in the tree. The 
- * root is of order 0.
+ * root is of order 0. The limit can be found by using order=INF.
  * @param rootpos a vec3 describing the position of the root node.
  * @param kwargs a vec3 describing an additional argument (usually a direction) 
  * used by the generator.
  * @return a vec3 describing the position of a node of given order.
+ * @return a vec3 with x, y, and z values equal to QUIET NAN if the generator
+ * diverges.
  */
 namespace f {
 glm::vec3 linear(const int64_t order, const glm::vec3 &rootpos,
@@ -320,8 +323,7 @@ public:
 	 */
 	stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 			   generators::type_gen tgen, generators::step_gen sgen,
-			   void *kwargs, stack_root *grandchild = nullptr,
-			   int64_t order = 0, int64_t cap = INF);
+			   void *kwargs, int64_t order = 0, int64_t cap = INF);
 
 	stack_root(const stack_root &) = delete;
 
@@ -332,6 +334,8 @@ public:
 	stack *operator[](std::size_t i);
 
 	edge *__render(int32_t order = 0, stack *ptr = nullptr, bool next = true);
+
+	node *get_grandchild() const;
 
 	void operator()(node::container &nodes,
 					const glm::vec3 &bottomleft, const glm::vec3 &topright,
@@ -351,7 +355,7 @@ public:
 
 private:
 	container children_;
-	node *grandchild_;
+	node *grandchild_; // this is just a normal node.
 	generators::type_gen tgen_;
 	generators::step_gen sgen_;
 	int64_t cap_;

@@ -85,6 +85,7 @@ branch_type blue(const int64_t order, void *kwargs)
 glm::vec3 f::geometric(const int64_t order, const glm::vec3 &rootpos,
 					   const glm::vec3 &kwargs)
 {
+	if (order == INF) return rootpos + kwargs;
 	return rootpos +
 		   kwargs * (1.0f - std::pow(GEOMETRIC_CONSTANT, (float) order));
 }
