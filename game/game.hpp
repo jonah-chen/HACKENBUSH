@@ -3,7 +3,10 @@
 #include "prereqs.hpp"
 #include "render/buffer.hpp"
 #include <vector>
+#include <unordered_map>
+#include <list>
 #include "interaction/input.hpp"
+#include "worldgen/parser.hpp"
 
 enum player
 {
@@ -13,9 +16,11 @@ enum player
 class hackenbush
 {
 public:
-	hackenbush();
-
+	hackenbush() = default;
 	~hackenbush();
+
+	void load_world(const char *filename);
+	void load_default();
 
 	void tick();
 
@@ -29,5 +34,5 @@ private:
 	game::node::container grounded_nodes_;
 
 	std::vector<game::node *> node_buf;
-	std::vector<game::edge *> edge_buf;
+	game::edge::container edge_buf;
 };

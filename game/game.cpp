@@ -2,7 +2,42 @@
 #include "game/nodes.hpp"
 #include "game/generators.hpp"
 
-hackenbush::hackenbush()
+hackenbush::~hackenbush()
+{
+	for (auto *n: node_buf)
+		delete n;
+	for (auto *e: edge_buf)
+		delete e;
+}
+
+void hackenbush::load_world(const char *filename)
+{
+	worldgen::lut_t lut;
+	worldgen::adj_list_t adj_list;
+
+	worldgen::parse(filename, lut, adj_list);
+
+	node_buf.reserve(lut.size());
+	for(int32_t node_id = 0 ; node_id < lut.size(); node_id++)
+    {
+        auto *n = new game::nodes::normal(lut[node_id]);
+		node_buf.push_back(n);
+		if (n->get_pos().y == 0.0f)
+			grounded_nodes_.insert(n);
+    }
+
+	for (int32_t n_p1 = 0; n_p1 < adj_list.size(); ++n_p1)
+    {
+		auto *p1 = node_buf[n_p1];
+        for (auto &e : adj_list[n_p1])
+        {
+            auto *p2 = node_buf[e.id];
+            edge_buf.insert(game::attach(e.type, p1, p2));
+        }
+    }
+}
+
+void hackenbush::load_default()
 {
 	glm::vec3 v1(8.0f, 0.0f, 0.0f);
 	glm::vec3 v2(8.0f, 1.0f, 0.0f);
@@ -22,21 +57,13 @@ hackenbush::hackenbush()
 	node_buf.push_back(n3);
 	node_buf.push_back(n4);
 
-	edge_buf.push_back(game::attach(game::green, n1, n2));
-	edge_buf.push_back(game::attach(game::blue, n2, n3));
-	edge_buf.push_back(game::attach(game::red, n2, n4));
+	edge_buf.insert(game::attach(game::green, n1, n2));
+	edge_buf.insert(game::attach(game::blue, n2, n3));
+	edge_buf.insert(game::attach(game::red, n2, n4));
 
 	n2->log();
 
 	std::cout << std::endl;
-}
-
-hackenbush::~hackenbush()
-{
-	for (auto *n: node_buf)
-		delete n;
-	for (auto *e: edge_buf)
-		delete e;
 }
 
 void hackenbush::get_visible_edges(game::edge::container &edges,
@@ -57,5 +84,7 @@ void hackenbush::chop(game::edge *edge, player player)
 		(player == red_player and edge->type != game::blue))
 	{
 		game::detach(edge);
+		edge_buf.erase(edge);
 	}
 }
+
