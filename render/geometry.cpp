@@ -131,6 +131,15 @@ void nodes::__update(const game::properties &cur_state)
 }
 
 
+void selected_nodes::__update(const game::properties &cur_state)
+{
+	game::edge::container selected_edges;
+	selected_edges.insert(cur_state.selected);
+	game::properties temp_state(cur_state.pos, selected_edges);
+	nodes::__update(temp_state);
+}
+
+
 void edges::__update(const game::properties &cur_state)
 {
 	// use an edge container to store all the edges
@@ -313,6 +322,11 @@ void crosshair::prepare_shader(shader &shader) const
 	glm::mat4 identity = glm::mat4(1.0f);
 	shader.set_uniform("u_view", identity);
 	shader.set_uniform("u_projection", identity);
+}
+
+void selected_nodes::prepare_shader(shader &shader) const
+{
+	shader.set_uniform("u_color", SELECTED_NODE_COLOR);
 }
 
 }

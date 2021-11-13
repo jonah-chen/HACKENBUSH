@@ -62,7 +62,7 @@ public:
 	explicit nodes(shader &shader, float width = 0.2f,
 				   std::size_t max_nodes = RENDER_LIMIT);
 
-private:
+protected:
 	std::size_t max_nodes_;
 	float width_;
 
@@ -72,6 +72,16 @@ private:
 
 	void disable_vertex_attribs() override;
 
+	void prepare_shader(shader &shader) const override;
+};
+
+class selected_nodes: public nodes
+{
+public:
+    explicit selected_nodes(shader &shader, float width = 0.2f)
+							: nodes(shader, width, 2) {}
+private:
+	void __update(const game::properties &cur_state) override;
 	void prepare_shader(shader &shader) const override;
 };
 
