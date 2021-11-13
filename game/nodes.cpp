@@ -151,6 +151,7 @@ stack_root::~stack_root()
 {
 	for (auto &child: children_)
 		delete child.second;
+	delete kwargs_;
 }
 
 edge *stack_root::__render(int32_t order, stack *ptr, bool next)
@@ -244,14 +245,15 @@ void stack_root::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 
 bool stack_root::attach(edge *e)
 {
-	if (grandchild_)
-		return grandchild_->attach(e);
-
-	if (e->p1 == this or e->p2 == this)
-	{
-		grandchild_ = e->get_other(this);
-		return true;
-	}
+//	if (grandchild_)
+//		return grandchild_->attach(e);
+//
+//	if (e->p1 == this or e->p2 == this)
+//	{
+//		grandchild_ = e->get_other(this);
+//		return true;
+//	}
+//	return false;
 	return false;
 }
 

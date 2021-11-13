@@ -6,6 +6,67 @@ std::cerr << "unable to parse line " << line_number << ": " << line\
 continue;\
 }
 
+static void parse_positions(worldgen::lut_t &node_pos,
+							std::unordered_map<glm::vec3, int32_t> &node_ids,
+							const char* filename)
+{
+	std::ifstream file(filename);
+	if (!file.is_open())
+	{
+		std::cerr << "Could not open file: " << filename << std::endl;
+		return;
+	}
+
+	int line_number = 0;
+	int32_t node_id = 0;
+
+	std::string line;
+	while (std::getline(file, line))
+	{
+		line_number++; // incrament line number
+		if (line.empty() or line[0] == '#') continue; // check for error.
+
+		std::stringstream ss(line);
+		std::string command, option;
+		game::branch_type branch_type;
+		glm::vec3 pos1, pos2;
+
+		ss >> command;
+		if (command.size() != 1)
+		ERROR
+
+		ss >> option;
+		if (option.size() != 1)
+		ERROR
+
+		ss >> pos1.x >> pos1.y >> pos1.z;
+		if (ss.fail())
+		ERROR
+
+		// if the position is not found, update the database to include it.
+		if (node_ids.find(pos1) == node_ids.end())
+		{
+			node_ids[pos1] = node_id;
+			node_pos[node_id++] = pos1;
+		}
+
+		ss >> command;
+		if (command.size() != 2)
+		ERROR
+
+		ss >> pos2.x >> pos2.y >> pos2.z;
+		if (ss.fail())
+		ERROR
+
+		if (node_ids.find(pos2) == node_ids.end() and option[0] != 'f')
+		{
+			node_ids[pos2] = node_id;
+			node_pos[node_id++] = pos2;
+		}
+	}
+	file.close();
+}
+
 namespace worldgen {
 
 /**
@@ -41,13 +102,19 @@ namespace worldgen {
 bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 {
 	std::unordered_map<glm::vec3, int32_t> node_ids;
+	parse_positions(node_pos, node_ids, filename);
+
+	const std::size_t num_nodes = node_ids.size();
+
+	// create adjacency list
+	adj_list = adj_list_t(node_ids.size());
 
 	std::ifstream file(filename);
-    if (!file.is_open())
+	if (!file.is_open())
 	{
-        std::cerr << "Could not open file: " << filename << std::endl;
-        return false;
-    }
+		std::cerr << "Could not open file: " << filename << std::endl;
+		return false;
+	}
 
 	int line_number = 0;
 	int32_t node_id = 0;
@@ -63,15 +130,10 @@ bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 		game::branch_type branch_type;
 		glm::vec3 pos1, pos2;
 		int32_t id1, id2;
-
-
         ss >> command;
 		if (command.size() != 1) ERROR
-
-
 		ss >> option;
 		if (option.size() != 1) ERROR
-
 		switch (option[0])
 		{
 		case 'r':
@@ -84,6 +146,7 @@ bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 			branch_type = game::blue;
 			break;
 		case 'f':
+			branch_type = game::invalid;
 			break;// need to do more stuff
 		default:
 			branch_type = game::invalid;
@@ -95,48 +158,24 @@ bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 		ss >> pos1.x >> pos1.y >> pos1.z;
 		if (ss.fail()) ERROR
 
-		// if the position is not found, update the database to include it.
-		auto it = node_ids.find(pos1);
-
-		if (it == node_ids.end())
-		{
-			node_ids[pos1] = node_id;
-			node_pos[node_id] = pos1;
-			id1 = node_id++;
-
-			std::list<edge> empty_list;
-			adj_list.push_back(empty_list);
-		}
-		else
-			id1 = it->second;
-
-
 		ss >> command;
 		if (command.size() != 2) ERROR
 
 		ss >> pos2.x >> pos2.y >> pos2.z;
 		if (ss.fail()) ERROR
 
-		if (command == "->")
+		id1 = node_ids.at(pos1);
+		if (branch_type == game::invalid)
+			adj_list[id1].ty = node_type::stack_root;
+        else
 		{
-			auto it = node_ids.find(pos2);
-			if (it == node_ids.end())
-            {
-                node_ids[pos2] = node_id;
-				node_pos[node_id] = pos2;
-				id2 = node_id++;
-
-				std::list<edge> empty_list;
-				adj_list.push_back(empty_list);
-            }
-			else
-				id2 = it->second;
-			edge _edge(id2, branch_type);
-			adj_list[id1].push_back(_edge);
+			id2 = node_ids.at(pos2);
+			adj_list[id1].conn.push_back(edge(id2, branch_type));
 		}
-		else if (command == "::")
+
+		if (command == "::")
 		{
-			ss >> command;
+			ss >> command; // parse the type of infinite stack
 			if (command.size() != 1) ERROR
 			switch(command[0])
             {
@@ -151,16 +190,16 @@ bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 				break;
 			case 'g':
 				{
-					pos2 += pos1;
-					auto it = node_ids.find(pos2);
+					glm::vec3 leaf = pos1 + pos2;
+					auto it = node_ids.find(leaf);
+
+					// if the leaf is not attached to anything else, it won't
+					// be in the LUT yet. Thus, add it.
 					if (it == node_ids.end())
                     {
-                        node_ids[pos2] = node_id;
-                        node_pos[node_id] = pos2;
-                        id2 = node_id++;
-
-						std::list<edge> empty_list;
-						adj_list.push_back(empty_list);
+						id2 = node_ids.size();
+                        node_ids[leaf] = id2;
+                        node_pos[id2] = leaf;
                     }
                     else
                         id2 = it->second;
@@ -170,26 +209,33 @@ bool parse(const char* filename, lut_t &node_pos, adj_list_t &adj_list)
 				ERROR
 			}
 
-			int numerator, denominator;
+			int32_t numerator, denominator;
 			ss >> numerator >> denominator;
 			if (ss.fail()) ERROR
+
+			edge _edge;
 
 			if (denominator == 0)
 			{
 				if (numerator > 0)
-					adj_list[id1].push_back(edge(id2, game::red,
-												 ALL_RED, GEOMETRIC));
+					_edge = edge(id2, game::red, ALL_RED, GEOMETRIC, nullptr,
+								 pos2);
                 else if (numerator < 0)
-                    adj_list[id1].push_back(edge(id2, game::blue, ALL_BLUE,
-												 GEOMETRIC));
+                    _edge = edge(id2, game::blue, ALL_BLUE, GEOMETRIC,
+								 nullptr, pos2);
                 else
-                    adj_list[id1].push_back(edge(id2, game::green, ALL_GREEN,
-												 GEOMETRIC));
+					_edge = edge(id2, game::green, ALL_GREEN, GEOMETRIC,
+								 nullptr, pos2);
 			}
 			else
 			{
-				std::cerr << "Other fractions are not implemented yet" << std::endl;
+				int32_t *fraction = new int32_t[2];
+				fraction[0] = numerator;
+				fraction[1] = denominator;
+				_edge = edge(id2, game::blue, FRACTION, GEOMETRIC, fraction,
+							 pos2);
 			}
+			adj_list[id1].conn.push_front(_edge);
 		}
     }
 	return true;

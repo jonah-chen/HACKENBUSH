@@ -84,8 +84,9 @@ static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
 					 branch_type zero)
 {
 	int32_t numerator = ((int32_t *) kwargs)[0];
-	uint32_t denominator = ((uint32_t *) (kwargs))[1];
+	int32_t denominator = ((int32_t *) (kwargs))[1];
 	assert(numerator and denominator);
+	assert(denominator > 0);
 	assert(denominator & (denominator - 1));
 
 	// compute the fraction
@@ -105,7 +106,7 @@ static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
 		return one;
 
 	uint32_t fractional_part = numerator % denominator;
-	auto frac = std::make_pair(numerator % denominator, denominator);
+	auto frac = std::make_pair(fractional_part, denominator);
 	auto it = stack_root::fraction_lut.find(frac);
 
 	// if it is not in the LUT, compute it and insert it
@@ -116,18 +117,25 @@ static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
 	}
 	else
 	{
-		std::vector<bool> bits;
+		std::size_t num_zeros = 0;
+		while (fractional_part < denominator)
+		{
+			fractional_part <<= 1;
+			num_zeros++;
+		}
+
+		std::vector<bool> bits(num_zeros);
 		while(true)
 		{
 			fractional_part <<= 1;
 			bits.push_back(fractional_part >= denominator);
 			fractional_part %= denominator;
-			const std::size_t length = bits.size();
+			const std::size_t length = bits.size() - num_zeros;
 			if (!(length & 1))
 			{
-				auto begining = bits.begin();
-				auto half_way = begining + length / 2;
-				if (std::equal(begining, half_way, half_way))
+				auto beginning = bits.begin() + num_zeros;
+				auto half_way = beginning + length / 2;
+				if (std::equal(beginning, half_way, half_way))
 				{
 					bits.erase(half_way, bits.end());
 					break;

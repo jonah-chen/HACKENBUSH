@@ -28,10 +28,26 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 		return;
 
 	node_buf.reserve(lut.size());
+
 	for(int32_t node_id = 0; node_id < lut.size(); node_id++)
     {
-        auto *n = new game::nodes::normal(lut[node_id] + offset);
+		game::node *n;
+
+		glm::vec3 &pos = lut[node_id];
+		auto &node_type = adj_list[node_id];
+
+		if (node_type.ty == worldgen::node_type::stack_root)
+		{
+			auto &front_edge = node_type.conn.front();
+			n = new game::nodes::stack_root(pos + offset, front_edge.vec_kwargs,
+											front_edge.type_gen, front_edge
+											.step_gen, front_edge.kwargs);
+		}
+		else
+			n = new game::nodes::normal(pos + offset);
+
 		node_buf.push_back(n);
+
 		if (n->get_pos().y == 0.0f)
 			grounded_nodes_.insert(n);
     }
@@ -39,11 +55,14 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 	for (int32_t n_p1 = 0; n_p1 < adj_list.size(); ++n_p1)
     {
 		auto *p1 = node_buf[n_p1+cur_num_nodes];
-        for (auto &e : adj_list[n_p1])
-        {
-            auto *p2 = node_buf[e.id+cur_num_nodes];
-            edge_buf.insert(game::attach(e.type, p1, p2));
-        }
+		//if (adj_list[n_p1].ty == worldgen::node_type::normal)
+		{
+			for (auto &e: adj_list[n_p1].conn)
+			{
+				auto *p2 = node_buf[e.id + cur_num_nodes];
+				edge_buf.insert(game::attach(e.type, p1, p2));
+			}
+		}
     }
 }
 
