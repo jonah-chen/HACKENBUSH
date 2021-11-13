@@ -22,7 +22,8 @@ public:
 	hackenbush() = default;
 	~hackenbush();
 
-	void load_world(const char *filename);
+	void load_world(const char *filename,
+					const glm::vec3 &offset = glm::vec3());
 	void load_default();
 
 	void tick();
@@ -32,6 +33,8 @@ public:
 	void
 	get_visible_edges(game::edge::container &edges, const glm::vec3 &bottomleft,
 					  const glm::vec3 &topright) const;
+
+	void command_terminal();
 
 private:
 	game::node::container grounded_nodes_;

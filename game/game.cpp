@@ -10,7 +10,7 @@ hackenbush::~hackenbush()
 		delete e;
 }
 
-void hackenbush::load_world(const char *filename)
+void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 {
 	if (!filename)
 	{
@@ -22,12 +22,15 @@ void hackenbush::load_world(const char *filename)
 	worldgen::lut_t lut;
 	worldgen::adj_list_t adj_list;
 
-	worldgen::parse(filename, lut, adj_list);
+	std::size_t cur_num_nodes = node_buf.size();
+
+	if (!worldgen::parse(filename, lut, adj_list))
+		return;
 
 	node_buf.reserve(lut.size());
-	for(int32_t node_id = 0 ; node_id < lut.size(); node_id++)
+	for(int32_t node_id = 0; node_id < lut.size(); node_id++)
     {
-        auto *n = new game::nodes::normal(lut[node_id]);
+        auto *n = new game::nodes::normal(lut[node_id] + offset);
 		node_buf.push_back(n);
 		if (n->get_pos().y == 0.0f)
 			grounded_nodes_.insert(n);
@@ -35,10 +38,10 @@ void hackenbush::load_world(const char *filename)
 
 	for (int32_t n_p1 = 0; n_p1 < adj_list.size(); ++n_p1)
     {
-		auto *p1 = node_buf[n_p1];
+		auto *p1 = node_buf[n_p1+cur_num_nodes];
         for (auto &e : adj_list[n_p1])
         {
-            auto *p2 = node_buf[e.id];
+            auto *p2 = node_buf[e.id+cur_num_nodes];
             edge_buf.insert(game::attach(e.type, p1, p2));
         }
     }
@@ -51,12 +54,16 @@ void hackenbush::load_default()
 	glm::vec3 v3(8.0f, 2.0f, 0.0f);
 	glm::vec3 v4(8.0f, 2.0f, 1.0f);
 
+	int32_t *fraction= new int32_t[2];
+	fraction[0] = 2;
+	fraction[1] = 3;
+
 	auto *n1 = new game::nodes::normal(v1);
 	auto *n2 = new game::nodes::normal(v2);
 	auto *n3 = new game::nodes::normal(v3);
 	auto *n4 = new game::nodes::stack_root(v4, glm::vec3(0.0f, 3.0f, 0.0f),
-										   ALL_GREEN,
-										   GEOMETRIC, nullptr);
+										   FRACTION,
+										   GEOMETRIC, fraction);
 
 	grounded_nodes_.insert(n1);
 	node_buf.push_back(n1);
@@ -97,3 +104,45 @@ bool hackenbush::chop(game::edge *edge, player player)
 	return false;
 }
 
+void hackenbush::command_terminal()
+{
+	std::cout << "You have discovered the command terminal. Type HELP to see "
+				 "the list of commands\n";
+
+	std::string command;
+
+	while (std::cin.good())
+	{
+		std::cout << ">>";
+		std::cin >> command;
+
+		if (command == "KILL")
+			exit(0);
+		else if (command == "EXIT")
+		{
+			std::cout << "Exiting... Press ESC again to return to game.\n";
+			return;
+		}
+		else if (command == "HELP")
+			std::cout << "Argument List:\n"
+						 "EXIT : exit the terminal and go back to the game\n"
+						 "LOAD [filename] : Load a world from file\n"
+						 "LOGINFO : Print the debug info to the terminal\n"
+						 "KILL : exit the game\n";
+		else if (command == "LOAD")
+		{
+			std::string filename;
+			std::cin >> filename;
+			glm::vec3 offset;
+			std::cin >> offset.x >> offset.z;
+			offset.y = 0;
+			std::cout << "Loading world at " << filename << " with offset ("
+                      << offset.x << ",0," << offset.z << ")\n";
+			load_world(filename.c_str(), offset);
+		}
+		else if (command == "LOGINFO")
+			std::cout << "Logging info is not implemented\n";
+		else std::cout << "Invalid command.\n"
+						  "Type HELP to see the list of commands\n";
+	}
+}
