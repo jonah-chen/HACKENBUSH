@@ -253,11 +253,15 @@ using type_gen = branch_type (*)(const int64_t, void *);
 
 struct step_gen
 {
-	glm::vec3 (*a)(const int64_t order, const glm::vec3 &rootpos,
-				   const glm::vec3 &kwargs);
-
-	int64_t (*a_)(const glm::vec3 &bottomleft, const glm::vec3 &topright,
-				  const glm::vec3 &rootpos, const glm::vec3 &kwargs);
+private:
+    using func = glm::vec3 (*)(const int64_t, const glm::vec3 &, const glm::vec3 &);
+    using inv_func = int64_t (*)(const glm::vec3 &, const glm::vec3 &,
+                                 const glm::vec3 &, const glm::vec3 &);
+public:
+	func a;
+    inv_func a_;
+    step_gen() = default;
+    step_gen(func a, inv_func a_) : a(a), a_(a_) {}
 };
 
 }

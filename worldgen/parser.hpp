@@ -1,6 +1,6 @@
 /**
  * @file parser.hpp
- * @author your name (you@domain.com)
+ * @author Jonah Chen
  * @brief implement the prerequisites to parse world generation files (.hkb) and
  *  generate a world using them.
  * @version 1.0
@@ -54,11 +54,8 @@ struct edge
 
 	edge() = default;
 
-	edge(int32_t id, game::branch_type type) : id(id), type(type)
+	edge(int32_t id, game::branch_type type) : id(id), type(type), type_gen(), step_gen(), kwargs()
 	{
-		type_gen = nullptr;
-		step_gen = {nullptr, nullptr};
-		kwargs = nullptr;
 	}
 
 	edge(int32_t id, game::branch_type type,
