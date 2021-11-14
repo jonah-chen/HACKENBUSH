@@ -57,6 +57,7 @@ user_inputs user_inputs::fetch(GLFWwindow *window)
 	K_D(inputs) = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
 	K_ESC(inputs) = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 	K_P(inputs) = glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS;
+    K_LCTRL(inputs) = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
 	return inputs;
 }
 
@@ -80,7 +81,8 @@ std::ostream &operator<<(std::ostream &os, const user_inputs &inputs)
 	   << " W:" << K_W(inputs) << " A:" << K_A(inputs)
 	   << " S:" << K_S(inputs) << " D:" << K_D(inputs)
 	   << " SPACE:" << K_SPACE(inputs) << " LSHIFT:" << K_LSHIFT(inputs)
-	   << " ESC:" << K_ESC(inputs) << " P:" << K_P(inputs);
+	   << " ESC:" << K_ESC(inputs) << " P:" << K_P(inputs) 
+       << " LCTRL:" << K_LCTRL(inputs);
 	return os;
 }
 
@@ -104,7 +106,7 @@ execute_movement(render::camera &camera, const game::properties &properties,
 
 
 	// no acceleration yet
-	const float velocity = 2.0f;
+	float velocity = K_LCTRL(inputs) ? 10.0f : 2.0f;
 	const float acceleration = 0.0f;
 
 	// the WASD keys control the movement of the camera
