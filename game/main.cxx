@@ -312,7 +312,9 @@ static int parse_args(int argc, char **argv, player &player)
 		{
 			std::cout << "Usage: hackenbush [world_file] [first_player: "
 						 "-R/-B]\n"
-						 "If no world file is specified, a default world will "
+                         "- If the world specified is 0, an empty world will be"
+                         " generated\n"
+						 "- If no world file is specified, a default world will "
 						 "be generated.\n";
 			exit(0);
 		}

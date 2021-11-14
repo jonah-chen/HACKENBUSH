@@ -17,6 +17,12 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 		return;
 	}
 
+    if (strcmp(filename, "0") == 0)
+    {
+        std::cout << "Loading empty world" << std::endl;
+        return;
+    }
+
 	worldgen::lut_t lut;
 	worldgen::adj_list_t adj_list;
 
@@ -90,10 +96,6 @@ void hackenbush::load_default()
 	edge_buf.insert(game::attach(game::green, n1, n2));
 	edge_buf.insert(game::attach(game::blue, n2, n3));
 	edge_buf.insert(game::attach(game::red, n2, n4));
-
-	n2->log();
-
-	std::cout << std::endl;
 }
 
 void hackenbush::get_visible_edges(game::edge::container &edges,
@@ -143,6 +145,7 @@ void hackenbush::command_terminal()
 			std::cout << "Argument List:\n"
 						 "EXIT : exit the terminal and go back to the game\n"
 						 "LOAD [filename] : Load a world from file\n"
+                         "RESET : Reset the world to an empty world\n"
 						 "LOGINFO : Print the debug info to the terminal\n"
 						 "KILL : exit the game\n";
 		else if (command == "LOAD")
@@ -152,14 +155,25 @@ void hackenbush::command_terminal()
 			glm::vec3 offset;
 			std::cin >> offset.x >> offset.z;
 			offset.y = 0;
-			std::cout << "Loading world at " << filename << " with offset ("
+            
+            // if the file doesn't end with .hkb, then assume it is a common 
+            // game stored in the common_games directory
+            if (filename.size() <= 4 or filename.substr(filename.size() - 4) != ".hkb")
+                filename = "worldgen/common_games/" + filename + ".hkb";
+
+            std::cout << "Loading world at " << filename << " with offset ("
 					  << offset.x << ",0," << offset.z << ")\n";
 			load_world(filename.c_str(), offset);
 		}
+        else if (command == "RESET")
+        {
+            std::cout << "Resetting world...\n";
+            *this = hackenbush();
+        }
 		else if (command == "LOGINFO")
 			std::cout << "Logging info is not implemented\n";
 		else
 			std::cout << "Invalid command.\n"
-						 "Type HELP to see the list of commands\n";
+						 "Type HELP to see the list of commands\n"; 
 	}
 }
