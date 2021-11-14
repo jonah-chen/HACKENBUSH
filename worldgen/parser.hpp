@@ -1,25 +1,15 @@
 /**
- * We will try to parse a few standard commands to generate the world.
- * There are different types of branches you can create:
- * 	- 'b' for branch
- * 	- 's' for stack
- * 	- 'f' for flower
- *
- * For option 'b' are different colors too:
- * 	- 'r' for red
- * 	- 'g' for green
- * 	- 'b' for blue
- *
- * For stacks, these options work as well. But to create a stack that represent
- * some number, use 'f'.
- *
- * Afterwards, you must specify the coordinates in 3 dimensions as floats. For
- * stacks, specify the root first, then specify the vector kwargs.
- *
- * The file will be converted into a set of nodes and edges that will be
- * rendered into the world.
- *
+ * @file parser.hpp
+ * @author your name (you@domain.com)
+ * @brief implement the prerequisites to parse world generation files (.hkb) and
+ *  generate a world using them.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
  */
+
 
 #pragma once
 

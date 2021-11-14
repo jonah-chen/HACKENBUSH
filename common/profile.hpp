@@ -8,7 +8,7 @@
  * 
  * @warning note that defining RELEASE will disable the profiler.
  * 
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-10
  * 
  * @copyright Copyright (c) 2021

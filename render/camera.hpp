@@ -1,8 +1,21 @@
+/**
+ * @file camera.hpp
+ * @author Jonah Chen
+ * @brief define the camera that is used for rendering 3D objects and control
+ * the player's position and orientation in the world. The camera uses a 
+ * perspective projection.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #define GLM_FORCE_RADIANS
-#define QUARTERNION_ERROR_TOLERANCE 1e-3f
 
+#include "common/constants.hpp"
 #include "game/prereqs.hpp"
 #include "shader.hpp"
 #include <glm/glm.hpp>

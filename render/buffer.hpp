@@ -2,7 +2,7 @@
  * @file buffer.hpp
  * @author Jonah Chen
  * @brief create, compile, and load vertex and index buffers.
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-11
  * 
  * @copyright Copyright (c) 2021

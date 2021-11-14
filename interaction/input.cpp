@@ -1,12 +1,17 @@
 #include "input.hpp"
 
 /**
- * @brief
- * @param forward vec3 normalized forward vector
- * @param position
- * @param p1
- * @param p2
- * @return
+ * @brief calculate the minimum distance between a ray and a line segment. The 
+ * ray is defined by the forward and position vectors, and the line segment is 
+ * described by the two endpoints p1 and p2.
+ * 
+ * @param forward a vec3 describing the normalized forward vector of the camera.
+ * @param position a vec3 describing the position of the camera.
+ * @param p1 a vec3 describing the position of one endpoint of a branch.
+ * @param p2 a vec3 describing the position of the other endpoint of a branch.
+ * @return a float describing the minimum distance between the ray of the 
+ * forward vector and the branch.
+ * @return infinity if the branch is behind the player.
  */
 static float calc_min_distance(const glm::vec3 &forward, const glm::vec3 &pos,
 							   const glm::vec3 &p1, const glm::vec3 &p2)

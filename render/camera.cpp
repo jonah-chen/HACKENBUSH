@@ -1,3 +1,14 @@
+/**
+ * @file camera.cpp
+ * @author Jonah Chen
+ * @brief implement the camera functionality for rendering specified in `camera.hpp`
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "camera.hpp"
 
 namespace render {

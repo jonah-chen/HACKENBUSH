@@ -11,8 +11,11 @@ b g 1 1 0 -> 0 0 0
 b r 1 2 0 -> 1 1 0
 
 b g 1 3 0 -> 0 0 1
-b g 1 3 0 -> 1 2 0
+b g 1 2 0 -> 1 3 0
 
 b b 1 4 0 -> 0 0 2
 
-#b f 1 3 0 :: 0 11 0 g 1 0
+# Here I'm generating an infinite branch with value 1/9
+b f 1 3 0 :: 0 11 0 g 1 9
+
+b r 1 14 0 -> 1 15 5

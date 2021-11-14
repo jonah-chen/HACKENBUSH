@@ -1,3 +1,15 @@
+/**
+ * @file input.hpp
+ * @author Jonah Chen
+ * @brief contains the necessary functions to obtain and process the user input 
+ * which is used to control the camera, game, and the client itself.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #include "render/camera.hpp"
@@ -91,7 +103,22 @@ void execute_movement(render::camera &camera, const game::properties &cur_state,
 					  const user_inputs &inputs, const user_inputs &last_inputs,
 					  float fps = 60.0f);
 
+
+/**
+ * @brief Find the selected edge from a collection of candidates. The selected 
+ * edge is the edge that is the edge closest to the direction the player is 
+ * facing and must be within a given tolerance.
+ * 
+ * @param camera a camera object describing the player's position and 
+ * orientation.
+ * @param properties a game properties object describing the current game 
+ * state.
+ * @param inputs user inputs at the current frame. 
+ * @param candidates a collection of edges that are currently rendered on the 
+ * screen.
+ * @return a pointer to the selected edge.
+ * @return nullptr if no edge should be selected.
+ */
 game::edge *select(const render::camera &camera, const game::properties
 &properties, const user_inputs &inputs, const game::edge::container
 				   &candidates);
-

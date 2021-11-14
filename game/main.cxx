@@ -1,3 +1,14 @@
+/**
+ * @file main.cxx
+ * @author Jonah Chen
+ * @brief The client for the hackenbush game. Contains the main loop.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #define RELEASE
 #define GLEW_STATIC
 
@@ -11,14 +22,41 @@
 #include "render/geometry.hpp"
 #include "game/game.hpp"
 
+/**
+ * @brief Initialize the current OpenGL context and GLFW window for the game.
+ * 
+ * @param window reference to the GLFW window pointer, which will store the 
+ * created window.
+ * @return 0 on success.
+ * @return nonzero number on failure, and an error message is printed to stderr.
+ */
 static int init(GLFWwindow **window);
 
+/**
+ * @brief parse the arguments to initialize the program.
+ * 
+ * @param argc the number of arguments.
+ * @param argv the array of arguments c-strings
+ * @param player reference to the player value, which will store the player who 
+ * goes first.
+ * @return the location of `argv` that contains the file path of the world file. 
+ */
 static int parse_args(int argc, char **argv, player &player);
 
+/**
+ * @brief switch the player to the next player, this is usually done in single 
+ * player mode when the current player is done with chopping a branch or passes 
+ * their turn.
+ * 
+ * @param player reference to the player value, which stores the current player. 
+ * @param crosshair reference to the crosshair that is currently rendered.
+ */
 static inline void switch_player(player &player,
 								 render::geometry::crosshair &crosshair);
 
-// write glDebugMessageCallback to print to console
+/**
+ * @brief callback that will catch OpenGL errors, and print them to stderr.
+ */
 static void APIENTRY
 debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 			  GLsizei length, const GLchar *message, const void *userParam);
@@ -199,14 +237,13 @@ void main()
 }
 
 
-// write glDebugMessageCallback to print to console
 static void APIENTRY
 debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 			  GLsizei length, const GLchar *message, const void *userParam)
 {
 	if (severity == GL_DEBUG_SEVERITY_HIGH)
 	{
-		std::cout << "Error " << id << ":" << message << std::endl;
+		std::cerr << "Error " << id << ":" << message << std::endl;
 		throw std::runtime_error("OpenGL error");
 	}
 }

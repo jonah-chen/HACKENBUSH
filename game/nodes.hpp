@@ -6,7 +6,7 @@
  * - Nodes of a `normal` graph.
  * - Nodes of an infinitely deep graph.
  * - Nodes of an infinitely wide graph.
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-09
  * 
  * @copyright Copyright (c) 2021
@@ -15,8 +15,7 @@
 
 #pragma once
 
-// define the rate geometric series shrinks
-#define GEOMETRIC_CONSTANT 0.9f
+#include "common/constants.hpp"
 
 #include <map>
 #include <cmath>

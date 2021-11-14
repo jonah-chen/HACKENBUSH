@@ -1,3 +1,15 @@
+/**
+ * @file generators.hpp
+ * @author Jonah Chen
+ * @brief contains macros for the type and step generators used for infinite 
+ * stacks of branches.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #pragma once
 
 #define TYPE_GENERATORS

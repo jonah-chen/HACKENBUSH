@@ -28,17 +28,30 @@ number system, intricately entangled with a host of new and exotic numeric speci
 - Finite collections of red, blue, or green branches.
 - Infinite stacks of branches (only the harmonic generator is implemented for now).
 - Player can chop down branches, and unsupported branches will disappear.
-- Basic world generator (see `testworld.hkb`).
+- World Parser (see `testworld.hkb`).
+- Random (finite only) World Generator.
 
-### TODO:
+### Future Goals:
 
+- Complete documentation
 - Menu screen
 - Ground texture
-- Procedural world generation
-
-### More Ambitious Goals:
-
+- Lighting
 - Online multiplayer game
 - World editor mode
 - More different branch types & generators
 - Python wrapper?
+
+### Comments from Me:
+
+It has been great to work on this game. I love the concept, and the simplicity of the game but it has the potential to
+be so complex. Implementing the game in software is a great learning experience but very challenging. It has been very
+difficult to wrap my head around the infinities the game can create which I have yet to fully implement, I am happy with
+being able to get the infinite stack to work today. Also, I know the graphics don't look the best, but this is my first
+working graphical program. OpenGL is very challenging, but I finally got the basics down enough to have it working. Fall
+break is over, so I would definitely not be able to have as much energy to work on this in the future.
+
+### Finally
+
+Happy belated birthday my good friend (not mentioning your name to everyone)! Sorry for the still incomplete project,
+but I tried to wrap it up as much as I can in these few days.

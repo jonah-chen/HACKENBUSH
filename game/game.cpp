@@ -1,6 +1,5 @@
 #include "game.hpp"
 
-
 hackenbush::~hackenbush()
 {
 	for (auto *n: node_buf)

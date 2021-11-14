@@ -6,7 +6,7 @@
  * - Edges between nodes (branches) @see edge
  * - Nodes virtual class @see node
  * - 
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-09
  * 
  * @copyright Copyright (c) 2021
@@ -15,13 +15,7 @@
 
 #pragma once
 
-// define max search depths
-#define DEFAULT_MAX_DEPTH 256
-#define DEFAULT_MAX_BREADTH 256
-
-// define negative int64_t constants: `special` numbers
-#define INF (int64_t)0x92345678abcdef10
-#define NOT_FOUND (int64_t)0x902345678abcdef1
+#include "common/constants.hpp"
 
 #include <iostream>
 #include <vector>

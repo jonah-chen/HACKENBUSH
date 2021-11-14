@@ -2,7 +2,7 @@
  * @file shader.hpp
  * @author Jonah Chen
  * @brief class for compiling and linking OpenGL shaders. 
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-11
  * 
  * @copyright Copyright (c) 2021
@@ -41,10 +41,6 @@ public:
 
 	shader &operator=(const shader &) = delete;
 
-	shader(shader &&) = default;
-
-	shader &operator=(shader &&) = default;
-
 	~shader();
 
 	void bind();
@@ -52,12 +48,9 @@ public:
 	void unbind();
 
 	/**
-	 * @brief sets a uniform for the shader.
+	 * @brief These methods sets a uniform for the shader.
 	 *
 	 * @warning the shader will be bound after the uniform is set.
-	 *
-	 * @param name
-	 * @param value
 	 */
 	void set_uniform(const char *name, int value);
 

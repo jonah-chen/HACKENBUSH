@@ -1,6 +1,16 @@
-#include "nodes.hpp"
+/**
+ * @file generators.cpp
+ * @author Jonah Chen
+ * @brief implement the generators specified in the generator namespace of 
+ * nodes.hpp.
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 
-#define FLOAT_EPSILON 1e-7f
+#include "nodes.hpp"
 
 static inline glm::vec3 operator*(const glm::vec3 &v, float m)
 {

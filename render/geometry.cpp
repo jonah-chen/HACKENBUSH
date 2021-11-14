@@ -1,6 +1,14 @@
 #include "geometry.hpp"
 
-
+/**
+ * @brief Calculate the indices for multiple cubes, which acts as nodes to 
+ * render.
+ * 
+ * @param num_cubes the number of cubes to generate indices for 
+ * @param partial if true, only the 4 faces on the sides will be rendered.
+ * @return vector of unsigned ints, which are the indices for the cubes in the 
+ * vertex layout used in the node and edge geometries.
+ */
 static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
 												  bool partial = false)
 {
@@ -25,6 +33,11 @@ static std::vector<GLuint> calculate_cube_indices(std::size_t num_cubes,
 
 
 namespace render::geometry {
+/**
+ * @brief These functions are used to enable and disable vertex attributes for 
+ * a particular geometry.
+ * 
+ */
 
 void ground::enable_vertex_attribs()
 {
@@ -70,6 +83,14 @@ void crosshair::disable_vertex_attribs()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief These functions are used to update the vertex buffer objects for the 
+ * geometries when the player/world changes.
+ * 
+ * @pre the geometry must be bound.
+ * @param cur_state the current state of the game.
+ */
 
 void ground::__update(const game::properties &cur_state)
 {

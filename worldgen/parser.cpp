@@ -1,3 +1,14 @@
+/**
+ * @file parser.cpp
+ * @author Jonah Chen
+ * @brief implement the functionality specified in parser.hpp
+ * @version 1.0
+ * @date 2021-11-14
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "parser.hpp"
 
 #define ERROR {\
@@ -6,6 +17,14 @@ std::cerr << "unable to parse line " << line_number << ": " << line\
 continue;\
 }
 
+/**
+ * @brief process the intermediate step of parsing a file, which is identifying
+ * and parsing the key nodes that should be generated into the game.
+ * 
+ * @param node_pos the lookup table to store the node position.
+ * @param node_ids the inverse lookup table to store the node id.
+ * @param filename the filename of the file to parse.
+ */
 static void parse_positions(worldgen::lut_t &node_pos,
 							std::unordered_map<glm::vec3, int32_t> &node_ids,
 							const char *filename)
@@ -70,34 +89,15 @@ static void parse_positions(worldgen::lut_t &node_pos,
 namespace worldgen {
 
 /**
- * We will try to parse a few standard commands to generate the world.
- * There are different types of branches you can create:
- * 	- 'b' for branch
- * 	- 's' for stack
- * 	- 'f' for flower
- *
- * For option 'b' are different colors too:
- * 	- 'r' for red
- * 	- 'g' for green
- * 	- 'b' for blue
- *
- * For stacks, these options work as well. But to create a stack that represent
- * some number, use 'f'.
- *
- * Afterwards, you must specify the coordinates in 3 dimensions as floats.
- * Make sure to use an arrow (like ->) between the 2 points.
- * For stacks, specify the root first, then specify the vector kwargs. Use the
- * double colon to separate them instead of the arrow.
- *
- * Then, you must specify the type of rendering:
- * 	- 'c' for constant
- * 	- 'h' for harmonic
- * 	- 'q' for quadratic
- * 	- 'g' for geometric
- *
- * The file will be converted into a set of nodes and edges that will be
- * rendered into the world.
- *
+ * @brief Parse a file containing a list of nodes and their connections. 
+ * 
+ * @pre The file must be ".hkb" format specified in the documentation.
+ * 
+ * @param filename The name of the file to parse.
+ * @param node_pos reference to write the lookup table of node positions.
+ * @param adj_list reference to write the adjacency list.
+ * @return true if the file was parsed successfully.
+ * @return false if the file could not be parsed.
  */
 bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 {

@@ -3,7 +3,7 @@
  * @author Jonah Chen
  * @brief contains code to load geometry into vertex and index buffers for
  * rendering.
- * @version 0.1
+ * @version 1.0
  * @date 2021-11-11
  * 
  * @copyright Copyright (c) 2021
@@ -12,28 +12,26 @@
 
 #pragma once
 
-#define RENDER_LIMIT 4096
-
-// RGBA colors
-#define RED_CROSSHAIR_COLOR        1.0f,0.0f,0.0f,1.0f
-#define BLUE_CROSSHAIR_COLOR    0.0f,0.0f,1.0f,1.0f
-#define UNSELECTED_NODE_COLOR   1.0f,1.0f,1.0f,0.4f
-#define SELECTED_NODE_COLOR_0   0.0f,0.0f,0.0f,0.7f
-#define SELECTED_NODE_COLOR_R   0.8f,0.0f,0.0f,0.7f
-#define SELECTED_NODE_COLOR_G   0.0f,0.8f,0.0f,0.7f
-#define SELECTED_NODE_COLOR_B   0.0f,0.0f,0.8f,0.7f
-#define GROUND_COLOR            0.2f,0.2f,0.2f,1.0f
-
+#include "common/constants.hpp"
 #include "game/nodes.hpp"
 #include "buffer.hpp"
 #include <vector>
 
 namespace render::geometry {
 
+/**
+ * @brief The ground is a geometry that is just a quad at y = 0. This will 
+ * describe what nodes must be connected to in order to stay alive.
+ * 
+ * @details This geometry is a quad with vertices at x and z values +/- 
+ * render_distance from the player's current x and z position, and y = 0.
+ * 
+ */
 class ground : public mesh
 {
 public:
-	explicit ground(shader &shader, float render_distance); // the ground is y=0
+	explicit ground(shader &shader, float render_distance);
+
 private:
 	float render_distance_;
 
@@ -46,6 +44,12 @@ private:
 	void prepare_shader(shader &shader) const override;
 };
 
+
+/**
+ * @brief The crosshair is just two lines which aid the player in aiming at the 
+ * branches.
+ * 
+ */
 class crosshair : public mesh
 {
 public:
@@ -65,6 +69,13 @@ private:
 	bool is_blue_player;
 };
 
+/**
+ * @brief The nodes geometry is composed of axis aligned cubes which are 
+ * centered at the position of the node. These nodes are rendered to seperate 
+ * the edges from each other, which is especially useful when edges of the 
+ * same color are connected to each other.
+ * 
+ */
 class nodes : public mesh
 {
 public:
@@ -84,6 +95,14 @@ protected:
 	void prepare_shader(shader &shader) const override;
 };
 
+/**
+ * @brief The selected node have brighter colors to indicate to the player that 
+ * they are selected. 
+ * 
+ * @details It is the same as nodes but with a different color uniform so the 
+ * 2 nodes of the selected edge are rendered with a distinctive color. 
+ * 
+ */
 class selected_nodes : public nodes
 {
 public:
@@ -99,6 +118,15 @@ private:
 	game::branch_type type_;
 };
 
+/**
+ * @brief The edges geometry is composed of rectangular prisms which are 
+ * connected to each other. Edges are the primary component of the game as they 
+ * represent branches which the players can chop.
+ * 
+ * @warning The edges are usually rendered with a different shader, as the color
+ *  is a vertex attribute rather than a uniform.
+ * 
+ */
 class edges : public mesh
 {
 public:
