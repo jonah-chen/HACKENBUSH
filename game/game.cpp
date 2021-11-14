@@ -1,7 +1,6 @@
 #include "game.hpp"
 
 
-
 hackenbush::~hackenbush()
 {
 	for (auto *n: node_buf)
@@ -29,8 +28,8 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 
 	node_buf.reserve(lut.size());
 
-	for(int32_t node_id = 0; node_id < lut.size(); node_id++)
-    {
+	for (int32_t node_id = 0; node_id < lut.size(); node_id++)
+	{
 		game::node *n;
 
 		glm::vec3 &pos = lut[node_id];
@@ -41,7 +40,8 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 			auto &front_edge = node_type.conn.front();
 			n = new game::nodes::stack_root(pos + offset, front_edge.vec_kwargs,
 											front_edge.type_gen, front_edge
-											.step_gen, front_edge.kwargs);
+													.step_gen,
+											front_edge.kwargs);
 		}
 		else
 			n = new game::nodes::normal(pos + offset);
@@ -50,20 +50,18 @@ void hackenbush::load_world(const char *filename, const glm::vec3 &offset)
 
 		if (n->get_pos().y == 0.0f)
 			grounded_nodes_.insert(n);
-    }
+	}
 
 	for (int32_t n_p1 = 0; n_p1 < adj_list.size(); ++n_p1)
-    {
-		auto *p1 = node_buf[n_p1+cur_num_nodes];
-		//if (adj_list[n_p1].ty == worldgen::node_type::normal)
+	{
+		auto *p1 = node_buf[n_p1 + cur_num_nodes];
+		for (auto &e: adj_list[n_p1].conn)
 		{
-			for (auto &e: adj_list[n_p1].conn)
-			{
-				auto *p2 = node_buf[e.id + cur_num_nodes];
-				edge_buf.insert(game::attach(e.type, p1, p2));
-			}
+			auto *p2 = node_buf[e.id + cur_num_nodes];
+			game::edge *_e = game::attach(e.type, p1, p2);
+			if (_e) edge_buf.insert(_e);
 		}
-    }
+	}
 }
 
 void hackenbush::load_default()
@@ -73,7 +71,7 @@ void hackenbush::load_default()
 	glm::vec3 v3(8.0f, 2.0f, 0.0f);
 	glm::vec3 v4(8.0f, 2.0f, 1.0f);
 
-	int32_t *fraction= new int32_t[2];
+	int32_t *fraction = new int32_t[2];
 	fraction[0] = 2;
 	fraction[1] = 3;
 
@@ -156,12 +154,13 @@ void hackenbush::command_terminal()
 			std::cin >> offset.x >> offset.z;
 			offset.y = 0;
 			std::cout << "Loading world at " << filename << " with offset ("
-                      << offset.x << ",0," << offset.z << ")\n";
+					  << offset.x << ",0," << offset.z << ")\n";
 			load_world(filename.c_str(), offset);
 		}
 		else if (command == "LOGINFO")
 			std::cout << "Logging info is not implemented\n";
-		else std::cout << "Invalid command.\n"
-						  "Type HELP to see the list of commands\n";
+		else
+			std::cout << "Invalid command.\n"
+						 "Type HELP to see the list of commands\n";
 	}
 }

@@ -24,9 +24,11 @@
 #include "prereqs.hpp"
 
 // hash struct for pair of int32_t
-template <>
-struct std::hash<std::pair<int32_t, int32_t>> {
-	size_t operator()(const std::pair<int32_t, int32_t>& p) const {
+template<>
+struct std::hash<std::pair<int32_t, int32_t>>
+{
+	size_t operator()(const std::pair<int32_t, int32_t> &p) const
+	{
 		return hash<int32_t>()(p.first) ^ hash<int32_t>()(p.second);
 	}
 };
@@ -59,7 +61,7 @@ public:
 	 *
 	 * @param pos the position of the node.
 	 */
-	normal(const glm::vec3 &pos) : node(pos)
+	explicit normal(const glm::vec3 &pos, node *parent = nullptr) : node(pos)
 	{}
 
 	normal(const normal &) = delete;
@@ -314,7 +316,8 @@ class stack_root : public stack
 public:
 	// Lookup table for the binary representation of repeating fractions.
 	static std::unordered_map<std::pair<int32_t, int32_t>, std::vector<bool>>
-	fraction_lut;
+			fraction_lut;
+
 	/**
 	 * @brief Construct a node that admits a (possibly infinite) stack of
 	 * branches that is procedurally generated.

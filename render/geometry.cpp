@@ -69,10 +69,8 @@ void crosshair::disable_vertex_attribs()
 	glDisableVertexAttribArray(0);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 
-// NOT DONE!!!!!!
 void ground::__update(const game::properties &cur_state)
 {
 	float positions[] = {
@@ -163,6 +161,12 @@ void edges::__update(const game::properties &cur_state)
 		glm::vec3 p2 = e->p2->get_pos();
 		glm::vec4 color = branch_color(e->type);
 
+//		if (p2.y > 1.0f and p2.y < 1.8f)
+//		{
+//			std::cout << p2.y << std::endl;
+//			std::cout << "color " << color.x << " " << color.y << " " << color.z
+//                      << std::endl;
+//		}
 		glm::vec3 dir = p2 - p1;
 		// find 2 orthogonal vectors to dir
 		glm::vec3 test_vector;
@@ -320,9 +324,9 @@ void nodes::prepare_shader(shader &shader) const
 void crosshair::prepare_shader(shader &shader) const
 {
 	if (is_blue_player)
-        shader.set_uniform("u_color", BLUE_CROSSHAIR_COLOR);
-    else
-        shader.set_uniform("u_color", RED_CROSSHAIR_COLOR);
+		shader.set_uniform("u_color", BLUE_CROSSHAIR_COLOR);
+	else
+		shader.set_uniform("u_color", RED_CROSSHAIR_COLOR);
 	// set view projection matrix to the identity matrix
 	glm::mat4 identity = glm::mat4(1.0f);
 	shader.set_uniform("u_view", identity);
@@ -333,17 +337,13 @@ void selected_nodes::prepare_shader(shader &shader) const
 {
 	switch (type_)
 	{
-	case game::red:
-		shader.set_uniform("u_color", SELECTED_NODE_COLOR_R);
+	case game::red: shader.set_uniform("u_color", SELECTED_NODE_COLOR_R);
 		break;
-	case game::blue:
-		shader.set_uniform("u_color", SELECTED_NODE_COLOR_B);
+	case game::blue: shader.set_uniform("u_color", SELECTED_NODE_COLOR_B);
 		break;
-	case game::green:
-		shader.set_uniform("u_color", SELECTED_NODE_COLOR_G);
+	case game::green: shader.set_uniform("u_color", SELECTED_NODE_COLOR_G);
 		break;
-	default:
-		shader.set_uniform("u_color", SELECTED_NODE_COLOR_0);
+	default: shader.set_uniform("u_color", SELECTED_NODE_COLOR_0);
 		break;
 	}
 }

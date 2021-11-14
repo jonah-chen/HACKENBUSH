@@ -181,7 +181,8 @@ static void test_stack_node()
 			c1.clear();
 			n1(c1, bottomleft, topright);
 			std::cout << "c1.size() = " << c1.size() << std::endl;
-		} else delete e;
+		}
+		else delete e;
 	}
 	out.clear();
 	for (auto *e: c1)
@@ -201,7 +202,8 @@ static void test_stack_node()
 			n1(c1, bottomleft, topright);
 			std::cout << "c1.size() = " << c1.size() << std::endl;
 			c1.clear();
-		} else delete e;
+		}
+		else delete e;
 	}
 }
 

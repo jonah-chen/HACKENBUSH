@@ -18,9 +18,9 @@
 #define      K_S(IN) ( ((IN).tf)[6] ) // move down
 #define      K_D(IN) ( ((IN).tf)[7] ) // move right
 #define    K_ESC(IN) ( ((IN).tf)[8] ) // change to menu
-#define	     K_P(IN) ( ((IN).tf)[9] ) // pass your turn
+#define         K_P(IN) ( ((IN).tf)[9] ) // pass your turn
 
-#define DOWN(KEY,CUR,PREV) (KEY(CUR) and !KEY(PREV))
+#define DOWN(KEY, CUR, PREV) (KEY(CUR) and !KEY(PREV))
 
 #define FLOATPOINT_INPUTS 2
 #define TRUE_FALSE_INPUTS 10

@@ -36,8 +36,10 @@
 #include "game/generators.hpp"
 
 template<>
-struct std::hash<glm::vec3> {
-	size_t operator()(const glm::vec3& vec) const {
+struct std::hash<glm::vec3>
+{
+	size_t operator()(const glm::vec3 &vec) const
+	{
 		return std::hash<float>()(vec.x) ^ std::hash<float>()(vec.y) ^
 			   std::hash<float>()(vec.z);
 	}
@@ -45,7 +47,8 @@ struct std::hash<glm::vec3> {
 
 namespace worldgen {
 
-enum class node_type {
+enum class node_type
+{
 	normal = 0,
 	stack_root
 };
@@ -60,6 +63,7 @@ struct edge
 	glm::vec3 vec_kwargs;
 
 	edge() = default;
+
 	edge(int32_t id, game::branch_type type) : id(id), type(type)
 	{
 		type_gen = nullptr;
@@ -68,17 +72,21 @@ struct edge
 	}
 
 	edge(int32_t id, game::branch_type type,
-         game::nodes::generators::type_gen type_gen,
-         game::nodes::generators::step_gen step_gen, int32_t *kwargs, const
+		 game::nodes::generators::type_gen type_gen,
+		 game::nodes::generators::step_gen step_gen, int32_t *kwargs, const
 		 glm::vec3 &vec_kwargs)
-        : id(id), type(type), type_gen(type_gen), step_gen(step_gen),
-		kwargs(kwargs), vec_kwargs(vec_kwargs) {}
+			: id(id), type(type), type_gen(type_gen), step_gen(step_gen),
+			  kwargs(kwargs), vec_kwargs(vec_kwargs)
+	{}
 };
 
-struct adj_list_element {
+struct adj_list_element
+{
 	node_type ty;
 	std::list<edge> conn;
-	adj_list_element() : ty(node_type::normal) {}
+
+	adj_list_element() : ty(node_type::normal)
+	{}
 };
 
 using lut_t = std::unordered_map<int32_t, glm::vec3>;

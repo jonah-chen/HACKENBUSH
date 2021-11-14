@@ -81,7 +81,7 @@ branch_type blue(const int64_t order, void *kwargs)
 { return game::blue; }
 
 static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
-					 branch_type zero)
+							branch_type zero)
 {
 	int32_t numerator = ((int32_t *) kwargs)[0];
 	int32_t denominator = ((int32_t *) (kwargs))[1];
@@ -125,7 +125,7 @@ static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
 		}
 
 		std::vector<bool> bits(num_zeros);
-		while(true)
+		while (true)
 		{
 			fractional_part <<= 1;
 			bits.push_back(fractional_part >= denominator);
@@ -147,22 +147,23 @@ static branch_type fraction(const int64_t order, void *kwargs, branch_type one,
 		return bits[fractional_order % bits.size()] ? one : zero;
 	}
 }
-	/**
-	 * @brief
-	 *
-	 * @pre Numerator and denominator must be nonzero.
-	 * @pre denominator must be positive, and not a power of 2.
-	 *
-	 * @param order
-	 * @param kwargs
-	 * @return
-	 */
-	// kwargs is 2 int32_t's. Meaning it must be 8 bytes.
+/**
+ * @brief
+ *
+ * @pre Numerator and denominator must be nonzero.
+ * @pre denominator must be positive, and not a power of 2.
+ *
+ * @param order
+ * @param kwargs
+ * @return
+ */
+// kwargs is 2 int32_t's. Meaning it must be 8 bytes.
 branch_type fraction(const int64_t order, void *kwargs)
 {
 	if (kwargs)
 		return fraction(order, kwargs, game::red, game::blue);
-	throw std::runtime_error("Fractional generator requires two int32_t's as kwargs");
+	throw std::runtime_error(
+			"Fractional generator requires two int32_t's as kwargs");
 }
 
 }

@@ -15,7 +15,7 @@
 #define RENDER_LIMIT 4096
 
 // RGBA colors
-#define RED_CROSSHAIR_COLOR		1.0f,0.0f,0.0f,1.0f
+#define RED_CROSSHAIR_COLOR        1.0f,0.0f,0.0f,1.0f
 #define BLUE_CROSSHAIR_COLOR    0.0f,0.0f,1.0f,1.0f
 #define UNSELECTED_NODE_COLOR   1.0f,1.0f,1.0f,0.4f
 #define SELECTED_NODE_COLOR_0   0.0f,0.0f,0.0f,0.7f
@@ -49,10 +49,12 @@ private:
 class crosshair : public mesh
 {
 public:
-	explicit crosshair(shader &shader, bool player, float crosshair_size = 0.05f,
+	explicit crosshair(shader &shader, bool player,
+					   float crosshair_size = 0.05f,
 					   float aspect = 16.0f / 9.0f);
 
 	void switch_player();
+
 private:
 	void enable_vertex_attribs() override;
 
@@ -86,7 +88,8 @@ class selected_nodes : public nodes
 {
 public:
 	explicit selected_nodes(shader &shader, float width = 0.2f)
-			: nodes(shader, width, 2), type_(game::invalid) {}
+			: nodes(shader, width, 2), type_(game::invalid)
+	{}
 
 private:
 	void __update(const game::properties &cur_state) override;

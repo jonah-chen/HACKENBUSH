@@ -28,7 +28,7 @@ void camera::rotate(float pitch, float yaw)
 	// quaternion rotations can cause floating point errors.
 	// correct using the small angle approximation.
 	if ((right_.y > QUARTERNION_ERROR_TOLERANCE
-		or right_.y < -QUARTERNION_ERROR_TOLERANCE) and up_.y > 0.5f)
+		 or right_.y < -QUARTERNION_ERROR_TOLERANCE) and up_.y > 0.5f)
 		rotation = glm::rotate(rotation, right_.y,
 							   glm::vec3(forward_.x, 0.0f, forward_.z));
 

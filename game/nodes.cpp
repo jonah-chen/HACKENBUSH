@@ -130,7 +130,7 @@ void stack::detach(edge *e)
 ///////////////////////////////////////////////////////////////////////////////
 
 std::unordered_map<std::pair<int32_t, int32_t>, std::vector<bool>>
-stack_root::fraction_lut;
+		stack_root::fraction_lut;
 
 stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 					   generators::type_gen tgen, generators::step_gen sgen,
@@ -156,6 +156,7 @@ stack_root::~stack_root()
 
 edge *stack_root::__render(int32_t order, stack *ptr, bool next)
 {
+
 	if (!ptr) // when nullptr, default behavior
 	{
 		game::branch_type type = tgen_(1, kwargs_);
@@ -163,9 +164,10 @@ edge *stack_root::__render(int32_t order, stack *ptr, bool next)
 		auto branch = children_.find(1);
 		if (branch != children_.end())
 			return game::attach(type, this, branch->second);
-	} else
+	}
+	else
 	{
-		game::branch_type type = tgen_(order + next - 1, kwargs_);
+		game::branch_type type = tgen_(order + (int) next - 1, kwargs_);
 
 		auto branch = children_.find(next ? order + 1 : order - 1);
 		if (branch != children_.end())
@@ -197,6 +199,7 @@ void stack_root::operator()(node::container &nodes,
 							const glm::vec3 &topright, int32_t max_depth)
 {
 	int64_t first = sgen_.a_(bottomleft, topright, pos_, vec_kwargs_);
+
 	if (first == NOT_FOUND) // if this entire stack is not in the region,
 		return;             // then we don't need to do anything
 
@@ -245,15 +248,16 @@ void stack_root::log(std::ostream &os, uint8_t layers, uint8_t counter) const
 
 bool stack_root::attach(edge *e)
 {
-//	if (grandchild_)
-//		return grandchild_->attach(e);
-//
-//	if (e->p1 == this or e->p2 == this)
-//	{
-//		grandchild_ = e->get_other(this);
-//		return true;
-//	}
-//	return false;
+	if (e->p1 == this or e->p2 == this)
+	{
+		node *candidate = e->get_other(this);
+		if (candidate->get_pos() == grandchild_->get_pos())
+		{
+			node *tmp = grandchild_;
+			grandchild_ = candidate;
+			delete tmp;
+		}
+	}
 	return false;
 }
 
@@ -278,6 +282,7 @@ void stack_root::detach(int64_t order)
 	for (auto j = children_.find(order); j != children_.end(); ++j)
 		delete j->second;
 	children_.erase(it, children_.end());
+	grandchild_ = nullptr;
 }
 
 node *stack_root::get_grandchild() const

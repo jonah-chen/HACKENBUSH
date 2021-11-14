@@ -8,16 +8,11 @@ glm::vec4 branch_color(branch_type branch)
 {
 	switch (branch)
 	{
-		case red:
-			return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		case green:
-			return glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-		case blue:
-			return glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
-		case invalid:
-			return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		default:
-			return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	case red: return glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	case green: return glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+	case blue: return glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	case invalid: return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	default: return glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
 	}
 }
 
@@ -28,8 +23,11 @@ edge *attach(branch_type type, node *node1, node *node2)
 	bool success1 = node1->attach(e);
 	bool success2 = node2->attach(e);
 
-	if (success1 or success2)
+	if (success1)
 		return e;
+
+	if (success2)
+		node2->detach(e);
 
 	delete e;
 	return nullptr;

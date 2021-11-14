@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 	glm::vec3 bottomleft, topright;
 
 	bool GAME_SINGLE_PLAYER = true; // automatically switches between red and
-	                                // blue player.
+	// blue player.
 	player player = red_player;     // red goes first if not specified.
 	game::properties cur_state(glm::vec3(0.0f, 0.5f, 0.0f), edge_container);
 	bool playing = true;
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 		game.load_world(argv[parse_code]);
 	else
 		game.load_default();
-    
-    GLFWwindow *window;
+
+	GLFWwindow *window;
 	if (init(&window))
 		throw std::runtime_error("Error!");
 
@@ -124,12 +124,12 @@ void main()
 
 
 	// rendering loop
-    prev_inputs = user_inputs::fetch(window);
+	prev_inputs = user_inputs::fetch(window);
 	while (!glfwWindowShouldClose(window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT); // clear the screen
 
-PROFILE_START;
+		PROFILE_START;
 
 		cur_inputs = user_inputs::fetch(window); // fetch current inputs
 
@@ -172,13 +172,13 @@ PROFILE_START;
 			camera.set_view_projection(basic_shader);
 			ground.update(cur_state);
 			camera.set_view_projection(edge_shader);
-			edges.update(cur_state);
 			nodes.update(cur_state);
+			edges.update(cur_state);
 			if (cur_state.selected_branch)
 				s_nodes.update(cur_state);
 			crosshair.update(cur_state);
-		} 
-        else
+		}
+		else
 		{
 			if (DOWN(RMB, cur_inputs, prev_inputs))
 				game.command_terminal();
@@ -186,7 +186,7 @@ PROFILE_START;
 
 		prev_inputs = cur_inputs; // update prev_inputs
 
-PROFILE_LOG;
+		PROFILE_LOG;
 
 		glfwSwapBuffers(window); // swap buffers
 		glfwPollEvents(); // poll events
@@ -268,7 +268,8 @@ static int parse_args(int argc, char **argv, player &player)
 		std::cout << "You have not specified a world generation file\n"
 					 "A default world would be generated instead.\n";
 		return 0;
-	} else
+	}
+	else
 	{
 		if (strcmp(argv[1], "--help") == 0 or strcmp(argv[1], "-h") == 0)
 		{
@@ -277,8 +278,8 @@ static int parse_args(int argc, char **argv, player &player)
 						 "If no world file is specified, a default world will "
 						 "be generated.\n";
 			exit(0);
-		} 
-        else if (strcmp(argv[1], "-R") == 0)
+		}
+		else if (strcmp(argv[1], "-R") == 0)
 			player = red_player;
 		else if (strcmp(argv[1], "-B") == 0)
 			player = blue_player;

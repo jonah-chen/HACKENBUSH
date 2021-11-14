@@ -20,10 +20,12 @@ class hackenbush
 {
 public:
 	hackenbush() = default;
+
 	~hackenbush();
 
 	void load_world(const char *filename,
 					const glm::vec3 &offset = glm::vec3());
+
 	void load_default();
 
 	void tick();
@@ -41,4 +43,5 @@ private:
 
 	std::vector<game::node *> node_buf;
 	game::edge::container edge_buf;
+	std::unordered_map<glm::vec3, game::node *> grandchild_nodes_;
 };

@@ -16,8 +16,8 @@
 #pragma once
 
 // define max search depths
-#define DEFAULT_MAX_DEPTH 2047
-#define DEFAULT_MAX_BREADTH 1024
+#define DEFAULT_MAX_DEPTH 256
+#define DEFAULT_MAX_BREADTH 256
 
 // define negative int64_t constants: `special` numbers
 #define INF (int64_t)0x92345678abcdef10

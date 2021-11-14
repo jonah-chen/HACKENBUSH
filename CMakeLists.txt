@@ -35,6 +35,6 @@ add_executable(HACKENBUSH common/profile.hpp
         render/shader.cpp
         render/shader.hpp
         game/game.cpp
-        worldgen/parser.cpp worldgen/parser.hpp game/main.cpp)
+        worldgen/parser.cpp worldgen/parser.hpp game/main.cpp worldgen/finite.cpp worldgen/finite.hpp)
 
 target_link_libraries(${PROJECT_NAME} ${OPENGL_gl_LIBRARY} ${OpenGlLinkers})
