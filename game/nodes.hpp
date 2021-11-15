@@ -20,6 +20,7 @@
 #include <map>
 #include <cmath>
 #include <limits>
+#include <unordered_map>
 #include "prereqs.hpp"
 
 // hash struct for pair of int32_t

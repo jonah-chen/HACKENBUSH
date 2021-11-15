@@ -210,8 +210,8 @@ void main()
 			camera.set_view_projection(basic_shader);
 			ground.update(cur_state);
 			camera.set_view_projection(edge_shader);
-			nodes.update(cur_state);
 			edges.update(cur_state);
+			nodes.update(cur_state);
 			if (cur_state.selected_branch)
 				s_nodes.update(cur_state);
 			crosshair.update(cur_state);
