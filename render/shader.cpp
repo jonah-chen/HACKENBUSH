@@ -1,3 +1,14 @@
+/**
+ * @file shader.cpp
+ * @author Jonah Chen
+ * @brief implement shader class specified in shader.hpp
+ * @version 1.1
+ * @date 2021-11-15
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include "shader.hpp"
 
 static void load_shader(GLuint id, const char *path)

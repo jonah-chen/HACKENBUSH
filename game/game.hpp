@@ -16,7 +16,6 @@
 #include "prereqs.hpp"
 #include "render/buffer.hpp"
 #include <vector>
-#include <unordered_map>
 #include <list>
 #include <cstring>
 #include "interaction/input.hpp"
@@ -97,5 +96,4 @@ private:
 
 	std::vector<game::node *> node_buf;
 	game::edge::container edge_buf;
-	std::unordered_map<glm::vec3, game::node *> grandchild_nodes_;
 };

@@ -144,7 +144,7 @@ void hackenbush::command_terminal()
 		else if (command == "HELP")
 			std::cout << "Argument List:\n"
 						 "EXIT : exit the terminal and go back to the game\n"
-						 "LOAD [filename] : Load a world from file\n"
+						 "LOAD [filename] [xoffset] [yoffset] : Load a world from file\n"
                          "RESET : Reset the world to an empty world\n"
 						 "LOGINFO : Print the debug info to the terminal\n"
 						 "KILL : exit the game\n";

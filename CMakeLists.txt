@@ -16,26 +16,17 @@ include_directories(${OPENGL_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS})
 
 include_directories(.)
 
-add_executable(HACKENBUSH common/profile.hpp
-        game/game.hpp
-        game/generators.cpp
-        game/generators.hpp
-        game/nodes.cpp
-        game/nodes.hpp
-        game/prereqs.cpp
-        game/prereqs.hpp
-        interaction/input.cpp
-        interaction/input.hpp
-        render/buffer.cpp
-        render/buffer.hpp
-        render/camera.cpp
-        render/camera.hpp
-        render/geometry.cpp
-        render/geometry.hpp
-        render/shader.cpp
-        render/shader.hpp
+add_executable(HACKENBUSH game/main.cxx
         game/game.cpp
-        worldgen/parser.cpp worldgen/parser.hpp game/main.cxx)
+        game/nodes.cpp
+        game/prereqs.cpp
+        game/generators.cpp
+        interaction/input.cpp
+        render/buffer.cpp
+        render/camera.cpp
+        render/geometry.cpp
+        render/shader.cpp
+        worldgen/parser.cpp)
 
 add_executable(finite worldgen/finite.cxx)
 
