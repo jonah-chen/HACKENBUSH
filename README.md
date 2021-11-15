@@ -42,6 +42,21 @@ number system, intricately entangled with a host of new and exotic numeric speci
 - More different branch types & generators
 - Python wrapper?
 
+### Some Screenshots
+
+#### Zero Position
+<img width="960" alt="empty" src="https://user-images.githubusercontent.com/71615343/141711602-3b881066-970f-4919-b8ba-3ebb5a33b117.png">
+
+#### Up
+<img width="960" alt="up" src="https://user-images.githubusercontent.com/71615343/141711586-8a3ed07c-25d3-429e-a0cf-6c70e176ca09.png">
+
+
+#### Double Omega + Negative Omega + Up
+<img width="960" alt="2omega-omega+up" src="https://user-images.githubusercontent.com/71615343/141711567-5c79e655-fd1b-4a43-8b5d-f37030f86e1e.png">
+
+#### Randomly generated world
+<img width="960" alt="rng" src="https://user-images.githubusercontent.com/71615343/141711470-7648b10a-fa5c-470b-97ef-a7fdae775bb7.png">
+
 ### Comments from Me:
 
 It has been great to work on this game. I love the concept, and the simplicity of the game but it has the potential to
