@@ -182,12 +182,6 @@ void edges::__update(const game::properties &cur_state)
 		glm::vec3 p2 = e->p2->get_pos();
 		glm::vec4 color = branch_color(e->type);
 
-//		if (p2.y > 1.0f and p2.y < 1.8f)
-//		{
-//			std::cout << p2.y << std::endl;
-//			std::cout << "color " << color.x << " " << color.y << " " << color.z
-//                      << std::endl;
-//		}
 		glm::vec3 dir = p2 - p1;
 		// find 2 orthogonal vectors to dir
 		glm::vec3 test_vector;

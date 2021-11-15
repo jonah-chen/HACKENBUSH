@@ -80,10 +80,14 @@ shader::shader(const std::string &vertex_source,
 		glShaderSource(geometry_shader_id, 1,
 					   (const char **) &geometry_source_c, nullptr);
 		glAttachShader(program_, geometry_shader_id);
+        glCompileShader(geometry_shader_id);
 	}
 
 	glAttachShader(program_, vertex_shader_id);
 	glAttachShader(program_, fragment_shader_id);
+
+    glCompileShader(vertex_shader_id);
+    glCompileShader(fragment_shader_id);
 
 	glLinkProgram(program_);
 	glValidateProgram(program_);
