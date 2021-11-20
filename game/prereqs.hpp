@@ -16,6 +16,7 @@
 #pragma once
 
 #include "common/constants.hpp"
+#include "networking/data.hpp"
 
 #include <iostream>
 #include <vector>
@@ -196,6 +197,15 @@ public:
 	virtual void detach(edge *e)
 	{}
 
+	/**
+	 * @brief serialize this node to the specified output stream in order to 
+	 * send it over a network.
+	 * 
+	 * @param buffer: reference to the output stream.
+	 *
+	 * @return reference to the this object so the operator can be chained.
+	 */
+	virtual node &operator>>(networking::buffer &buf) const=0;
 
 	/**
 	 * @brief return the position of the node
