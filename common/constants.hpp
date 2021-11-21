@@ -19,6 +19,12 @@
 #define INF (int64_t)0x92345678abcdef10
 #define NOT_FOUND (int64_t)0x902345678abcdef1
 
+// define hashing constants
+#define HASH_X_SEED (std::size_t)0x159a4f25e2fb1
+#define HASH_Y_SEED (std::size_t)0x371607f38c6f9
+#define HASH_Z_SEED (std::size_t)0xfbac09fe27a7
+#define HASH_CONST  (std::size_t)0x2cf107d98dbb5
+
 // define the rate geometric series shrinks
 #define GEOMETRIC_CONSTANT 0.9f
 

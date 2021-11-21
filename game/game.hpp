@@ -18,6 +18,7 @@
 #include <vector>
 #include <list>
 #include <cstring>
+#include <unordered_map>
 #include "interaction/input.hpp"
 #include "worldgen/parser.hpp"
 #include "nodes.hpp"
@@ -30,6 +31,46 @@ enum player
 
 class hackenbush
 {
+private:
+	class edge_map
+	{
+	public:
+		edge_map() = default;
+		edge_map(const edge_map &) = default;
+		edge_map(edge_map &&) = default;
+		edge_map &operator=(const edge_map &) = default;
+		edge_map &operator=(edge_map &&) = default;
+
+		~edge_map()
+		{
+			for (auto &e : v2p)
+				delete e.second;
+		}
+
+		inline game::edge *&at(const game::vec6 &loc)
+		{ return v2p.at(loc); }
+
+		inline game::vec6 &at(game::edge *e)
+		{ return p2v.at(e); }
+
+		edge_map &insert(game::edge *e)
+		{
+			v2p.insert({e->get_vec6(), e});
+			p2v.insert({e, e->get_vec6()});
+			return *this;
+		}
+
+		void erase(game::edge *e)
+		{
+			v2p.erase(e->get_vec6());
+			p2v.erase(e);
+		}
+
+	private:
+		std::unordered_map<game::edge *, game::vec6> p2v;
+		std::unordered_map<game::vec6, game::edge *> v2p;
+	};
+
 public:
 	hackenbush() = default;
 
@@ -95,5 +136,5 @@ private:
 	game::node::container grounded_nodes_;
 
 	std::vector<game::node *> node_buf;
-	game::edge::container edge_buf;
+	edge_map edge_buf;
 };

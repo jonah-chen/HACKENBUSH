@@ -4,8 +4,6 @@ hackenbush::~hackenbush()
 {
 	for (auto *n: node_buf)
 		delete n;
-	for (auto *e: edge_buf)
-		delete e;
 }
 
 void hackenbush::load_world(const char *filename, const glm::vec3 &offset)

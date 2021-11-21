@@ -45,6 +45,14 @@ enum branch_type : int8_t
 
 glm::vec4 branch_color(branch_type type);
 
+struct vec6
+{
+	glm::vec3 v1;
+	glm::vec3 v2;
+	vec6(const glm::vec3 &v1, const glm::vec3 &v2) : v1(v1), v2(v2) {}
+	bool operator==(const vec6 &other) const;
+};
+
 
 /**
  * @brief An edge or branch in the game.
@@ -72,6 +80,8 @@ struct edge
 
 	inline node *get_other(const node *p) const
 	{ return p1 == p ? p2 : p1; }
+
+	vec6 get_vec6() const;
 };
 
 
@@ -205,7 +215,11 @@ public:
 	 *
 	 * @return reference to the this object so the operator can be chained.
 	 */
-	virtual node &operator>>(networking::buffer &buf) const=0;
+	virtual const node &operator>>(networking::buffer &buf) const
+	{
+		buf >> pos_;
+		return *this;
+	}
 
 	/**
 	 * @brief return the position of the node
@@ -273,3 +287,24 @@ struct properties
 };
 
 }
+
+template<>
+struct std::hash<glm::vec3>
+{
+	size_t operator()(const glm::vec3 &vec) const
+	{
+		return HASH_X_SEED * std::hash<float>()(vec.x) + 
+			   HASH_Y_SEED * std::hash<float>()(vec.y) +
+			   HASH_Z_SEED * std::hash<float>()(vec.z) + 
+			   HASH_CONST;
+	}
+};
+
+template<>
+struct std::hash<game::vec6>
+{
+	size_t operator()(const game::vec6 &vec) const
+	{
+		return std::hash<glm::vec3>()(vec.v1) ^ std::hash<glm::vec3>()(vec.v2);
+	}
+};

@@ -136,6 +136,8 @@ public:
 	 */
 	void detach(edge *e) override;
 
+	//normal &operator>>(networking::buffer &buf) const override;
+
 private:
 	edge::container edges_;
 };

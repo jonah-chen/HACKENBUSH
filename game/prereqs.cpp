@@ -2,6 +2,12 @@
 
 namespace game {
 
+bool vec6::operator==(const vec6& other) const 
+{ return v1 == other.v1 and v2 == other.v2; }
+
+vec6 edge::get_vec6() const
+{ return vec6(p1->get_pos(), p2->get_pos()); }
+
 node::container node::nodes_discard;
 
 glm::vec4 branch_color(branch_type branch)
