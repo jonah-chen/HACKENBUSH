@@ -25,16 +25,6 @@
 #include "game/nodes.hpp"
 #include "game/generators.hpp"
 
-template<>
-struct std::hash<glm::vec3>
-{
-	size_t operator()(const glm::vec3 &vec) const
-	{
-		return std::hash<float>()(vec.x) ^ std::hash<float>()(vec.y) ^
-			   std::hash<float>()(vec.z);
-	}
-};
-
 namespace worldgen {
 
 enum class node_type
