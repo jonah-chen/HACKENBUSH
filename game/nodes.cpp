@@ -90,6 +90,11 @@ void normal::detach(edge *e)
 // Implementation of the stacked nodes
 ///////////////////////////////////////////////////////////////////////////////
 
+stack::~stack()
+{
+	delete edge_up_;
+}
+
 void stack::operator()(node::container &nodes, const glm::vec3 &bottomleft,
 					   const glm::vec3 &topright, int32_t max_depth)
 {
@@ -100,10 +105,12 @@ void stack::operator()(node::container &nodes, const glm::vec3 &bottomleft,
 // return the edge that is BOTH moving away or towards the root
 void stack::render(edge::container &edges, int32_t max_breadth)
 {
-	edge *prev = root_->__render(order_, this, false);
-	edge *next = root_->__render(order_, this, true);
-	if (prev) edges.insert(prev);
-	if (next) edges.insert(next);
+	// edge *prev = root_->__render(order_, this, false);
+	if (edge_up_==nullptr)
+		edge_up_ = root_->__render(order_, this, false);
+	
+	if (edge_up_ and edges.find(edge_up_)==edges.end())
+		edges.insert(edge_up_);
 }
 
 void stack::log(std::ostream &os, uint8_t layers, uint8_t counter) const
@@ -121,6 +128,8 @@ bool stack::attach(edge *e)
 void stack::detach(edge *e)
 {
 	stack *other = (stack *) (e->get_other(this));
+	std::cout << "detaching " << e << " from " << this << " and " << other
+			  << std::endl;
 	if (other->order_ < order_)
 		root_->detach(order_);
 }
@@ -151,7 +160,7 @@ stack_root::~stack_root()
 {
 	for (auto &child: children_)
 		delete child.second;
-	delete kwargs_;
+	delete[] (int32_t*)kwargs_;
 }
 
 edge *stack_root::__render(int32_t order, stack *ptr, bool next)
@@ -225,7 +234,10 @@ void stack_root::operator()(node::container &nodes,
 void stack_root::render(edge::container &edges, int32_t max_breadth)
 {
 	edge *next = root_->__render();
-	if (next) edges.insert(next);
+	if (next and edges.find(next)==edges.end()) 
+		edges.insert(next);
+	else
+		delete next;
 }
 
 void stack_root::log(std::ostream &os, uint8_t layers, uint8_t counter) const

@@ -134,6 +134,7 @@ public:
 
 private:
 	game::node::container grounded_nodes_;
+	mutable game::node::container visible_nodes_;
 
 	std::vector<game::node *> node_buf;
 	edge_map edge_buf;

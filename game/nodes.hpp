@@ -283,12 +283,14 @@ public:
 	using container = std::map<int32_t, stack *>; // mapping order to children
 
 	stack(const glm::vec3 &pos, stack_root *root, int64_t order) :
-			node(pos), root_(root), order_(order)
+			node(pos), root_(root), order_(order), edge_up_()
 	{};
 
 	stack(const stack &) = delete;
 
 	stack &operator=(const stack &) = delete;
+
+	~stack() override;
 
 	/**
 	 * @brief THIS METHOD SHOULD NOT BE CALLED!
@@ -314,6 +316,7 @@ public:
 protected:
 	int64_t order_; // The order or index or id of this node.
 	stack_root *root_;  // Pointer to the root of the stack.
+	edge *edge_up_;
 };
 
 
