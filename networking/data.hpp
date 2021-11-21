@@ -12,10 +12,21 @@ namespace networking
  * stream. Uses:
  *  - Headers
  *  - Footers
- */ 
-enum token : int32_t
+ */
+enum token : uint32_t
 {
-    invalid = 0
+    invalid = 0x00000000,       // default, invalid token
+
+    begin_stream = 0x11000000,  // begin a stream, expect end_stream 8 times to 
+                                // end the stream
+    end_stream = 0xff00ff00,    // end a stream if repeated 8 times
+    
+    begin_chunk2 = 0x00000002,  // begin a chunk, expect a 2 byte integer to 
+                                // specify the size of the chunk
+    begin_chunk4 = 0x00000004,  // begin a chunk, expect a 4 byte integer to 
+                                // specify the size of the chunk
+    begin_chunk8 = 0x00000008,  // begin a chunk, expect a 8 byte integer to 
+                                // specify the size of the chunk
 };
 
 /**
