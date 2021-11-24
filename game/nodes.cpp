@@ -128,9 +128,7 @@ bool stack::attach(edge *e)
 void stack::detach(edge *e)
 {
 	stack *other = (stack *) (e->get_other(this));
-	std::cout << "detaching " << e << " from " << this << " and " << other
-			  << std::endl;
-	if (other->order_ < order_)
+	if (other->order_ > order_)
 		root_->detach(order_);
 }
 

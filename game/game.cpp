@@ -115,8 +115,7 @@ bool hackenbush::chop(game::edge *edge, player player)
 	if ((player == blue_player and edge->type != game::red) or
 		(player == red_player and edge->type != game::blue))
 	{
-		edge_buf.erase(edge);
-		game::detach(edge);
+		game::soft_detach(edge);
 		return true;
 	}
 	return false;
