@@ -27,7 +27,9 @@
 
 namespace game {
 
-class node; // forward decloration
+class node;
+
+struct vec6;
 
 /**
  * @brief types of branches in the game
@@ -44,15 +46,6 @@ enum branch_type : int8_t
 };
 
 glm::vec4 branch_color(branch_type type);
-
-struct vec6
-{
-	glm::vec3 v1;
-	glm::vec3 v2;
-	vec6(const glm::vec3 &v1, const glm::vec3 &v2) : v1(v1), v2(v2) {}
-	bool operator==(const vec6 &other) const;
-};
-
 
 /**
  * @brief An edge or branch in the game.
@@ -284,6 +277,16 @@ struct properties
 	properties(glm::vec3 pos, edge::container &visible_gamestate) :
 			pos(pos), visible_gamestate(visible_gamestate)
 	{}
+};
+
+struct vec6
+{
+	glm::vec3 v1;
+	glm::vec3 v2;
+ 	vec6() = default;
+	vec6(const glm::vec3 &v1, const glm::vec3 &v2) : v1(v1), v2(v2) {}
+	vec6(edge *e) : v1(e->p1->get_pos()), v2(e->p2->get_pos()) {}
+	bool operator==(const vec6 &other) const;
 };
 
 }

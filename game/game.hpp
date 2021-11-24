@@ -37,9 +37,7 @@ private:
 	public:
 		edge_map() = default;
 		edge_map(const edge_map &) = default;
-		edge_map(edge_map &&) = default;
 		edge_map &operator=(const edge_map &) = default;
-		edge_map &operator=(edge_map &&) = default;
 
 		~edge_map()
 		{
