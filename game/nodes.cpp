@@ -151,7 +151,6 @@ stack_root::stack_root(const glm::vec3 &pos, const glm::vec3 &vec_kwargs,
 		grandchild_ = nullptr;
 	else
 		grandchild_ = new normal(end);
-
 }
 
 stack_root::~stack_root()
@@ -159,6 +158,7 @@ stack_root::~stack_root()
 	for (auto &child: children_)
 		delete child.second;
 	delete[] (int32_t*)kwargs_;
+	delete grandchild_;
 }
 
 edge *stack_root::__render(int32_t order, stack *ptr, bool next)
@@ -275,7 +275,6 @@ void stack_root::detach(edge *e)
 {
 	if (grandchild_)
 		grandchild_->detach(e);
-	// not done :(((
 }
 
 // kill off everything greater with order greater than order
@@ -286,7 +285,7 @@ void stack_root::detach(int64_t order)
 	if (cap_ != INF and order > cap_)
 		return;
 
-	cap_ = order; // not sure if i need a -1 here
+	cap_ = order + 1; // not sure if i need a -1 here
 
 	auto it = children_.find(order);
 	for (auto j = children_.find(order); j != children_.end(); ++j)
