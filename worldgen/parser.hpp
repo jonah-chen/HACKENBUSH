@@ -81,4 +81,21 @@ using adj_list_t = std::vector<adj_list_element>;
 
 bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list);
 
+/**
+ * @brief Hackenbush parsing exception is thrown when the world generation
+ * files are not formatted correctly. The line number and the contents of 
+ * the error is returned.
+ */
+class hackenbush_parsing_exception : public std::exception
+{
+public:
+	hackenbush_parsing_exception(int _line_number, const std::string &_line);
+
+	const char *what() const noexcept override;
+private:
+	const int &line_number;
+	const std::string &line;
+	std::string msg;
+};
+
 }
