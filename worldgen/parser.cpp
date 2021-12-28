@@ -11,12 +11,6 @@
 
 #include "parser.hpp"
 
-#define ERROR {\
-std::cerr << "unable to parse line " << line_number << ": " << line\
-<< std::endl;\
-continue;\
-}
-
 /**
  * @brief process the intermediate step of parsing a file, which is identifying
  * and parsing the key nodes that should be generated into the game.
@@ -43,7 +37,7 @@ static void parse_positions(worldgen::lut_t &node_pos,
 	while (std::getline(file, line))
 	{
 		line_number++; // incrament line number
-		if (line.empty() or line[0] == '#') continue; // check for error.
+		if (line.empty() or line[0] == '#') continue; // check for     throw worldgen::hackenbush_parsing_exception(line_number, line);.
 
 		std::stringstream ss(line);
 		std::string command, option;
@@ -52,15 +46,15 @@ static void parse_positions(worldgen::lut_t &node_pos,
 
 		ss >> command;
 		if (command.size() != 1)
-		ERROR
+			throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		ss >> option;
 		if (option.size() != 1)
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		ss >> pos1.x >> pos1.y >> pos1.z;
 		if (ss.fail())
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		// if the position is not found, update the database to include it.
 		if (node_ids.find(pos1) == node_ids.end())
@@ -71,11 +65,11 @@ static void parse_positions(worldgen::lut_t &node_pos,
 
 		ss >> command;
 		if (command.size() != 2)
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		ss >> pos2.x >> pos2.y >> pos2.z;
 		if (ss.fail())
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		if (node_ids.find(pos2) == node_ids.end() and option[0] != 'f')
 		{
@@ -123,7 +117,7 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 	while (std::getline(file, line))
 	{
 		line_number++; // incrament line number
-		if (line.empty() or line[0] == '#') continue; // check for error.
+		if (line.empty() or line[0] == '#') continue; // check for     throw worldgen::hackenbush_parsing_exception(line_number, line);.
 
 		std::stringstream ss(line);
 		std::string command, option;
@@ -132,10 +126,10 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 		int32_t id1, id2;
 		ss >> command;
 		if (command.size() != 1)
-		ERROR
+			throw hackenbush_parsing_exception(line_number, line);
 		ss >> option;
 		if (option.size() != 1)
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 		switch (option[0])
 		{
 		case 'r': branch_type = game::red;
@@ -154,15 +148,15 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 
 		ss >> pos1.x >> pos1.y >> pos1.z;
 		if (ss.fail())
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		ss >> command;
 		if (command.size() != 2)
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		ss >> pos2.x >> pos2.y >> pos2.z;
 		if (ss.fail())
-		ERROR
+		    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 		id1 = node_ids.at(pos1);
 		if (branch_type == game::invalid)
@@ -177,7 +171,7 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 		{
 			ss >> command; // parse the type of infinite stack
 			if (command.size() != 1)
-			ERROR
+			    throw worldgen::hackenbush_parsing_exception(line_number, line);
 			switch (command[0])
 			{
 			case 'c':
@@ -210,13 +204,13 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 				break;
 			}
 			default:
-			ERROR
+			    throw worldgen::hackenbush_parsing_exception(line_number, line);
 			}
 
 			int32_t numerator, denominator;
 			ss >> numerator >> denominator;
 			if (ss.fail())
-			ERROR
+			    throw worldgen::hackenbush_parsing_exception(line_number, line);
 
 			edge _edge;
 
@@ -244,6 +238,19 @@ bool parse(const char *filename, lut_t &node_pos, adj_list_t &adj_list)
 		}
 	}
 	return true;
+}
+
+hackenbush_parsing_exception::hackenbush_parsing_exception(int _line_number, const std::string &_line)
+	: line_number(_line_number), line(_line)
+{
+	std::stringstream ss;
+	ss << "Error parsing hackenbush file at line " << line_number << ": " << line << std::ends;
+	msg = ss.str();
+}
+
+const char *hackenbush_parsing_exception::what() const noexcept
+{
+	return msg.c_str();
 }
 
 }

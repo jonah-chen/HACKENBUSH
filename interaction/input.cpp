@@ -65,9 +65,9 @@ user_inputs user_inputs::fetch(GLFWwindow *window)
 user_inputs user_inputs::operator-(const user_inputs &rhs) const
 {
 	user_inputs ret;
-	for (int i = 0; i < FLOATPOINT_INPUTS; ++i)
+	for (int i = 0; i < fp.size(); ++i)
 		ret.fp[i] = fp[i] - rhs.fp[i];
-	for (int i = 0; i < TRUE_FALSE_INPUTS; ++i)
+	for (int i = 0; i < fp.size(); ++i)
 		ret.tf[i] = tf[i] != rhs.tf[i];
 
 	return ret;
@@ -140,3 +140,4 @@ game::edge *select(const render::camera &camera, const game::properties
 	}
 	return selected;
 }
+

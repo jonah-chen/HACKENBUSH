@@ -16,6 +16,7 @@
 #include "game/prereqs.hpp"
 #include <iostream>
 #include <limits>
+#include <sstream>
 #include <GLFW/glfw3.h>
 #include "game/game.hpp"
 
@@ -35,9 +36,6 @@
 
 #define DOWN(KEY, CUR, PREV) (KEY(CUR) and !KEY(PREV))
 
-#define FLOATPOINT_INPUTS 2
-#define TRUE_FALSE_INPUTS 11
-
 #define MIN_WACK_DISTANCE 0.17f
 
 /**
@@ -51,6 +49,9 @@
  */
 class user_inputs
 {
+private:
+	static constexpr std::size_t FLOATPOINT_INPUTS = 2;
+	static constexpr std::size_t TRUE_FALSE_INPUTS = 11;
 public:
 	// default constructors suffice
 	user_inputs() = default;
@@ -80,12 +81,10 @@ public:
 	 */
 	static user_inputs fetch(GLFWwindow *window);
 
-
 	friend std::ostream &operator<<(std::ostream &os, const user_inputs &ui);
-
 public:
-	double fp[FLOATPOINT_INPUTS];
-	bool tf[TRUE_FALSE_INPUTS];
+	std::array<double, FLOATPOINT_INPUTS> fp;
+	std::array<bool, TRUE_FALSE_INPUTS> tf;
 };
 
 /**
